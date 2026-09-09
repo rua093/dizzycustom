@@ -1,0 +1,317 @@
+            <style>
+    #id-{{ section.id }}.logo-text-wrapper{
+      --space: 2rem;
+      display: grid;
+      align-content: center;
+      overflow: hidden;
+      gap: var(--space);
+      width: 100%;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      padding-top:{{ section.settings.padding_top}}px;
+      padding-bottom:{{ section.settings.padding_bottom }}px;
+      background-color: {{ section.settings.bg_color }};
+    }
+
+    #id-{{ section.id }} .logo-marquee {
+      --duration: 60s;
+      --gap: var(--space);
+
+      display: flex;
+      overflow: hidden;
+      user-select: none;
+      gap: var(--gap);
+    }
+
+    #id-{{ section.id }} .logo-marquee__group {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: var(--gap);
+      min-width: 100%;
+      animation: scroll var(--duration) linear infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #id-{{ section.id }} .logo-marquee__group {
+        animation-play-state: paused;
+      }
+    }
+
+    #id-{{ section.id }} .logo-marquee__group img {
+      max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.max_width }});
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+
+    #id-{{ section.id }} .logo-marquee__group p {
+      background-image: linear-gradient(
+        75deg,
+        hsl(240deg 70% 49%) 0%,
+        hsl(253deg 70% 49%) 11%,
+        hsl(267deg 70% 49%) 22%,
+        hsl(280deg 71% 48%) 33%,
+        hsl(293deg 71% 48%) 44%,
+        hsl(307deg 71% 48%) 56%,
+        hsl(320deg 71% 48%) 67%,
+        hsl(333deg 72% 48%) 78%,
+        hsl(347deg 72% 48%) 89%,
+        hsl(0deg 73% 47%) 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #id-{{ section.id }} .logo-marquee--borders {
+         {% if section.settings.show_border == true %}
+    border-block: {{ section.settings.border_thickness }}px solid {{section.settings.border_color}};
+    {% endif %}
+      padding-block: 0.75rem;
+    }
+
+    #id-{{ section.id }} .logo-marquee--reverse .logo-marquee__group {
+      animation-direction: reverse;
+      animation-delay: calc(var(--duration) / -2);
+    }
+
+    #id-{{ section.id }} .logo-marquee:hover .logo-marquee__group {
+    animation-play-state: {{ section.settings.pause_text }};
+  }
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(calc(-100% - var(--gap)));
+      }
+    }
+      @media (max-width: 768px) {
+         #id-{{ section.id }} .logo-marquee__group img {
+            max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.t_max_width }});
+         }
+
+  }
+    @media (max-width: 480px) {
+      #id-{{ section.id }}.logo-text-wrapper {
+        padding-top:{{ section.settings.m_padding_top}}px;
+        padding-bottom:{{ section.settings.m_padding_bottom }}px;
+      }
+             #id-{{ section.id }} .logo-marquee__group img {
+            max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.m_max_width }});
+         }
+  }
+</style>
+<section class="logo-text-wrapper" id="id-{{ section.id }}">
+  <div
+    class="logo-marquee logo-marquee--borders {{ section.settings.scroll_text_move }}"
+    style="--duration: {{ section.settings.scroll_time }}s"
+  >
+    <div class="logo-marquee__group">
+      {% for block in section.blocks %}
+        {% if block.settings.logo_image != blank %}
+          <img src="{{ block.settings.logo_image | img_url:'master' }}" alt="">
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div aria-hidden="true" class="logo-marquee__group">
+      {% for block in section.blocks %}
+        {% if block.settings.logo_image != blank %}
+          <img src="{{ block.settings.logo_image | img_url:'master' }}" alt="">
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Image Marquee",
+  "settings": [
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color"
+      },
+      {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show border",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 3
+    },
+      {
+        "type": "text",
+        "label": "Scroll Time",
+        "id": "scroll_time",
+        "default": "10"
+      },
+    {
+      "type": "select",
+      "id": "scroll_text_move",
+      "label": "Scroll text move from",
+      "options": [
+        {
+          "value": "marquee-left",
+          "label": "Left"
+        },
+        {
+          "value": "logo-marquee--reverse",
+          "label": "Right"
+        }
+      ],
+      "default": "logo-marquee--reverse"
+    },
+    {
+      "type": "select",
+      "id": "pause_text",
+      "label": "Pause text on mouse hover",
+      "options": [
+        {
+          "value": "paused",
+          "label": "Yes"
+        },
+        {
+          "value": "initial",
+          "label": "No"
+        }
+      ],
+      "default": "paused"
+    },
+    {
+      "type":"header",
+      "content":"Width for desktop"
+    },
+    {
+      "type": "text",
+      "id": "max_width",
+      "label": "Maximum Width",
+      "default": "20rem",
+      "info": "Value from 1 to 20"
+    },
+    {
+      "type":"header",
+      "content":"Width for tablet"
+    },
+    {
+      "type": "text",
+      "id": "t_max_width",
+      "label": "Tablet Maximum Width",
+      "default": "15rem",
+      "info": "Value from 1 to 20"
+    },
+    {
+      "type":"header",
+      "content":"Width for mobile"
+    },
+    {
+      "type": "text",
+      "id": "m_max_width",
+      "label": "Mobile Maximum Width",
+      "default": "5rem",
+      "info": "Value from 1 to 20"
+    },
+    {
+      "type":"header",
+      "content":"Padding for desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 16
+    },
+    {
+      "type":"header",
+      "content":"Padding for mobile"
+    },
+    {
+      "type": "range",
+      "id": "m_padding_top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "m_padding_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Image",
+      "type": "block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Image"
+        }
+
+      ]
+    }
+  ],
+  "presets":[
+    {
+      "name":"Image Marquee",
+            "blocks": [
+        {
+          "type": "block"
+        },
+        {
+          "type": "block"
+        },
+        {
+          "type": "block"
+        },
+        {
+          "type": "block"
+        },
+        {
+          "type": "block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}            

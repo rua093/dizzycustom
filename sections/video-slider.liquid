@@ -1,0 +1,317 @@
+    
+				    
+            <!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+<style>
+  #id-{{ section.id }}{
+    background-color:{{ section.settings.bg_color }};
+    background-image: {{ section.settings.background_gradient_color }};
+  }
+   #id-{{ section.id }} .video--heading {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+     color: {{ section.settings.heading_color }};
+}
+ #id-{{ section.id }} .video-desc {
+    font-size: 18px;
+    text-align: center;
+    color: {{ section.settings.desc_color }};
+    margin: 0;
+    padding: 0 20px;
+}
+.video-width {
+    max-width: 1000px;
+    padding: 0 10px;
+    margin:0 auto;
+}
+
+.video-slider-section {
+    padding: 6rem 0 7rem;
+}
+.customer-video-wrapper video {
+    width: 100%;
+    border-radius: 10px;
+}
+.customer-video-wrapper {
+    position: relative;
+}
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.video-slider-block .slick-track {
+    display: flex;
+    gap: 22px;
+}
+.video-slider-block .slick-dots button:before {
+    display: none;
+}
+.video-slider-block .slick-dots button {
+    width: 12px !important;
+    height: 12px !important;
+    background: #D9D9D9 !important;
+    border-radius: 20px;
+}
+.video-slider-block .slick-dots .slick-active button {
+    background: #000000 !important;
+}
+.video-slider-block .slick-dots {
+    bottom: -50px;
+}
+.video-slider-inner {
+    padding: 3rem 0 0;
+}
+.video-slider-block .slick-prev i, .video-slider-block .slick-prev:before {
+    display: none !important;
+}
+.video-slider-block .slick-next i, .video-slider-block .slick-next:before {
+    display: none !important;
+}
+{% if section.settings.left_arrow != blank %}
+.video-slider-block .slick-prev {
+    content: "";
+    position: absolute;
+    top: -70px;
+    left: 15px;
+    width: 34px;
+    height: 34px;
+    background: url({{ section.settings.left_arrow | img_url:'master'}});
+      background-repeat: no-repeat;
+}
+{% endif %}
+{% if section.settings.right_arrow != blank %}
+.video-slider-block .slick-next {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: 15px;
+    width: 34px;
+    height: 34px;
+    background: url({{ section.settings.right_arrow | img_url:'master'}});
+    background-repeat: no-repeat;
+}
+{% endif %}
+
+@media only screen and (max-width: 989px) {
+.video-slider-block .slick-prev, .video-slider-block .slick-next, .customer-testimonial-block .slick-prev, .customer-testimonial-block .slick-next {
+    display: none;
+}
+.video-slider-section {
+    padding: 4rem 0 5rem;
+}
+}
+@media only screen and (max-width: 749px) {
+.video-slider-section .video--heading {
+    font-size: 24px;
+}
+ .video-slider-section  .video-desc {
+    padding: 0 20px;
+}
+.video-slider-block .slick-track {
+    gap: 10;
+}
+}
+
+</style>
+<section class="video-slider-section" id="id-{{ section.id }}">
+  <div class="video-width">
+    <div class="video-slider-wrapper">
+      <div class="video-slider-content">
+        <h2 class="video--heading">{{ section.settings.the_heading }}</h2>
+        <p class="video-desc">{{ section.settings.the_text }}</p>
+      </div>
+      <div class="video-slider-inner">
+        <div class="cstm-slider video-slider-block customer-video">
+          {%- for block in section.blocks -%}
+          <div class="customer-video-wrapper">
+            <video
+              style="display:block;"
+              width="100%"
+              class="slick-video"
+              poster="{% if block.settings.video_poster != blank %} {{ block.settings.video_poster | img_url:'master' }} {% endif %}"
+              playsinline
+            >
+              <source src="{{ block.settings.bg_video }}" type="video/mp4">
+            </video>
+            <div class="play-button">
+            {% if section.settings.video_play_btn != blank %}
+              <img src="{{ section.settings.video_play_btn | img_url:'master' }}">
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script>
+  // Function to handle showing play button when video ends
+  function handleVideoEnded(videoElement) {
+    // Show play button when video ends
+    $(videoElement).siblings('.play-button').show();
+  }
+
+  // Initialize slick slider
+  var slider = $('.cstm-slider').not('.slick-initialized').slick({
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: true,
+    dots: true,
+    prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+    nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>",
+    responsive: [{
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true
+        }
+      },
+      {
+        breakpoint: 780,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          arrows: false
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false
+        }
+      }
+    ]
+  });
+
+  // Pause video when slider changes slide
+  slider.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+    var currentSlideElement = slick.$slides[currentSlide];
+    var currentVideo = $(currentSlideElement).find('.slick-video')[0];
+    if (currentVideo && !currentVideo.paused) {
+      currentVideo.pause();
+      $(currentVideo).siblings('.play-button').show();
+    }
+  });
+
+  // Handle play button click and video play/pause
+  $('.cstm-slider').on('click', '.slick-slide', function() {
+    var clickedVideo = $(this).find('.slick-video')[0];
+    $('.slick-video').each(function(index, video) {
+      if (video !== clickedVideo) {
+        video.pause();
+        $(video).siblings('.play-button').show();
+      }
+    });
+    if (clickedVideo.paused) {
+      clickedVideo.play();
+      $(clickedVideo).siblings('.play-button').hide();
+    } else {
+      clickedVideo.pause();
+      $(clickedVideo).siblings('.play-button').show();
+    }
+  });
+
+  // Add event listener to each video to detect when playback ends
+  $('.slick-video').each(function(index, video) {
+    video.onended = function() {
+      handleVideoEnded(video);
+    };
+  });
+</script>
+
+
+
+
+{% schema %}
+{
+  "name": "Video with slider",
+  "settings": [
+    {
+      "type":"color",
+      "id":"bg_color",
+      "label":"Background color"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient_color",
+      "label": "Background gradient"
+    },
+    {
+      "type": "text",
+      "id": "the_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "textarea",
+      "id": "the_text",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_play_btn",
+      "label": "Play Button image"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_arrow",
+      "label": "Left arrow"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_arrow",
+      "label": "Right arrow"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Block",
+      "type": "Video",
+      "settings": [
+          {
+            "type": "url",
+            "id": "bg_video",
+            "label": "Video"
+          },
+           {
+       "type": "image_picker",
+       "id": "video_poster",
+       "label": "Video Poster"
+     }
+        ]
+      }
+  ],
+    "presets":[
+    {
+      "name":"Video with slider"
+    }
+  ]
+}
+{% endschema %}
+
+            
+            
