@@ -1,0 +1,147 @@
+.dc-brand-experience__story {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--text-boxes-radius);
+  background: #1e4e86;
+  color: #ffffff;
+}
+
+.dc-brand-experience__media {
+  position: relative;
+  min-height: 28rem;
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.dc-brand-experience__media img,
+.dc-brand-experience__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dc-brand-experience__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3.2rem 2.4rem;
+}
+
+.dc-brand-experience__eyebrow {
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.dc-brand-experience__heading {
+  margin: 0;
+  color: #ffffff;
+}
+
+.dc-brand-experience__text {
+  max-width: 52rem;
+  margin-top: 1.6rem;
+}
+
+.dc-brand-experience__text,
+.dc-brand-experience__text p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dc-brand-experience__button {
+  margin-top: 2.4rem;
+  --color-button: 255, 255, 255;
+  --color-button-text: 30, 78, 134;
+}
+
+.dc-brand-experience__benefits {
+  margin-top: 4rem;
+}
+
+.dc-brand-experience__benefits-heading {
+  margin: 0 0 2.4rem;
+  text-align: center;
+}
+
+.dc-brand-experience__benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-mobile-horizontal-spacing);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dc-brand-experience__benefit {
+  height: 100%;
+  padding: 2rem 1.6rem;
+  border-radius: var(--text-boxes-radius);
+  background: rgb(var(--color-background))
+    linear-gradient(rgba(var(--color-foreground), 0.04), rgba(var(--color-foreground), 0.04));
+  text-align: center;
+}
+
+.dc-brand-experience__benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  margin-bottom: 1.2rem;
+  color: #1e4e86;
+}
+
+.dc-brand-experience__benefit-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dc-brand-experience__benefit h3 {
+  margin: 0;
+}
+
+.dc-brand-experience__benefit .rte {
+  margin-top: 0.8rem;
+}
+
+@media screen and (min-width: 750px) {
+  .dc-brand-experience__story {
+    grid-template-columns: minmax(0, 1.35fr) minmax(32rem, 0.85fr);
+    min-height: 42rem;
+  }
+
+  .dc-brand-experience__story--image-right {
+    grid-template-columns: minmax(32rem, 0.85fr) minmax(0, 1.35fr);
+  }
+
+  .dc-brand-experience__story--image-right .dc-brand-experience__media {
+    order: 2;
+  }
+
+  .dc-brand-experience__media {
+    min-height: 100%;
+  }
+
+  .dc-brand-experience__content {
+    padding: 4rem;
+  }
+
+  .dc-brand-experience__benefit-grid {
+    gap: var(--grid-desktop-horizontal-spacing);
+  }
+
+  .dc-brand-experience__benefit {
+    padding: 2.4rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .dc-brand-experience__content {
+    padding: 5rem;
+  }
+
+  .dc-brand-experience__benefit-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+

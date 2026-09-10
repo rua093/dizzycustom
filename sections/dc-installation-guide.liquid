@@ -1,0 +1,150 @@
+{{ 'section-dc-installation-guide.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign step_blocks = section.blocks | where: 'type', 'step' -%}
+{%- assign tip_blocks = section.blocks | where: 'type', 'tip' -%}
+
+<section class="dc-installation-guide color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="dc-installation-guide__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if step_blocks.size > 0 -%}
+      <ol class="dc-installation-guide__steps" role="list">
+        {%- for block in step_blocks -%}
+          <li class="dc-installation-guide__step" {{ block.shopify_attributes }}>
+            <div class="dc-installation-guide__step-media">
+              <span class="dc-installation-guide__step-number" aria-hidden="true">{{ forloop.index }}</span>
+              {%- if block.settings.image != blank -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 900
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '275, 375, 550, 750, 900',
+                    sizes: '(min-width: 1200px) 275px, (min-width: 990px) 23vw, (min-width: 750px) 46vw, 100vw',
+                    alt: block.settings.image.alt
+                }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg dc-installation-guide__placeholder' }}
+              {%- endif -%}
+            </div>
+            <div class="dc-installation-guide__step-content">
+              {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
+              {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+    {%- endif -%}
+
+    {%- if tip_blocks.size > 0 -%}
+      <div class="dc-installation-guide__tips-wrap">
+        {%- if section.settings.tips_heading != blank -%}
+          <h2 class="dc-installation-guide__tips-heading h2">{{ section.settings.tips_heading }}</h2>
+        {%- endif -%}
+        <ul class="dc-installation-guide__tips" role="list">
+          {%- for block in tip_blocks -%}
+            <li class="dc-installation-guide__tip" {{ block.shopify_attributes }}>
+              <span class="dc-installation-guide__tip-icon" aria-hidden="true">
+                {%- if block.settings.icon == 'curve' -%}
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M5 18c0-7 4-12 11-12h3M16 3l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M4 17h16M7 13l3 3 7-8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {%- endif -%}
+              </span>
+              <div>
+                {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
+                {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "DC installation guide",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "How to Apply Your Emblem" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" }
+      ],
+      "default": "h2",
+      "label": "Heading size"
+    },
+    { "type": "inline_richtext", "id": "tips_heading", "label": "Tips heading", "default": "Tips for the Best Result" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "inverse" },
+    { "type": "header", "content": "Section padding" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding bottom", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Installation step",
+      "limit": 4,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Installation step" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Explain this step in one short, practical sentence.</p>" }
+      ]
+    },
+    {
+      "type": "tip",
+      "name": "Application tip",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            { "value": "flat", "label": "Flat surface" },
+            { "value": "curve", "label": "Curved surface" }
+          ],
+          "default": "flat",
+          "label": "Icon"
+        },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Surface tip" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Add a short application tip for this type of surface.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "DC installation guide",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "tip" },
+        { "type": "tip" }
+      ]
+    }
+  ]
+}
+{% endschema %}
