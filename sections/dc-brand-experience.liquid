@@ -19,30 +19,51 @@
   if story_image == blank and product != blank
     assign story_image = product.featured_image
   endif
+  assign mobile_story_image = section.settings.mobile_image | default: story_image
+
+  assign button_link = section.settings.button_link
+  if button_link == blank and product != blank
+    assign main_section_prefix = section.id | split: '__' | first
+    assign main_section_id = main_section_prefix | append: '__main'
+    assign button_link = '#ProductInfo-' | append: main_section_id
+  endif
 -%}
 
 <section class="dc-brand-experience color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
-  <div class="page-width">
-    <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}">
-      <div class="dc-brand-experience__media">
-        {%- if story_image != blank -%}
+  <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}">
+    <div class="dc-brand-experience__media">
+      {%- if story_image != blank -%}
+        <picture>
+          {%- if section.settings.mobile_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="
+                {{ mobile_story_image | image_url: width: 550 }} 550w,
+                {{ mobile_story_image | image_url: width: 750 }} 750w,
+                {{ mobile_story_image | image_url: width: 900 }} 900w
+              "
+              sizes="100vw"
+            >
+          {%- endif -%}
           {{
             story_image
-            | image_url: width: 2000
+            | image_url: width: 2400
             | image_tag:
               loading: 'lazy',
-              widths: '550, 750, 900, 1100, 1300, 1600, 2000',
-              sizes: '(min-width: 1200px) 720px, (min-width: 750px) 58vw, 100vw',
+              widths: '750, 1100, 1500, 1800, 2172, 2400',
+              sizes: '100vw',
               alt: story_image.alt
           }}
-        {%- else -%}
-          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg dc-brand-experience__placeholder' }}
-        {%- endif -%}
-      </div>
+        </picture>
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg dc-brand-experience__placeholder' }}
+      {%- endif -%}
+    </div>
 
+    <div class="dc-brand-experience__content-layer page-width">
       <div class="dc-brand-experience__content">
         {%- if section.settings.eyebrow != blank -%}
-          <p class="dc-brand-experience__eyebrow caption-with-letter-spacing">{{ section.settings.eyebrow | escape }}</p>
+          <p class="dc-brand-experience__eyebrow">{{ section.settings.eyebrow | escape }}</p>
         {%- endif -%}
         {%- if section.settings.heading != blank -%}
           <h2 class="dc-brand-experience__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
@@ -53,20 +74,22 @@
         {%- if section.settings.button_label != blank -%}
           <a
             class="button dc-brand-experience__button"
-            {% if section.settings.button_link == blank %}
+            {% if button_link == blank %}
               role="link" aria-disabled="true"
             {% else %}
-              href="{{ section.settings.button_link }}"
+              href="{{ button_link }}"
             {% endif %}
           >
-            {{ section.settings.button_label | escape }}
+            <span>{{ section.settings.button_label | escape }}</span>
+            <span class="dc-brand-experience__button-icon" aria-hidden="true">{% render 'icon-arrow' %}</span>
           </a>
         {%- endif -%}
       </div>
     </div>
+  </div>
 
-    {%- if section.blocks.size > 0 -%}
-      <div class="dc-brand-experience__benefits">
+  {%- if section.blocks.size > 0 -%}
+    <div class="dc-brand-experience__benefits page-width">
         {%- if section.settings.benefits_heading != blank -%}
           <h2 class="dc-brand-experience__benefits-heading h2">{{ section.settings.benefits_heading }}</h2>
         {%- endif -%}
@@ -90,9 +113,8 @@
             </li>
           {%- endfor -%}
         </ul>
-      </div>
-    {%- endif -%}
-  </div>
+    </div>
+  {%- endif -%}
 </section>
 
 {% schema %}
@@ -102,8 +124,9 @@
   "class": "section",
   "settings": [
     { "type": "image_picker", "id": "image", "label": "Story image" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Your idea. Our craft." },
-    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Make Your Ride Truly Yours" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile story image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "MAKE YOUR RIDE" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "TRULY YOURS" },
     {
       "type": "select",
       "id": "heading_size",
@@ -115,8 +138,8 @@
       "default": "h1",
       "label": "Heading size"
     },
-    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>More than an emblem, it is a statement. Every piece is carefully made to reflect your style and personality.</p>" },
-    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "CUSTOMIZE YOURS TODAY" },
     { "type": "url", "id": "button_link", "label": "Button link" },
     {
       "type": "select",

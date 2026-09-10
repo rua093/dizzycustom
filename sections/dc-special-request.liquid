@@ -55,11 +55,11 @@
         {%- if request_image != blank -%}
           {{
             request_image
-            | image_url: width: 1600
+            | image_url: width: 2400
             | image_tag:
               loading: 'lazy',
-              widths: '375, 550, 750, 900, 1100, 1300, 1600',
-              sizes: '(min-width: 1200px) 550px, (min-width: 750px) 45vw, 100vw',
+              widths: '375, 550, 750, 900, 1100, 1300, 1600, 2000, 2400',
+              sizes: '(min-width: 750px) 100vw, 100vw',
               alt: request_image.alt
           }}
         {%- else -%}
