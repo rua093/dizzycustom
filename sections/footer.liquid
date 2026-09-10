@@ -131,6 +131,7 @@
           <div class="dizzy-footer__brand">
             {%- if settings.logo != blank -%}
               {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+              {%- capture logo_style -%}--dizzy-footer-brand-logo-width: {{ settings.logo_width }}px;{%- endcapture -%}
               {{
                 settings.logo
                 | image_url: width: 600
@@ -138,7 +139,8 @@
                   class: 'dizzy-footer__brand-logo',
                   loading: 'lazy',
                   widths: '120, 180, 240, 360, 480, 600',
-                  alt: logo_alt
+                  alt: logo_alt,
+                  style: logo_style
               }}
             {%- else -%}
               <a class="dizzy-footer__brand-name" href="{{ routes.root_url }}">{{ shop.name }}</a>
@@ -206,6 +208,7 @@
                 <div class="dizzy-footer__brand" {{ block.shopify_attributes }}>
                   {%- if settings.brand_image != blank -%}
                     {%- assign brand_image_height = settings.brand_image_width | divided_by: settings.brand_image.aspect_ratio -%}
+                    {%- capture brand_logo_style -%}--dizzy-footer-brand-logo-width: {{ settings.brand_image_width }}px;{%- endcapture -%}
                     {{
                       settings.brand_image
                       | image_url: width: 1100
@@ -214,10 +217,12 @@
                         loading: 'lazy',
                         widths: '120, 180, 240, 360, 480, 600, 800, 1100',
                         height: brand_image_height,
-                        width: settings.brand_image_width
+                        width: settings.brand_image_width,
+                        style: brand_logo_style
                     }}
                   {%- elsif settings.logo != blank -%}
                     {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                    {%- capture logo_style -%}--dizzy-footer-brand-logo-width: {{ settings.logo_width }}px;{%- endcapture -%}
                     {{
                       settings.logo
                       | image_url: width: 600
@@ -225,7 +230,8 @@
                         class: 'dizzy-footer__brand-logo',
                         loading: 'lazy',
                         widths: '120, 180, 240, 360, 480, 600',
-                        alt: logo_alt
+                        alt: logo_alt,
+                        style: logo_style
                     }}
                   {%- endif -%}
 
@@ -268,13 +274,14 @@
                       loading="lazy"
                       width="{{ block.settings.image.width }}"
                       height="{{ block.settings.image.height }}"
-                      style="max-width: min(100%, {{ block.settings.image_width }}px);"
+                      style="--dizzy-footer-brand-logo-width: {{ block.settings.image_width }}px;"
                     >
                   {%- elsif settings.logo != blank -%}
                     {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
                     {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
                     {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
                     {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                    {%- capture logo_style -%}--dizzy-footer-brand-logo-width: {{ settings.logo_width }}px;{%- endcapture -%}
                     {{
                       settings.logo
                       | image_url: width: 600
@@ -285,6 +292,7 @@
                         width: settings.logo_width,
                         alt: logo_alt,
                         sizes: sizes,
+                        style: logo_style,
                         loading: 'lazy'
                     }}
                   {%- endif -%}
@@ -390,16 +398,20 @@
           &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.
         </small>
 
-        {%- if section.settings.show_policy -%}
-          {%- liquid
-            assign privacy_policy_url = shop.privacy_policy.url | default: '/policies/privacy-policy'
-            assign privacy_policy_title = shop.privacy_policy.title | default: 'Privacy Policy'
-            assign terms_of_service_url = shop.terms_of_service.url | default: '/policies/terms-of-service'
-            assign terms_of_service_title = shop.terms_of_service.title | default: 'Terms of Service'
-          -%}
+        {%- liquid
+          assign has_footer_policies = false
+          if shop.privacy_policy != blank or shop.terms_of_service != blank
+            assign has_footer_policies = true
+          endif
+        -%}
+        {%- if section.settings.show_policy and has_footer_policies -%}
           <ul class="dizzy-footer__policies list-unstyled" role="list">
-            <li><a href="{{ privacy_policy_url }}">{{ privacy_policy_title }}</a></li>
-            <li><a href="{{ terms_of_service_url }}">{{ terms_of_service_title }}</a></li>
+            {%- if shop.privacy_policy != blank -%}
+              <li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title | escape }}</a></li>
+            {%- endif -%}
+            {%- if shop.terms_of_service != blank -%}
+              <li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title | escape }}</a></li>
+            {%- endif -%}
           </ul>
         {%- endif -%}
       </div>

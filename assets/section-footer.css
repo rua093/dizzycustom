@@ -157,7 +157,7 @@
   filter: brightness(0) invert(1);
   height: auto;
   max-height: 7rem;
-  max-width: 22rem;
+  max-width: min(100%, var(--dizzy-footer-brand-logo-width, 22rem));
   object-fit: contain;
   object-position: left center;
   width: auto;
@@ -513,7 +513,6 @@
 
   .dizzy-footer__brand-logo {
     margin-inline: auto;
-    max-width: 19rem;
     object-position: center;
   }
 
