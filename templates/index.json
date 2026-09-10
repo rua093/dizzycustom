@@ -62,6 +62,92 @@
         "show_text_below": false
       }
     },
+    "image_scrolling_ACYgDa": {
+      "type": "image-scrolling",
+      "blocks": {
+        "block_VXHBDj": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/ford.png"
+          }
+        },
+        "block_HGAtQn": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/lamborghini-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_bDYqfg": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/mazda-brand-logo-car-symbol-black-and-white-design-vector-46098405_ec2d8ac1-3ec6-4a6e-8f71-8a3fe977cd0e.jpg"
+          }
+        },
+        "block_QDijnr": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/porsche-logo-car-brand-symbol-black-white-design-vector-46125298.jpg"
+          }
+        },
+        "block_p3yM4K": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/infiniti-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_RhJUmt": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/toyota-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_LQaJxr": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/rolls-royce-brand-logo-symbol-with-name-white-design-british-car-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_jzNpxX": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/nissan-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_yFiFKK": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/maserati-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "block_VXHBDj",
+        "block_HGAtQn",
+        "block_bDYqfg",
+        "block_QDijnr",
+        "block_p3yM4K",
+        "block_RhJUmt",
+        "block_LQaJxr",
+        "block_jzNpxX",
+        "block_yFiFKK"
+      ],
+      "settings": {
+        "bg_color": "#000000",
+        "show_border": false,
+        "border_color": "",
+        "border_thickness": 1,
+        "scroll_time": "10",
+        "scroll_text_move": "logo-marquee--reverse",
+        "pause_text": "paused",
+        "max_width": "10rem",
+        "t_max_width": "15rem",
+        "m_max_width": "5rem",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "m_padding_top": 16,
+        "m_padding_bottom": 16
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -240,92 +326,6 @@
         "padding_bottom": 20
       }
     },
-    "image_scrolling_ACYgDa": {
-      "type": "image-scrolling",
-      "blocks": {
-        "block_VXHBDj": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/ford.png"
-          }
-        },
-        "block_HGAtQn": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/lamborghini-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        },
-        "block_bDYqfg": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/mazda-brand-logo-car-symbol-black-and-white-design-vector-46098405_ec2d8ac1-3ec6-4a6e-8f71-8a3fe977cd0e.jpg"
-          }
-        },
-        "block_QDijnr": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/porsche-logo-car-brand-symbol-black-white-design-vector-46125298.jpg"
-          }
-        },
-        "block_p3yM4K": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/infiniti-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        },
-        "block_RhJUmt": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/toyota-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        },
-        "block_LQaJxr": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/rolls-royce-brand-logo-symbol-with-name-white-design-british-car-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        },
-        "block_jzNpxX": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/nissan-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        },
-        "block_yFiFKK": {
-          "type": "block",
-          "settings": {
-            "logo_image": "shopify://shop_images/maserati-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
-          }
-        }
-      },
-      "block_order": [
-        "block_VXHBDj",
-        "block_HGAtQn",
-        "block_bDYqfg",
-        "block_QDijnr",
-        "block_p3yM4K",
-        "block_RhJUmt",
-        "block_LQaJxr",
-        "block_jzNpxX",
-        "block_yFiFKK"
-      ],
-      "settings": {
-        "bg_color": "#000000",
-        "show_border": false,
-        "border_color": "",
-        "border_thickness": 1,
-        "scroll_time": "10",
-        "scroll_text_move": "logo-marquee--reverse",
-        "pause_text": "paused",
-        "max_width": "10rem",
-        "t_max_width": "15rem",
-        "m_max_width": "5rem",
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "m_padding_top": 16,
-        "m_padding_bottom": 16
-      }
-    },
     "multicolumn_EedCKm": {
       "type": "multicolumn",
       "blocks": {
@@ -419,13 +419,13 @@
   },
   "order": [
     "image_banner",
+    "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
     "1752288780048388a8",
     "multicolumn_6CbrDa",
     "17522895397c61f6f8",
     "multicolumn_m7M4TB",
-    "image_scrolling_ACYgDa",
     "multicolumn_EedCKm",
     "1705574032ea599050",
     "featured_blog_JezEiz"
