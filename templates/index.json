@@ -126,6 +126,7 @@
         "column_Tzacyw": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
             "title": "Outstanding features",
             "text": "",
             "link_label": "",
@@ -135,6 +136,7 @@
         "column_BCgAjf": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/3lo_icaremblem_48691ec1-fb86-4b02-bd8f-f0e41cd15f3f.png",
             "title": "3 Luxury Finishes",
             "text": "",
             "link_label": "",
@@ -144,6 +146,7 @@
         "column_wDp6fP": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
             "title": "DizzyCustom vs. The Others",
             "text": "",
             "link_label": "",
@@ -186,6 +189,7 @@
         "column_wBMzkN": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/pngegg.png",
             "title": "<strong>Global Reach, Local Care</strong>",
             "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping with in 10-12 business days.</p>",
             "link_label": "",
@@ -195,6 +199,7 @@
         "column_RHKTUC": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/kisspng-check-mark-computer-icons-tick-inside-vector-5ae15b5f6abf63.3423985415247184314372.png",
             "title": "<strong>Seamless Elegance, Effortless Installation</strong>",
             "text": "<p>Dizzy's emblems not only exude elegance but also come with easy installation, ensuring a hassle-free process for every customer.</p>",
             "link_label": "",
@@ -204,6 +209,7 @@
         "column_REfT7U": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/kisspng-computer-icons-clip-art-box-scalable-vector-graphi-box-closed-svg-png-icon-free-download-65594-o-5b6e1442a7aa02.7279711415339408026868.png",
             "title": "<strong>Securely Packaged Elegance</strong>",
             "text": "<p>Our meticulous packaging guarantees that your personalized masterpiece arrives in pristine condition, ready to adorn your vehicle.</p>",
             "link_label": "",

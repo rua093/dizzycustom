@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "optionName": "Surface",
@@ -151,80 +160,6 @@
       }
     },
     "content_for_index": [],
-    "blocks": {
-      "5397159629896517023": {
-        "type": "shopify://apps/proveway-uptrack/blocks/tracking_page/86b784e2-0c26-411d-9523-069d0cae121f",
-        "disabled": false,
-        "settings": {
-          "form_imgHead1": "30 Days Money Back Guarantee",
-          "form_imgSub1": "30-day refund policy: Return within 30 days for a full refund, no questions asked. Contact customer service for return process.",
-          "form_imgHead2": "Customer Support",
-          "form_imgSub2": "24/7 Customer Support: Our dedicated customer support team is here to assist you anytime, day or night. Contact us 24 hours a day, 7 days a week for any questions or concerns. We're always here to help.",
-          "form_btnText": "Track",
-          "icons_color": "#000000",
-          "form_title_color": "#000000",
-          "form_heading_color": "#000000",
-          "form_subHeading_color": "#000000",
-          "form_button_text_color": "#ffffff",
-          "form_button_bg_color": "#02af5b",
-          "progress_bar_color": "#3c5460",
-          "shipping_updates_bg_color": "#f5f9fa",
-          "form_hide_right_block": true,
-          "trackingPage_hide_courier": false,
-          "trackingPage_hide_address": false,
-          "trackingPage_hide_translation": true,
-          "themeFont": "1",
-          "dateFormat": "4",
-          "timeFormat": "2",
-          "sizes": "en"
-        }
-      },
-      "5134484470793087125": {
-        "type": "shopify://apps/vitals/blocks/app-embed/aeb48102-2a5a-4f39-bdbd-d8d49f4e20b8",
-        "disabled": false,
-        "settings": {}
-      },
-      "4143866229958350875": {
-        "type": "shopify://apps/upsell-koala-bundles/blocks/deals-embed/2b951f75-113f-4fca-bdf3-c92703235716",
-        "disabled": false,
-        "settings": {}
-      },
-      "13672250894428551832": {
-        "type": "shopify://apps/qikify-slide-cart/blocks/app-embed/39da5d6e-3e04-4687-bc69-e23fafb93294",
-        "disabled": false,
-        "settings": {}
-      },
-      "1513253815146976218": {
-        "type": "shopify://apps/omnisend-email-marketing-sms/blocks/app-embed/44704aa2-794f-4c5d-8c8e-039c841158e9",
-        "disabled": false,
-        "settings": {}
-      },
-      "6615124273980966592": {
-        "type": "shopify://apps/chatty-livechat-helpdesk/blocks/app-embed/1c0e135d-e8e1-4fe2-86be-1c36def46675",
-        "disabled": false,
-        "settings": {}
-      },
-      "9426859951591838832": {
-        "type": "shopify://apps/chatty-livechat-helpdesk/blocks/app-page/1c0e135d-e8e1-4fe2-86be-1c36def46675",
-        "disabled": false,
-        "settings": {}
-      },
-      "1787840288555608609": {
-        "type": "shopify://apps/live-product-options/blocks/app-embed/88bfdf40-5e27-4962-a966-70c8d1e87757",
-        "disabled": false,
-        "settings": {}
-      },
-      "6097499278999377719": {
-        "type": "shopify://apps/globo-mega-menu/blocks/app-embed/7a00835e-fe40-45a5-a615-2eb4ab697b58",
-        "disabled": true,
-        "settings": {}
-      },
-      "6279071938380501511": {
-        "type": "shopify://apps/powerful-form-builder/blocks/app-embed/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
-        "disabled": false,
-        "settings": {}
-      }
-    },
     "color_schemes": {
       "background-1": {
         "settings": {
