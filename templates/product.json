@@ -285,7 +285,7 @@
         "benefit_vehicles"
       ],
       "settings": {
-        "image": "shopify://shop_images/Make_Your_Ride.png",
+        "image": "shopify://shop_images/madeyouridea.png",
         "eyebrow": "Your idea. Our craft.",
         "heading": "Make Your Ride Truly Yours",
         "heading_size": "h1",
@@ -865,7 +865,7 @@
         "text": "<p>Looking for a unique design, logo, bulk order, or a size outside our standard options? Tell us what you have in mind and we will help bring it to life.</p>",
         "button_label": "Request a Custom Emblem",
         "button_link": "shopify://pages/contact",
-        "image": "shopify://shop_images/your_idea_our_craft.png",
+        "image": "shopify://shop_images/upscalemedia-transformed.png",
         "desktop_image_position": "right",
         "color_scheme": "inverse",
         "padding_top": 48,
