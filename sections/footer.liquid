@@ -391,13 +391,15 @@
         </small>
 
         {%- if section.settings.show_policy -%}
+          {%- liquid
+            assign privacy_policy_url = shop.privacy_policy.url | default: '/policies/privacy-policy'
+            assign privacy_policy_title = shop.privacy_policy.title | default: 'Privacy Policy'
+            assign terms_of_service_url = shop.terms_of_service.url | default: '/policies/terms-of-service'
+            assign terms_of_service_title = shop.terms_of_service.title | default: 'Terms of Service'
+          -%}
           <ul class="dizzy-footer__policies list-unstyled" role="list">
-            {%- if shop.privacy_policy != blank -%}
-              <li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a></li>
-            {%- endif -%}
-            {%- if shop.terms_of_service != blank -%}
-              <li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title }}</a></li>
-            {%- endif -%}
+            <li><a href="{{ privacy_policy_url }}">{{ privacy_policy_title }}</a></li>
+            <li><a href="{{ terms_of_service_url }}">{{ terms_of_service_title }}</a></li>
           </ul>
         {%- endif -%}
       </div>
