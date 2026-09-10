@@ -34,8 +34,15 @@
     if ratio == 0 or ratio == null
       assign ratio = 1
     endif
+    assign discount_percentage = 0
+    if card_product.compare_at_price > card_product.price and card_product.available
+      assign difference = card_product.compare_at_price | minus: card_product.price
+      assign float_difference = difference | times: 1.0
+      assign discount_fraction = float_difference | divided_by: card_product.compare_at_price
+      assign discount_percentage = discount_fraction | times: 100 | round
+    endif
   -%}
-  <div class="card-wrapper product-card-wrapper underline-links-hover">
+  <div class="card-wrapper product-card-wrapper product-card-wrapper--dizzy underline-links-hover">
     <div
       class="
         card card--{{ settings.card_style }}
@@ -119,26 +126,17 @@
               </a>
             </h3>
           </div>
-          <div class="card__badge {{ settings.badge_position }}">
+          <div class="card__badge {{ settings.badge_position }} bottom left">
             {%- if card_product.available == false -%}
               <span
                 id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
                 class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
-              >
-                {{- 'products.product.sold_out' | t -}}
-              </span>
-            {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-             {%- assign difference = card_product.compare_at_price | minus: card_product.price -%}
-              {%- assign float_difference = difference | times: 1.0 -%}
-              {%- assign discount_fraction = float_difference | divided_by: card_product.compare_at_price -%}
-              {%- assign discount_percentage = discount_fraction | times: 100 | round -%}
+              >{{ 'products.product.sold_out' | t }}</span>
+            {%- elsif discount_percentage > 0 -%}
               <span
                 id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
-                class="badge badge--top-right color-{{ settings.sale_badge_color_scheme }}"
-              >
-                {% comment %}{{- 'products.product.on_sale' | t -}}{% endcomment %}
-                {{- discount_percentage }}% OFF
-              </span>
+                class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
+              >{{ discount_percentage }}% OFF</span>
             {%- endif -%}
           </div>
         </div>
@@ -178,33 +176,35 @@
                   assign rating_decimal = 1
                 endif
               %}
-              <div
-                class="rating"
-                role="img"
-                aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: card_product.metafields.reviews.rating.value, rating_max: card_product.metafields.reviews.rating.value.scale_max }}"
-              >
-                <span
-                  aria-hidden="true"
-                  class="rating-star"
-                  style="--rating: {{ card_product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ card_product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
-                ></span>
+              <div class="card-rating">
+                <div
+                  class="rating"
+                  role="img"
+                  aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: card_product.metafields.reviews.rating.value, rating_max: card_product.metafields.reviews.rating.value.scale_max }}"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="rating-star"
+                    style="--rating: {{ card_product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ card_product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
+                  ></span>
+                </div>
+                <p class="rating-text caption">
+                  <span aria-hidden="true">
+                    {{- card_product.metafields.reviews.rating.value }} /
+                    {{ card_product.metafields.reviews.rating.value.scale_max -}}
+                  </span>
+                </p>
+                <p class="rating-count caption">
+                  <span aria-hidden="true">({{ card_product.metafields.reviews.rating_count }})</span>
+                  <span class="visually-hidden">
+                    {{- card_product.metafields.reviews.rating_count }}
+                    {{ 'accessibility.total_reviews' | t -}}
+                  </span>
+                </p>
               </div>
-              <p class="rating-text caption">
-                <span aria-hidden="true">
-                  {{- card_product.metafields.reviews.rating.value }} /
-                  {{ card_product.metafields.reviews.rating.value.scale_max -}}
-                </span>
-              </p>
-              <p class="rating-count caption">
-                <span aria-hidden="true">({{ card_product.metafields.reviews.rating_count }})</span>
-                <span class="visually-hidden">
-                  {{- card_product.metafields.reviews.rating_count }}
-                  {{ 'accessibility.total_reviews' | t -}}
-                </span>
-              </p>
             {%- endif -%}
 
-            {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+            {% render 'price', product: card_product, price_class: '', show_compare_at_price: true, hide_from_price: true %}
             {%- if card_product.quantity_price_breaks_configured? -%}
               <div class="card__information-volume-pricing-note">
                 <span class="caption">{{ 'products.product.volume_pricing.note' | t }}</span>
@@ -232,7 +232,12 @@
                   aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
                   data-product-url="{{ card_product.url }}"
                 >
-                  {{ 'products.product.choose_options' | t }}
+                  <span class="quick-add__icon" aria-hidden="true">
+                    {% render 'icon-shopping-cart' %}
+                  </span>
+                  <span class="quick-add__label">
+                    {{ 'products.product.choose_options' | t }}
+                  </span>
                   {%- if horizontal_quick_add -%}
                     <span class="icon-wrap">{% render 'icon-arrow' %}</span>
                   {%- endif -%}
@@ -289,7 +294,10 @@
                       disabled
                     {% endif %}
                   >
-                    <span>
+                    <span class="quick-add__icon" aria-hidden="true">
+                      {% render 'icon-shopping-cart' %}
+                    </span>
+                    <span class="quick-add__label">
                       {%- if card_product.selected_or_first_available_variant.available -%}
                         {{ 'products.product.add_to_cart' | t }}
                       {%- else -%}
@@ -316,13 +324,6 @@
               class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
             >
               {{- 'products.product.sold_out' | t -}}
-            </span>
-          {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-            <span
-              id="Badge-{{ section_id }}-{{ card_product.id }}"
-              class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-            >
-              {{- 'products.product.on_sale' | t -}}
             </span>
           {%- endif -%}
         </div>

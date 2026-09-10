@@ -12,41 +12,62 @@
     "image_banner": {
       "type": "image-banner",
       "blocks": {
-        "button": {
+        "caption_1": {
+          "type": "caption",
+          "settings": {
+            "caption": "CUSTOM METAL EMBLEMS"
+          }
+        },
+        "heading_1": {
+          "type": "heading",
+          "settings": {
+            "heading": "MAKE IT YOURS",
+            "heading_size": "h1"
+          }
+        },
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "High-quality, custom emblems for cars, motorcycles and more. Timeless style. Lasting quality.",
+            "text_style": "body"
+          }
+        },
+        "buttons_1": {
           "type": "buttons",
           "settings": {
-            "button_label_1": "Design Your Emblem",
-            "button_link_1": "shopify://collections/dizzy-custom-emblems",
-            "button_style_secondary_1": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "button_label_1": "Customize Your Emblem",
+            "button_link_1": "/pages/contact",
+            "button_label_2": "Shop All Emblems",
+            "button_link_2": "/collections/dizzy-custom-emblems"
           }
         }
       },
       "block_order": [
-        "button"
+        "caption_1",
+        "heading_1",
+        "text_1",
+        "buttons_1"
       ],
       "settings": {
         "image": "shopify://shop_images/banner.webp",
         "image_overlay_opacity": 10,
         "image_height": "medium",
-        "desktop_content_position": "bottom-center",
+        "desktop_content_position": "middle-center",
         "show_text_box": false,
         "desktop_content_alignment": "center",
         "color_scheme": "inverse",
         "image_behavior": "none",
         "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
-        "show_text_below": true
+        "show_text_below": false
       }
     },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "All Emblems",
+        "title": "Best Selling Emblems",
         "heading_size": "h2",
-        "description": "",
+        "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
         "show_description": false,
         "description_style": "body",
         "collection": "dizzy-custom-emblems",
@@ -57,14 +78,14 @@
         "view_all_style": "solid",
         "enable_desktop_slider": false,
         "color_scheme": "inverse",
-        "image_ratio": "adapt",
+        "image_ratio": "square",
         "image_shape": "default",
         "show_secondary_image": true,
         "show_vendor": false,
         "show_rating": true,
-        "enable_quick_add": false,
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
+        "enable_quick_add": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
         "padding_top": 40,
         "padding_bottom": 36
       }
