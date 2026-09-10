@@ -1,0 +1,446 @@
+{{ 'section-dizzy-about.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="dizzy-about"
+  style="--dizzy-about-accent: {{ section.settings.accent_color }}; --dizzy-about-ink: {{ section.settings.ink_color }}; --dizzy-about-muted: {{ section.settings.muted_color }}; --dizzy-about-soft: {{ section.settings.soft_background }};"
+>
+  <div class="dizzy-about__hero">
+    <div class="dizzy-about__hero-media" aria-hidden="true">
+      {%- if section.settings.hero_image != blank -%}
+        {{
+          section.settings.hero_image
+          | image_url: width: 2400
+          | image_tag:
+            widths: '750, 1100, 1500, 2000, 2400',
+            sizes: '100vw',
+            loading: 'eager',
+            fetchpriority: 'high',
+            class: 'dizzy-about__hero-image',
+            alt: ''
+        }}
+      {%- else -%}
+        <img
+          src="{{ 'dizzycustom-about-hero-custom-edition.webp' | asset_url }}"
+          alt=""
+          width="1672"
+          height="941"
+          loading="eager"
+          fetchpriority="high"
+          class="dizzy-about__hero-image"
+        >
+      {%- endif -%}
+    </div>
+    <div class="dizzy-about__hero-overlay"></div>
+
+    <div class="page-width dizzy-about__hero-inner">
+      <div class="dizzy-about__hero-copy">
+        {%- if section.settings.hero_eyebrow != blank -%}
+          <p class="dizzy-about__eyebrow dizzy-about__eyebrow--light">{{ section.settings.hero_eyebrow | escape }}</p>
+        {%- endif -%}
+
+        <h1 class="dizzy-about__hero-title">{{ section.settings.hero_heading | default: page.title | escape }}</h1>
+
+        {%- if section.settings.hero_subheading != blank -%}
+          <p class="dizzy-about__hero-subheading">{{ section.settings.hero_subheading | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.hero_text != blank -%}
+          <div class="dizzy-about__hero-text rte">{{ section.settings.hero_text }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.hero_button_label != blank and section.settings.hero_button_link != blank -%}
+          <a class="dizzy-about__button dizzy-about__button--primary" href="{{ section.settings.hero_button_link }}">
+            {{ section.settings.hero_button_label | escape }}
+            <span aria-hidden="true">→</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width dizzy-about__story">
+    <div class="dizzy-about__story-copy">
+      {%- if section.settings.story_eyebrow != blank -%}
+        <p class="dizzy-about__eyebrow">{{ section.settings.story_eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.story_heading != blank -%}
+        <h2 class="dizzy-about__heading">{{ section.settings.story_heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.story_text != blank -%}
+        <div class="dizzy-about__body rte">{{ section.settings.story_text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.story_button_label != blank and section.settings.story_button_link != blank -%}
+        <a class="dizzy-about__button dizzy-about__button--secondary" href="{{ section.settings.story_button_link }}">
+          {{ section.settings.story_button_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="dizzy-about__story-media">
+      {%- if section.settings.story_image != blank -%}
+        {{
+          section.settings.story_image
+          | image_url: width: 1600
+          | image_tag:
+            widths: '550, 750, 990, 1200, 1600',
+            sizes: '(min-width: 990px) 52vw, 100vw',
+            loading: 'lazy',
+            class: 'dizzy-about__story-image',
+            alt: section.settings.story_image.alt
+        }}
+      {%- else -%}
+        <img
+          src="{{ 'dizzycustom-about-story-emblem-workshop.webp' | asset_url }}"
+          alt="Custom metal emblem being crafted in the DizzyCustom workshop"
+          width="1448"
+          height="1086"
+          loading="lazy"
+          class="dizzy-about__story-image"
+        >
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="dizzy-about__benefits-wrap">
+    <div class="page-width dizzy-about__benefits" role="list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'benefit' -%}
+          <div class="dizzy-about__benefit" role="listitem" {{ block.shopify_attributes }}>
+            <span class="dizzy-about__benefit-icon" aria-hidden="true">
+              {%- case block.settings.icon -%}
+                {%- when 'quality' -%}
+                  {%- render 'icon-diamond', class: 'dizzy-about__benefit-svg' -%}
+                {%- when 'installation' -%}
+                  {%- render 'icon-gear', class: 'dizzy-about__benefit-svg' -%}
+                {%- when 'customize' -%}
+                  {%- render 'icon-pencil', class: 'dizzy-about__benefit-svg' -%}
+                {%- when 'shipping' -%}
+                  {%- render 'icon-truck', class: 'dizzy-about__benefit-svg' -%}
+              {%- endcase -%}
+            </span>
+            <h3>{{ block.settings.heading | escape }}</h3>
+            {%- if block.settings.text != blank -%}
+              <div class="rte">{{ block.settings.text }}</div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="dizzy-about__stats-wrap">
+    <div class="page-width dizzy-about__stats" role="list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'stat' -%}
+          <div class="dizzy-about__stat" role="listitem" {{ block.shopify_attributes }}>
+            <strong>{{ block.settings.value | escape }}</strong>
+            <span>{{ block.settings.label | escape }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="page-width dizzy-about__details">
+    <div class="dizzy-about__details-media">
+      {%- if section.settings.details_image != blank -%}
+        {{
+          section.settings.details_image
+          | image_url: width: 1600
+          | image_tag:
+            widths: '550, 750, 990, 1200, 1600',
+            sizes: '(min-width: 990px) 50vw, 100vw',
+            loading: 'lazy',
+            class: 'dizzy-about__details-image',
+            alt: section.settings.details_image.alt
+        }}
+      {%- else -%}
+        <img
+          src="{{ 'dizzycustom-about-lifestyle-motorcycle-emblem.webp' | asset_url }}"
+          alt="Custom motorcycle emblem lifestyle detail"
+          width="1448"
+          height="1086"
+          loading="lazy"
+          class="dizzy-about__details-image"
+        >
+      {%- endif -%}
+    </div>
+
+    <div class="dizzy-about__details-copy">
+      {%- if section.settings.details_eyebrow != blank -%}
+        <p class="dizzy-about__eyebrow">{{ section.settings.details_eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.details_heading != blank -%}
+        <h2 class="dizzy-about__heading">{{ section.settings.details_heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.details_text != blank -%}
+        <div class="dizzy-about__body rte">{{ section.settings.details_text }}</div>
+      {%- endif -%}
+
+      <ul class="dizzy-about__checklist" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'detail' and block.settings.text != blank -%}
+            <li {{ block.shopify_attributes }}>
+              <span class="dizzy-about__check" aria-hidden="true">✓</span>
+              <span>{{ block.settings.text | escape }}</span>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      {%- if section.settings.details_button_label != blank and section.settings.details_button_link != blank -%}
+        <a class="dizzy-about__button dizzy-about__button--dark" href="{{ section.settings.details_button_link }}">
+          {{ section.settings.details_button_label | escape }}
+          <span aria-hidden="true">→</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Dizzy About Us",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow",
+      "default": "OUR STORY"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading",
+      "label": "Heading",
+      "default": "About Us"
+    },
+    {
+      "type": "text",
+      "id": "hero_subheading",
+      "label": "Subheading",
+      "default": "Custom Emblems. Real Stories."
+    },
+    {
+      "type": "richtext",
+      "id": "hero_text",
+      "label": "Text",
+      "default": "<p>At DizzyCustom, we believe every vehicle tells a story. Our mission is to help car and motorcycle owners make their ride truly their own with high-quality custom metal emblems — personalized, durable, and built to last.</p>"
+    },
+    {
+      "type": "text",
+      "id": "hero_button_label",
+      "label": "Button label",
+      "default": "Shop Custom Emblems"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Story"
+    },
+    {
+      "type": "image_picker",
+      "id": "story_image",
+      "label": "Story image"
+    },
+    {
+      "type": "text",
+      "id": "story_eyebrow",
+      "label": "Eyebrow",
+      "default": "PASSION DRIVES US"
+    },
+    {
+      "type": "text",
+      "id": "story_heading",
+      "label": "Heading",
+      "default": "Made for People Who Love Their Ride"
+    },
+    {
+      "type": "richtext",
+      "id": "story_text",
+      "label": "Text",
+      "default": "<p>DizzyCustom was founded by automotive enthusiasts who believe details make the difference. We design and craft custom metal name emblems — personalized with your name, initials, or lettering — in a style that fits your vehicle and your personality.</p><p>Every emblem is made to order from premium stainless steel, built to last and easy to install in minutes. From daily drivers to show cars, we're here to help you add a personal touch that stands out.</p>"
+    },
+    {
+      "type": "text",
+      "id": "story_button_label",
+      "label": "Button label",
+      "default": "Our Story"
+    },
+    {
+      "type": "url",
+      "id": "story_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Details"
+    },
+    {
+      "type": "image_picker",
+      "id": "details_image",
+      "label": "Details image"
+    },
+    {
+      "type": "text",
+      "id": "details_eyebrow",
+      "label": "Eyebrow",
+      "default": "MORE THAN JUST EMBLEMS"
+    },
+    {
+      "type": "text",
+      "id": "details_heading",
+      "label": "Heading",
+      "default": "It's a Lifestyle"
+    },
+    {
+      "type": "richtext",
+      "id": "details_text",
+      "label": "Text",
+      "default": "<p>From the open road to your daily commute, custom emblems bring your personality to life. We're proud to be part of a community that values craftsmanship, individuality, and the freedom to make every ride your own.</p>"
+    },
+    {
+      "type": "text",
+      "id": "details_button_label",
+      "label": "Button label",
+      "default": "View Our Emblems"
+    },
+    {
+      "type": "url",
+      "id": "details_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#1297e8"
+    },
+    {
+      "type": "color",
+      "id": "ink_color",
+      "label": "Dark text",
+      "default": "#06131f"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#56616b"
+    },
+    {
+      "type": "color",
+      "id": "soft_background",
+      "label": "Soft background",
+      "default": "#f3f8fc"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "quality",
+          "options": [
+            { "value": "quality", "label": "Premium quality" },
+            { "value": "installation", "label": "Easy installation" },
+            { "value": "customize", "label": "Customizable" },
+            { "value": "shipping", "label": "Shipping" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Premium Quality"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Durable, weather-resistant stainless steel.</p>"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "name": "Stat",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "20,000+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Happy Customers"
+        }
+      ]
+    },
+    {
+      "type": "detail",
+      "name": "Checklist item",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Handcrafted, made-to-order emblems"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dizzy About Us",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "quality", "heading": "Premium Quality", "text": "<p>Durable, weather-resistant stainless steel.</p>" } },
+        { "type": "benefit", "settings": { "icon": "installation", "heading": "Easy Installation", "text": "<p>Install in minutes on virtually any surface.</p>" } },
+        { "type": "benefit", "settings": { "icon": "customize", "heading": "Fully Customizable", "text": "<p>Your name. Your style. Your ride.</p>" } },
+        { "type": "benefit", "settings": { "icon": "shipping", "heading": "Worldwide Shipping", "text": "<p>Serving customers in 150+ countries.</p>" } },
+        { "type": "stat", "settings": { "value": "20,000+", "label": "Happy Customers" } },
+        { "type": "stat", "settings": { "value": "150+", "label": "Countries" } },
+        { "type": "stat", "settings": { "value": "4.9/5", "label": "Average Rating" } },
+        { "type": "stat", "settings": { "value": "100%", "label": "Built for Enthusiasts" } },
+        { "type": "detail", "settings": { "text": "Handcrafted, made-to-order emblems" } },
+        { "type": "detail", "settings": { "text": "Premium stainless steel that lasts" } },
+        { "type": "detail", "settings": { "text": "Easy 5-minute installation" } },
+        { "type": "detail", "settings": { "text": "Real people, fast and friendly support" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
