@@ -60,12 +60,6 @@
             "picker_type": "button"
           }
         },
-        "live_product_options_app_block_WKXgHg": {
-          "type": "shopify://apps/live-product-options/blocks/app-block/88bfdf40-5e27-4962-a966-70c8d1e87757",
-          "settings": {
-            "product": "{{product}}"
-          }
-        },
         "quantity_selector": {
           "type": "quantity_selector",
           "settings": {}
@@ -124,10 +118,6 @@
             "content": "<p><strong>Your Custom Emblems Are Meticulously Crafted. Craftsmanship at Its Best</strong> – Every emblem is carefully designed, manufactured, and finished with precision.</p><p>✍️<strong> Production Time:</strong> 1 - 3 days (Includes design, manufacturing, and quality control)</p><p>🚚<strong> Shipping:</strong> 5 - 8 days (Delivery time depends on your location)</p><p>📦 <strong>Estimated Arrival: Total 7 - 14 days</strong> from order to delivery</p><p>💯<strong> Quality Worth the Wait</strong> – <strong>See why our customers love us!</strong></p>",
             "page": ""
           }
-        },
-        "vitals_trust_kMQ7Rq": {
-          "type": "shopify://apps/vitals/blocks/trust/aeb48102-2a5a-4f39-bdbd-d8d49f4e20b8",
-          "settings": {}
         }
       },
       "block_order": [
@@ -139,7 +129,6 @@
         "text_Q3rmVL",
         "text_fNhciU",
         "variant_picker",
-        "live_product_options_app_block_WKXgHg",
         "quantity_selector",
         "buy_buttons",
         "text_iGkwi3",
@@ -147,8 +136,7 @@
         "collapsible_tab_tcDPeT",
         "collapsible_tab_GhaHkm",
         "collapsible_tab_yYNFNm",
-        "collapsible_tab_UYfayn",
-        "vitals_trust_kMQ7Rq"
+        "collapsible_tab_UYfayn"
       ],
       "settings": {
         "enable_sticky_info": true,
@@ -254,39 +242,6 @@
         "m_padding_bottom": 16
       }
     },
-    "related-products": {
-      "type": "related-products",
-      "disabled": true,
-      "settings": {
-        "heading": "You may also like",
-        "heading_size": "h2",
-        "products_to_show": 4,
-        "columns_desktop": 4,
-        "color_scheme": "background-1",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "columns_mobile": "2",
-        "padding_top": 36,
-        "padding_bottom": 28
-      }
-    },
-    "17116942862d54480a": {
-      "type": "apps",
-      "disabled": true,
-      "settings": {
-        "include_margins": true
-      }
-    },
-    "172042640627ff6334": {
-      "type": "apps",
-      "disabled": true,
-      "settings": {
-        "include_margins": true
-      }
-    },
     "dc_brand_experience": {
       "type": "dc-brand-experience",
       "blocks": {
@@ -330,6 +285,7 @@
         "benefit_vehicles"
       ],
       "settings": {
+        "image": "shopify://shop_images/Make_Your_Ride.png",
         "eyebrow": "Your idea. Our craft.",
         "heading": "Make Your Ride Truly Yours",
         "heading_size": "h1",
@@ -412,68 +368,37 @@
         "padding_bottom": 48
       }
     },
-    "multicolumn_mjQLwf": {
-      "type": "multicolumn",
+    "related-products": {
+      "type": "related-products",
       "disabled": true,
-      "blocks": {
-        "column_mPVtdW": {
-          "type": "column",
-          "settings": {
-            "title": "Premium Metal Quality",
-            "text": "<p>Durable zinc-alloy metal with a polished, long-lasting finish.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_qTJz84": {
-          "type": "column",
-          "settings": {
-            "title": "Fully Customizable",
-            "text": "<p>Your wording, finish and style—made to express what matters to you.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_E67H8R": {
-          "type": "column",
-          "settings": {
-            "title": "Built for the Road",
-            "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_fits_more": {
-          "type": "column",
-          "settings": {
-            "title": "Fits More Than Cars",
-            "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column_mPVtdW",
-        "column_qTJz84",
-        "column_E67H8R",
-        "column_fits_more"
-      ],
       "settings": {
-        "title": "Why Choose DizzyCustom",
+        "heading": "You may also like",
         "heading_size": "h2",
-        "image_width": "full",
-        "image_ratio": "adapt",
+        "products_to_show": 4,
         "columns_desktop": 4,
-        "column_alignment": "center",
-        "background_style": "primary",
-        "button_label": "",
-        "button_link": "",
-        "color_scheme": "inverse",
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
         "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 48,
-        "padding_bottom": 48
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "17116942862d54480a": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "172042640627ff6334": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": true
       }
     },
     "image_with_text_tbQfGL": {
@@ -579,7 +504,6 @@
     },
     "image_with_text_pG4P8A": {
       "type": "image-with-text",
-      "disabled": true,
       "blocks": {
         "heading_tBz8YG": {
           "type": "heading",
@@ -609,6 +533,7 @@
         "text_6JRMWT",
         "button_tthHxR"
       ],
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/ezgif-2-7a7cf4e2dc.gif",
         "height": "adapt",
@@ -625,9 +550,72 @@
         "padding_bottom": 24
       }
     },
+    "multicolumn_mjQLwf": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_mPVtdW": {
+          "type": "column",
+          "settings": {
+            "title": "Premium Metal Quality",
+            "text": "<p>Durable zinc-alloy metal with a polished, long-lasting finish.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_qTJz84": {
+          "type": "column",
+          "settings": {
+            "title": "Fully Customizable",
+            "text": "<p>Your wording, finish and style—made to express what matters to you.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_E67H8R": {
+          "type": "column",
+          "settings": {
+            "title": "Built for the Road",
+            "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_fits_more": {
+          "type": "column",
+          "settings": {
+            "title": "Fits More Than Cars",
+            "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_mPVtdW",
+        "column_qTJz84",
+        "column_E67H8R",
+        "column_fits_more"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Why Choose DizzyCustom",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
     "image_with_text_gMLYcA": {
       "type": "image-with-text",
-      "disabled": true,
       "blocks": {
         "heading_wm7gL8": {
           "type": "heading",
@@ -657,6 +645,7 @@
         "text_H9RzTU",
         "button_EwDaYY"
       ],
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/compressed_2.gif",
         "height": "medium",
@@ -722,7 +711,6 @@
     },
     "multicolumn_ykVdx7": {
       "type": "multicolumn",
-      "disabled": true,
       "blocks": {
         "column_RDMd7P": {
           "type": "column",
@@ -771,6 +759,7 @@
         "column_q86ne8",
         "column_X8e7La"
       ],
+      "disabled": true,
       "settings": {
         "title": "How to Apply Your Emblem",
         "heading_size": "h2",
@@ -790,7 +779,6 @@
     },
     "multicolumn_mrpKL4": {
       "type": "multicolumn",
-      "disabled": true,
       "blocks": {
         "column_yymRgz": {
           "type": "column",
@@ -815,6 +803,7 @@
         "column_yymRgz",
         "column_CHGeDL"
       ],
+      "disabled": true,
       "name": "t:sections.multicolumn.presets.name",
       "settings": {
         "title": "Tips for the Best Result",
@@ -835,17 +824,6 @@
     },
     "1705119654de2e3b3c": {
       "type": "apps",
-      "blocks": {
-        "vitals_product_reviews_YazwWG": {
-          "type": "shopify://apps/vitals/blocks/product-reviews/aeb48102-2a5a-4f39-bdbd-d8d49f4e20b8",
-          "settings": {
-            "hide_mock_data": false
-          }
-        }
-      },
-      "block_order": [
-        "vitals_product_reviews_YazwWG"
-      ],
       "settings": {
         "include_margins": true
       }
@@ -887,6 +865,7 @@
         "text": "<p>Looking for a unique design, logo, bulk order, or a size outside our standard options? Tell us what you have in mind and we will help bring it to life.</p>",
         "button_label": "Request a Custom Emblem",
         "button_link": "shopify://pages/contact",
+        "image": "shopify://shop_images/your_idea_our_craft.png",
         "desktop_image_position": "right",
         "color_scheme": "inverse",
         "padding_top": 48,
