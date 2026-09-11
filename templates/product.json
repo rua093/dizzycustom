@@ -225,6 +225,7 @@
         "block_y9hXt6",
         "block_phQxzE"
       ],
+      "disabled": true,
       "settings": {
         "bg_color": "#000000",
         "show_border": false,
@@ -837,8 +838,8 @@
         "show_description": false,
         "description_style": "body",
         "collection": "dizzy-custom-emblems",
-        "products_to_show": 5,
-        "columns_desktop": 5,
+        "products_to_show": 4,
+        "columns_desktop": 4,
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
@@ -928,6 +929,7 @@
         "collapsible_row_fQeGWY",
         "collapsible_row_gbLVtx"
       ],
+      "disabled": true,
       "settings": {
         "caption": "",
         "heading": "FAQ",

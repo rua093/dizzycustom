@@ -153,10 +153,10 @@
       "type": "featured-collection",
       "settings": {
         "title": "Best Selling Emblems",
-        "heading_size": "h2",
+        "heading_size": "h1",
         "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
         "show_description": false,
-        "description_style": "body",
+        "description_style": "subtitle",
         "collection": "dizzy-custom-emblems",
         "products_to_show": 8,
         "columns_desktop": 4,
