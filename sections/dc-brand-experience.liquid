@@ -30,8 +30,8 @@
 -%}
 
 <section class="dc-brand-experience color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
-  <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}">
-    <div class="dc-brand-experience__media{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+  <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div class="dc-brand-experience__media">
       {%- if story_image != blank -%}
         <picture>
           {%- if section.settings.mobile_image != blank -%}
@@ -122,6 +122,100 @@
         </ul>
     </div>
   {%- endif -%}
+
+  {%- if section.settings.show_feature_showcase -%}
+    <div class="dc-brand-experience__showcase-wrap">
+      <div class="dc-brand-experience__showcase page-width">
+        <div class="dc-brand-experience__feature-row{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <article class="dc-brand-experience__feature-content">
+            {%- if section.settings.craftsmanship_eyebrow != blank -%}
+              <p class="dc-brand-experience__feature-eyebrow">{{ section.settings.craftsmanship_eyebrow | escape }}</p>
+            {%- endif -%}
+            <h2 class="dc-brand-experience__feature-heading">
+              {%- if section.settings.craftsmanship_accent != blank -%}
+                <span>{{ section.settings.craftsmanship_accent | escape }}&nbsp;</span>
+              {%- endif -%}
+              {{ section.settings.craftsmanship_heading | escape }}
+            </h2>
+            {%- if section.settings.craftsmanship_text != blank -%}
+              <div class="dc-brand-experience__feature-text rte">{{ section.settings.craftsmanship_text }}</div>
+            {%- endif -%}
+            {%- if section.settings.craftsmanship_label != blank -%}
+              <p class="dc-brand-experience__feature-label">
+                <span aria-hidden="true"></span>{{ section.settings.craftsmanship_label | escape }}
+              </p>
+            {%- endif -%}
+          </article>
+
+          <div class="dc-brand-experience__feature-media">
+            {%- if section.settings.craftsmanship_image != blank -%}
+              {{
+                section.settings.craftsmanship_image
+                | image_url: width: 1800
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '550, 750, 1100, 1500, 1800',
+                  sizes: '(min-width: 990px) 47vw, 100vw',
+                  alt: section.settings.craftsmanship_image.alt
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+            {%- if section.settings.craftsmanship_image_label != blank -%}
+              <p class="dc-brand-experience__media-label"><span aria-hidden="true"></span>{{ section.settings.craftsmanship_image_label | escape }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div
+          class="dc-brand-experience__feature-row dc-brand-experience__feature-row--reverse{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: 2;"
+          {% endif %}
+        >
+          <div class="dc-brand-experience__feature-media">
+            {%- if section.settings.installation_image != blank -%}
+              {{
+                section.settings.installation_image
+                | image_url: width: 1800
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '550, 750, 1100, 1500, 1800',
+                  sizes: '(min-width: 990px) 47vw, 100vw',
+                  alt: section.settings.installation_image.alt
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+            {%- if section.settings.installation_image_label != blank -%}
+              <p class="dc-brand-experience__media-label"><span aria-hidden="true"></span>{{ section.settings.installation_image_label | escape }}</p>
+            {%- endif -%}
+          </div>
+
+          <article class="dc-brand-experience__feature-content">
+            {%- if section.settings.installation_eyebrow != blank -%}
+              <p class="dc-brand-experience__feature-eyebrow">{{ section.settings.installation_eyebrow | escape }}</p>
+            {%- endif -%}
+            <h2 class="dc-brand-experience__feature-heading">
+              {%- if section.settings.installation_accent != blank -%}
+                <span>{{ section.settings.installation_accent | escape }}&nbsp;</span>
+              {%- endif -%}
+              {{ section.settings.installation_heading | escape }}
+            </h2>
+            {%- if section.settings.installation_text != blank -%}
+              <div class="dc-brand-experience__feature-text rte">{{ section.settings.installation_text }}</div>
+            {%- endif -%}
+            {%- if section.settings.installation_label != blank -%}
+              <p class="dc-brand-experience__feature-label">
+                <span aria-hidden="true"></span>{{ section.settings.installation_label | escape }}
+              </p>
+            {%- endif -%}
+          </article>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
 </section>
 
 {% schema %}
@@ -159,6 +253,22 @@
       "label": "Desktop image position"
     },
     { "type": "inline_richtext", "id": "benefits_heading", "label": "Benefits heading", "default": "Why Choose DizzyCustom" },
+    { "type": "header", "content": "Feature showcase" },
+    { "type": "checkbox", "id": "show_feature_showcase", "label": "Show feature showcase", "default": true },
+    { "type": "image_picker", "id": "craftsmanship_image", "label": "Craftsmanship image" },
+    { "type": "text", "id": "craftsmanship_image_label", "label": "Craftsmanship image label", "default": "CRAFTED BY HAND" },
+    { "type": "text", "id": "craftsmanship_eyebrow", "label": "Craftsmanship eyebrow", "default": "CRAFTSMANSHIP" },
+    { "type": "text", "id": "craftsmanship_accent", "label": "Craftsmanship blue heading", "default": "Precision" },
+    { "type": "text", "id": "craftsmanship_heading", "label": "Craftsmanship heading", "default": "in Every Detail" },
+    { "type": "richtext", "id": "craftsmanship_text", "label": "Craftsmanship text", "default": "<p>Every custom emblem is meticulously crafted by hand, ensuring a flawless finish that reflects your unique style and personality.</p>" },
+    { "type": "text", "id": "craftsmanship_label", "label": "Craftsmanship footer label", "default": "HANDCRAFTED · BUILT TO STAND OUT" },
+    { "type": "image_picker", "id": "installation_image", "label": "Installation image" },
+    { "type": "text", "id": "installation_image_label", "label": "Installation image label", "default": "SIMPLE INSTALLATION" },
+    { "type": "text", "id": "installation_eyebrow", "label": "Installation eyebrow", "default": "USER FRIENDLY" },
+    { "type": "text", "id": "installation_accent", "label": "Installation blue heading", "default": "Effortless" },
+    { "type": "text", "id": "installation_heading", "label": "Installation heading", "default": "Installation" },
+    { "type": "richtext", "id": "installation_text", "label": "Installation text", "default": "<p>No tools, no hassle! Simply peel, stick, and enjoy a long-lasting, premium-quality emblem that stays in place for years.</p>" },
+    { "type": "text", "id": "installation_label", "label": "Installation footer label", "default": "PEEL · STICK · DRIVE WITH CONFIDENCE" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "inverse" },
     { "type": "header", "content": "Section padding" },
     { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding top", "default": 48 },

@@ -326,9 +326,24 @@
         "button_link": "",
         "desktop_image_position": "left",
         "benefits_heading": "Why Choose DizzyCustom",
+        "show_feature_showcase": true,
+        "craftsmanship_image": "shopify://shop_images/ezgif-2-7a7cf4e2dc.gif",
+        "craftsmanship_image_label": "CRAFTED BY HAND",
+        "craftsmanship_eyebrow": "CRAFTSMANSHIP",
+        "craftsmanship_accent": "Precision",
+        "craftsmanship_heading": "in Every Detail",
+        "craftsmanship_text": "<p>Every custom emblem is meticulously crafted by hand, ensuring a flawless finish that reflects your unique style and personality.</p>",
+        "craftsmanship_label": "HANDCRAFTED · BUILT TO STAND OUT",
+        "installation_image": "shopify://shop_images/compressed_2.gif",
+        "installation_image_label": "SIMPLE INSTALLATION",
+        "installation_eyebrow": "USER FRIENDLY",
+        "installation_accent": "Effortless",
+        "installation_heading": "Installation",
+        "installation_text": "<p>No tools, no hassle! Simply peel, stick, and enjoy a long-lasting, premium-quality emblem that stays in place for years.</p>",
+        "installation_label": "PEEL · STICK · DRIVE WITH CONFIDENCE",
         "color_scheme": "inverse",
         "padding_top": 0,
-        "padding_bottom": 48
+        "padding_bottom": 0
       }
     },
     "dc_installation_guide": {
@@ -370,16 +385,16 @@
           "type": "tip",
           "settings": {
             "icon": "flat",
-            "heading": "Flat Surfaces",
-            "text": "<p>Work slowly from one side and make sure the surface is clean and completely dry for maximum adhesion.</p>"
+            "heading": "Flat Surfaces (e.g. cars, guitars)",
+            "text": "<p>Work best on flat areas. Ensure the surface is clean and dry for maximum adhesion.</p>"
           }
         },
         "tip_curve": {
           "type": "tip",
           "settings": {
             "icon": "curve",
-            "heading": "Curved Surfaces",
-            "text": "<p>Test the curve before removing the backing. Shape gently, then press from the center toward the edges.</p>"
+            "heading": "Curved Surfaces (e.g. motorbikes, helmets)",
+            "text": "<p>For curved surfaces, choose a smaller size and press firmly from the center to the edges.</p>"
           }
         }
       },
@@ -609,7 +624,7 @@
         "color_scheme": "inverse",
         "image_behavior": "none",
         "mobile_content_alignment": "left",
-        "padding_top": 48,
+        "padding_top": 0,
         "padding_bottom": 24
       }
     },

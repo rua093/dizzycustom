@@ -165,7 +165,7 @@
   border: 0.15rem solid rgba(56, 189, 248, 0.35);
   border-radius: 0;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 1.6rem 3.6rem rgba(0, 0, 0, 0.6),
     0 0 2rem rgba(28, 135, 220, 0.25),
     inset 0 0.1rem 0.15rem rgba(255, 255, 255, 0.25);
@@ -176,7 +176,7 @@
 .craftsmanship-step:hover .craftsmanship-step__card {
   transform: translateY(-0.8rem);
   border-color: rgba(56, 189, 248, 0.85);
-  box-shadow: 
+  box-shadow:
     0 2.4rem 5rem rgba(0, 0, 0, 0.75),
     0 0 3.2rem rgba(28, 135, 220, 0.6),
     inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.4);

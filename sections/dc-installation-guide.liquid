@@ -78,9 +78,9 @@
             >
               <span class="dc-installation-guide__tip-icon" aria-hidden="true">
                 {%- if block.settings.icon == 'curve' -%}
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M5 18c0-7 4-12 11-12h3M16 3l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {%- render 'icon-tip-curved-surface' -%}
                 {%- else -%}
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M4 17h16M7 13l3 3 7-8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {%- render 'icon-tip-flat-surface' -%}
                 {%- endif -%}
               </span>
               <div>
