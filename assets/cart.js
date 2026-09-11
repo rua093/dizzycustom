@@ -104,6 +104,10 @@ class CartItems extends HTMLElement {
   }
 
   updateQuantity(line, quantity, name, variantId) {
+    const cartDrawer = this.closest('cart-drawer');
+    if (cartDrawer && cartDrawer.isCartMutationLocked()) return;
+
+    if (cartDrawer) cartDrawer.setCartMutationLoading(true);
     this.enableLoading(line);
 
     const body = JSON.stringify({
@@ -144,6 +148,7 @@ class CartItems extends HTMLElement {
             section.selector
           );
         });
+        if (cartDrawer) cartDrawer.setCartMutationLoading(true);
         const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
         let message = '';
         if (items.length === parsedState.items.length && updatedValue !== parseInt(quantityElement.value)) {
@@ -176,6 +181,7 @@ class CartItems extends HTMLElement {
       })
       .finally(() => {
         this.disableLoading(line);
+        if (cartDrawer) cartDrawer.setCartMutationLoading(false);
       });
   }
 
@@ -201,7 +207,10 @@ class CartItems extends HTMLElement {
 
   enableLoading(line) {
     const mainCartItems = document.getElementById('main-cart-items') || document.getElementById('CartDrawer-CartItems');
-    mainCartItems.classList.add('cart__items--disabled');
+    if (mainCartItems) {
+      mainCartItems.classList.add('cart__items--disabled');
+      mainCartItems.setAttribute('aria-busy', 'true');
+    }
 
     const cartItemElements = this.querySelectorAll(`#CartItem-${line} .loading__spinner`);
     const cartDrawerItemElements = this.querySelectorAll(`#CartDrawer-Item-${line} .loading__spinner`);
@@ -209,12 +218,15 @@ class CartItems extends HTMLElement {
     [...cartItemElements, ...cartDrawerItemElements].forEach((overlay) => overlay.classList.remove('hidden'));
 
     document.activeElement.blur();
-    this.lineItemStatusElement.setAttribute('aria-hidden', false);
+    if (this.lineItemStatusElement) this.lineItemStatusElement.setAttribute('aria-hidden', false);
   }
 
   disableLoading(line) {
     const mainCartItems = document.getElementById('main-cart-items') || document.getElementById('CartDrawer-CartItems');
-    mainCartItems.classList.remove('cart__items--disabled');
+    if (mainCartItems) {
+      mainCartItems.classList.remove('cart__items--disabled');
+      mainCartItems.removeAttribute('aria-busy');
+    }
 
     const cartItemElements = this.querySelectorAll(`#CartItem-${line} .loading__spinner`);
     const cartDrawerItemElements = this.querySelectorAll(`#CartDrawer-Item-${line} .loading__spinner`);

@@ -215,6 +215,83 @@ quick-add-modal .product-form__buttons {
   box-sizing: border-box;
 }
 
+.product-card-wrapper--dizzy .quick-add {
+  z-index: 2;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.product-card-wrapper--dizzy .quick-add__submit {
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr);
+  align-items: center;
+  min-height: 4.4rem;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.6rem;
+  background: #03182a;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.product-card-wrapper--dizzy .quick-add__submit::before,
+.product-card-wrapper--dizzy .quick-add__submit::after {
+  display: none;
+}
+
+.product-card-wrapper--dizzy .quick-add__submit:hover {
+  background: #092c4a;
+  color: #ffffff;
+}
+
+.product-card-wrapper--dizzy .quick-add__submit:disabled {
+  background: rgba(var(--color-foreground), 0.22);
+  color: rgba(var(--color-foreground), 0.7);
+  cursor: not-allowed;
+}
+
+.product-card-wrapper--dizzy .quick-add__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  border-right: 0.1rem solid rgba(255, 255, 255, 0.22);
+}
+
+.product-card-wrapper--dizzy .quick-add__icon .icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.product-card-wrapper--dizzy .quick-add__label {
+  overflow: hidden;
+  padding: 0 0.8rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .product-card-wrapper--dizzy .quick-add {
+    margin-top: 0.8rem;
+  }
+
+  .product-card-wrapper--dizzy .quick-add__submit {
+    min-height: 3.8rem;
+    font-size: 1.25rem;
+    grid-template-columns: 3.4rem minmax(0, 1fr);
+    border-radius: 0.6rem;
+  }
+
+  .product-card-wrapper--dizzy .quick-add__icon .icon {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+
 quick-add-modal .product-media-container.constrain-height {
   --viewport-offset: calc((var(--modal-height-offset) + var(--modal-padding) + var(--popup-border-width)) * 2);
 }

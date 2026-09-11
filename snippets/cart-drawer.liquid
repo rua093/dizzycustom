@@ -37,22 +37,7 @@
       <div class="drawer__header dizzy-cart-drawer__header">
         <div class="dizzy-cart-drawer__title-wrap">
           <span class="dizzy-cart-drawer__cart-icon" aria-hidden="true">
-            <svg
-              class="icon dizzy-cart-drawer__cart-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2 3h3l2.4 12.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4l1.4-5.4H6.6"
-                stroke="currentColor"
-                stroke-width="2.3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <circle cx="9.5" cy="21" r="1.4" fill="currentColor" />
-              <circle cx="18" cy="21" r="1.4" fill="currentColor" />
-            </svg>
+            {% render 'icon-shopping-cart' %}
           </span>
           <h2 class="dizzy-cart-drawer__heading">Your Cart</h2>
           <span class="dizzy-cart-drawer__divider" aria-hidden="true"></span>
@@ -91,12 +76,13 @@
       {%- else -%}
         <div class="dizzy-cart-drawer__shipping" role="status">
           <span class="dizzy-cart-drawer__shipping-icon" aria-hidden="true">
-            {%- render 'icon-truck', class: 'dizzy-cart-drawer__shipping-svg' -%}
+            {% render 'icon-truck-speed', class: 'dizzy-cart-drawer__shipping-svg' %}
           </span>
           <div class="dizzy-cart-drawer__shipping-content">
             <p class="dizzy-cart-drawer__shipping-title">
               {%- if free_shipping_remaining > 0 -%}
-                Get {{ free_shipping_goal }} Emblems or more to unlock <strong>FREE Shipping</strong>
+                Add {{ free_shipping_remaining }} more emblem{% if free_shipping_remaining != 1 %}s{% endif %} to unlock
+                <strong>FREE Shipping</strong>
               {%- else -%}
                 <strong>FREE Shipping</strong> unlocked
               {%- endif -%}
@@ -214,7 +200,7 @@
                           <div class="cart-item__quantity-wrapper quantity-popover-wrapper dizzy-cart-drawer__quantity-row">
                             <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
                               <quantity-input class="quantity cart-quantity dizzy-cart-drawer__quantity">
-                                <button class="quantity__button no-js-hidden" name="minus" type="button">
+                                <button class="quantity__button no-js-hidden" name="minus" type="button" data-cart-mutation-control>
                                   <span class="visually-hidden">
                                     {{-
                                       'products.product.quantity.decrease'
@@ -241,8 +227,9 @@
                                   aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
                                   id="Drawer-quantity-{{ item.index | plus: 1 }}"
                                   data-index="{{ item.index | plus: 1 }}"
+                                  data-cart-mutation-control
                                 >
-                                <button class="quantity__button no-js-hidden" name="plus" type="button">
+                                <button class="quantity__button no-js-hidden" name="plus" type="button" data-cart-mutation-control>
                                   <span class="visually-hidden">
                                     {{-
                                       'products.product.quantity.increase'
@@ -310,6 +297,7 @@
                         <button
                           type="button"
                           class="cart-remove-button dizzy-cart-drawer__remove"
+                          data-cart-mutation-control
                           aria-label="{{ 'sections.cart.remove_title' | t: title: item.title }}"
                           data-variant-id="{{ item.variant.id }}"
                         >
@@ -335,22 +323,7 @@
             <form class="dizzy-cart-drawer__discount-form" data-cart-discount-form>
               <label class="visually-hidden" for="CartDrawer-DiscountCode">Discount code</label>
               <div class="dizzy-cart-drawer__discount-field">
-                <svg
-                  class="icon dizzy-cart-drawer__discount-svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path
-                    d="M4 8.5V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2.5a3.5 3.5 0 0 0 0 7V18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2.5a3.5 3.5 0 0 0 0-7Z"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linejoin="round"
-                  />
-                  <path d="M10 8v8M14 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                </svg>
+                {%- render 'icon-tag-discount', class: 'icon dizzy-cart-drawer__discount-svg' -%}
                 <input
                   id="CartDrawer-DiscountCode"
                   class="dizzy-cart-drawer__discount-input"
@@ -358,9 +331,10 @@
                   name="discount"
                   placeholder="Discount code"
                   autocomplete="off"
+                  data-cart-mutation-control
                 >
               </div>
-              <button class="dizzy-cart-drawer__discount-button" type="submit">Apply</button>
+              <button class="dizzy-cart-drawer__discount-button" type="submit" data-cart-mutation-control>Apply</button>
               <p class="dizzy-cart-drawer__discount-message" data-cart-discount-message role="status"></p>
             </form>
             {%- if cart.cart_level_discount_applications.size > 0 -%}
@@ -397,6 +371,7 @@
               class="cart__checkout-button button dizzy-cart-drawer__button dizzy-cart-drawer__button--primary"
               name="checkout"
               form="CartDrawer-Form"
+              data-cart-mutation-control
             >
               Checkout
             </button>

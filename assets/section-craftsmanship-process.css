@@ -1,0 +1,328 @@
+/* ==========================================================================
+   Craftsmanship Process Timeline Section
+   ========================================================================== */
+
+.craftsmanship-process {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0%, #112233 0%, #080e14 70%, #05090d 100%);
+  color: #ffffff;
+  overflow: hidden;
+  padding-top: var(--section-padding-top, 5rem);
+  padding-bottom: var(--section-padding-bottom, 6rem);
+}
+
+.craftsmanship-process::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.1rem;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+.craftsmanship-process__header {
+  text-align: center;
+  max-width: 78rem;
+  margin: 0 auto 2.8rem auto;
+  position: relative;
+  z-index: 2;
+}
+
+.craftsmanship-process__tagline {
+  display: inline-block;
+  font-family: var(--font-body-family);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #1c87dc;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 1.2rem rgba(28, 135, 220, 0.4);
+}
+
+.craftsmanship-process__title {
+  color: #ffffff;
+  font-size: 3.6rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.craftsmanship-process__title:not(:last-child) {
+  margin-bottom: 1.4rem;
+}
+
+.craftsmanship-process__description {
+  color: #94a3b8;
+  font-family: var(--font-body-family);
+  font-size: 1.55rem;
+  line-height: 1.5;
+  margin: 0 auto;
+}
+
+/* Timeline Container & Grid */
+.craftsmanship-process__container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Showroom Spotlight Glow behind cards */
+.craftsmanship-process__container::before {
+  content: '';
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  width: 100%;
+  max-width: 110rem;
+  height: 85%;
+  background: radial-gradient(ellipse at center, rgba(28, 135, 220, 0.22) 0%, rgba(13, 57, 95, 0.12) 50%, transparent 75%);
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(50px);
+}
+
+.craftsmanship-process__timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 108rem;
+  position: relative;
+}
+
+/* Horizontal Connecting Line between badges on desktop */
+@media screen and (min-width: 990px) {
+  .craftsmanship-process__timeline::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: calc(12.5% + 2rem);
+    right: calc(12.5% + 2rem);
+    height: 0.2rem;
+    background: linear-gradient(90deg, #1c87dc 0%, rgba(28, 135, 220, 0.4) 50%, #1c87dc 100%);
+    box-shadow: 0 0 0.8rem rgba(28, 135, 220, 0.5);
+    z-index: 1;
+  }
+}
+
+/* Individual Step Item */
+.craftsmanship-step {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  transition: transform var(--duration-default) ease;
+}
+
+/* Step Badge Indicator (01, 02, 03, 04) */
+.craftsmanship-step__badge-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.6rem;
+  position: relative;
+  z-index: 3;
+}
+
+.craftsmanship-step__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: #0b1723;
+  border: 0.2rem solid #1c87dc;
+  color: #ffffff;
+  font-family: var(--font-heading-family);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 1.6rem rgba(28, 135, 220, 0.6), inset 0 0 0.8rem rgba(28, 135, 220, 0.3);
+  transition: all var(--duration-default) ease;
+}
+
+.craftsmanship-step:hover .craftsmanship-step__badge {
+  background: #1c87dc;
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 0 2.2rem rgba(28, 135, 220, 0.8);
+}
+
+/* Media Card (Glassmorphic Frame for GIF with Neon Rim & Depth) */
+.craftsmanship-step__card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(11, 20, 34, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 0.15rem solid rgba(56, 189, 248, 0.35);
+  border-radius: 1.6rem;
+  overflow: hidden;
+  box-shadow: 
+    0 1.6rem 3.6rem rgba(0, 0, 0, 0.6),
+    0 0 2rem rgba(28, 135, 220, 0.25),
+    inset 0 0.1rem 0.15rem rgba(255, 255, 255, 0.25);
+  height: 100%;
+  transition: transform var(--duration-default) ease, border-color var(--duration-default) ease, box-shadow var(--duration-default) ease;
+}
+
+.craftsmanship-step:hover .craftsmanship-step__card {
+  transform: translateY(-0.8rem);
+  border-color: rgba(56, 189, 248, 0.85);
+  box-shadow: 
+    0 2.4rem 5rem rgba(0, 0, 0, 0.75),
+    0 0 3.2rem rgba(28, 135, 220, 0.6),
+    inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.4);
+}
+
+.craftsmanship-step__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background-color: #030712;
+}
+
+.craftsmanship-step__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 0.1rem rgba(255, 255, 255, 0.1), inset 0 0 2rem rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  z-index: 2;
+  transition: box-shadow var(--duration-default) ease;
+}
+
+.craftsmanship-step:hover .craftsmanship-step__media::after {
+  box-shadow: inset 0 0 0 0.15rem rgba(56, 189, 248, 0.4), inset 0 0 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.craftsmanship-step__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.craftsmanship-step:hover .craftsmanship-step__media img {
+  transform: scale(1.05);
+}
+
+/* Content below media */
+.craftsmanship-step__content {
+  padding: 2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.craftsmanship-step__title {
+  color: #ffffff;
+  font-family: var(--font-heading-family);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 0.8rem 0;
+  letter-spacing: 0.01em;
+}
+
+.craftsmanship-step__text {
+  color: #94a3b8;
+  font-family: var(--font-body-family);
+  font-size: 1.35rem;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+/* ==========================================================================
+   Responsive: Mobile & Tablet
+   ========================================================================== */
+
+@media screen and (max-width: 989px) and (min-width: 750px) {
+  .craftsmanship-process__timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+    max-width: 64rem;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .craftsmanship-process {
+    padding-top: 2.8rem;
+    padding-bottom: 3.2rem;
+  }
+
+  .craftsmanship-process__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .craftsmanship-process__title {
+    font-size: 2.4rem;
+  }
+
+  .craftsmanship-process__description {
+    font-size: 1.4rem;
+  }
+
+  /* Mobile Swipe Slider */
+  .craftsmanship-process__timeline {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 2.2rem;
+    padding: 0 1.5rem 1.2rem 1.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .craftsmanship-process__timeline::-webkit-scrollbar {
+    display: none;
+  }
+
+  .craftsmanship-step {
+    flex: 0 0 58%;
+    max-width: 58%;
+    scroll-snap-align: start;
+  }
+
+  .craftsmanship-step__badge-wrap {
+    justify-content: center;
+    margin-bottom: 1.2rem;
+  }
+
+  .craftsmanship-step__badge {
+    width: 3.4rem;
+    height: 3.4rem;
+    font-size: 1.25rem;
+  }
+
+  .craftsmanship-step__media {
+    aspect-ratio: 9 / 16;
+  }
+
+  .craftsmanship-step__content {
+    padding: 1.6rem 1.4rem;
+  }
+
+  .craftsmanship-step__title {
+    font-size: 1.65rem;
+  }
+
+  .craftsmanship-step__text {
+    font-size: 1.3rem;
+  }
+}
