@@ -27,8 +27,11 @@
       <ol class="dc-installation-guide__steps" role="list">
         {%- for block in step_blocks -%}
           <li class="dc-installation-guide__step" {{ block.shopify_attributes }}>
-            <div class="dc-installation-guide__step-media">
+            <div class="dc-installation-guide__step-header">
               <span class="dc-installation-guide__step-number" aria-hidden="true">{{ forloop.index }}</span>
+              {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
+            </div>
+            <div class="dc-installation-guide__step-media">
               {%- if block.settings.image != blank -%}
                 {{
                   block.settings.image
@@ -44,7 +47,6 @@
               {%- endif -%}
             </div>
             <div class="dc-installation-guide__step-content">
-              {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
               {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
             </div>
           </li>

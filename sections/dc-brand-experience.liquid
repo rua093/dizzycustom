@@ -98,14 +98,14 @@
             <li class="dc-brand-experience__benefit" {{ block.shopify_attributes }}>
               <span class="dc-brand-experience__benefit-icon" aria-hidden="true">
                 {%- case block.settings.icon -%}
+                  {%- when 'quality' -%}
+                    {%- render 'icon-premium-metal-quality' -%}
                   {%- when 'customize' -%}
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l11-11-4-4L4 16v4Zm9-13 4 4M14 4l2-2 4 4-2 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {%- render 'icon-fully-customizable' -%}
                   {%- when 'shield' -%}
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6l8-3Zm-3 8 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {%- render 'icon-built-for-road' -%}
                   {%- when 'vehicle' -%}
-                    <svg viewBox="0 0 24 24" fill="none"><path d="m5 11 2-5h10l2 5M4 11h16v7H4v-7Zm2 7v2m12-2v2M7 14h.01M17 14h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  {%- else -%}
-                    <svg viewBox="0 0 24 24" fill="none"><path d="m12 2 3 6 6 3-6 3-3 6-3-6-6-3 6-3 3-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                    {%- render 'icon-fits-more-than-cars' -%}
                 {%- endcase -%}
               </span>
               {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
