@@ -91,6 +91,21 @@
         "padding_bottom": 36
       }
     },
+    "dc_emblem_builder": {
+      "type": "dc-emblem-builder",
+      "settings": {
+        "product": "",
+        "eyebrow": "YOUR WORDS. YOUR STYLE.",
+        "heading": "Make it unmistakably yours.",
+        "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
+        "default_text": "DIZZY",
+        "max_length": 16,
+        "demo": true,
+        "preview_note": "Digital preview. Actual colors and finishes may vary slightly.",
+        "color_scheme": "",
+        "padding": 48
+      }
+    },
     "image_scrolling_ACYgDa": {
       "type": "image-scrolling",
       "blocks": {
@@ -175,21 +190,6 @@
         "padding_bottom": 0,
         "m_padding_top": 16,
         "m_padding_bottom": 16
-      }
-    },
-    "dc_emblem_builder": {
-      "type": "dc-emblem-builder",
-      "settings": {
-        "product": "",
-        "eyebrow": "YOUR WORDS. YOUR STYLE.",
-        "heading": "Make it unmistakably yours.",
-        "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
-        "default_text": "DIZZY",
-        "max_length": 16,
-        "demo": true,
-        "preview_note": "Digital preview. Actual colors and finishes may vary slightly.",
-        "color_scheme": "",
-        "padding": 48
       }
     },
     "rich_text_hjbhAC": {
@@ -434,9 +434,9 @@
   },
   "order": [
     "image_banner",
-    "featured_collection",
-    "image_scrolling_ACYgDa",
     "dc_emblem_builder",
+    "image_scrolling_ACYgDa",
+    "featured_collection",
     "rich_text_hjbhAC",
     "1752288780048388a8",
     "multicolumn_6CbrDa",
