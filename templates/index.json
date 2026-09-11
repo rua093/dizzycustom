@@ -157,8 +157,8 @@
         "show_description": false,
         "description_style": "body",
         "collection": "dizzy-custom-emblems",
-        "products_to_show": 5,
-        "columns_desktop": 5,
+        "products_to_show": 8,
+        "columns_desktop": 4,
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
@@ -270,73 +270,6 @@
         "include_margins": true
       }
     },
-    "multicolumn_m7M4TB": {
-      "type": "multicolumn",
-      "blocks": {
-        "column_wBMzkN": {
-          "type": "column",
-          "settings": {
-            "image": "shopify://shop_images/pngegg.png",
-            "title": "<strong>Global Reach, Local Care</strong>",
-            "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping with in 10-12 business days.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_RHKTUC": {
-          "type": "column",
-          "settings": {
-            "image": "shopify://shop_images/kisspng-check-mark-computer-icons-tick-inside-vector-5ae15b5f6abf63.3423985415247184314372.png",
-            "title": "<strong>Seamless Elegance, Effortless Installation</strong>",
-            "text": "<p>Dizzy's emblems not only exude elegance but also come with easy installation, ensuring a hassle-free process for every customer.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_REfT7U": {
-          "type": "column",
-          "settings": {
-            "image": "shopify://shop_images/kisspng-computer-icons-clip-art-box-scalable-vector-graphi-box-closed-svg-png-icon-free-download-65594-o-5b6e1442a7aa02.7279711415339408026868.png",
-            "title": "<strong>Securely Packaged Elegance</strong>",
-            "text": "<p>Our meticulous packaging guarantees that your personalized masterpiece arrives in pristine condition, ready to adorn your vehicle.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_BLTgtU": {
-          "type": "column",
-          "settings": {
-            "image": "shopify://shop_images/ChatGPT_Image_Sep_11_2026_03_24_16_PM.png",
-            "title": "Create Your Emblem, Your Way",
-            "text": "<p>Customize your emblem live or generate a unique design with AI—right on our website. Preview, refine, and make it yours before ordering.<br/><br/></p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column_wBMzkN",
-        "column_RHKTUC",
-        "column_REfT7U",
-        "column_BLTgtU"
-      ],
-      "settings": {
-        "title": "Why Dizzy Special?",
-        "heading_size": "h2",
-        "image_width": "third",
-        "image_ratio": "adapt",
-        "columns_desktop": 4,
-        "column_alignment": "center",
-        "background_style": "primary",
-        "button_label": "",
-        "button_link": "",
-        "color_scheme": "inverse",
-        "columns_mobile": "1",
-        "swipe_on_mobile": true,
-        "padding_top": 20,
-        "padding_bottom": 20
-      }
-    },
     "craftsmanship_process": {
       "type": "craftsmanship-process",
       "blocks": {
@@ -391,6 +324,73 @@
         "padding_bottom": 44
       }
     },
+    "multicolumn_m7M4TB": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_wBMzkN": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/pngegg.png",
+            "title": "<strong>Global Reach, Local Care</strong>",
+            "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping with in 10-12 business days.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_RHKTUC": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/kisspng-check-mark-computer-icons-tick-inside-vector-5ae15b5f6abf63.3423985415247184314372.png",
+            "title": "<strong>Seamless Elegance, Effortless Installation</strong>",
+            "text": "<p>Dizzy's emblems not only exude elegance but also come with easy installation, ensuring a hassle-free process for every customer.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_REfT7U": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/kisspng-computer-icons-clip-art-box-scalable-vector-graphi-box-closed-svg-png-icon-free-download-65594-o-5b6e1442a7aa02.7279711415339408026868.png",
+            "title": "<strong>Securely Packaged Elegance</strong>",
+            "text": "<p>Our meticulous packaging guarantees that your personalized masterpiece arrives in pristine condition, ready to adorn your vehicle.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_BLTgtU": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_11_2026_03_45_26_PM.png",
+            "title": "Create Your Emblem, Your Way",
+            "text": "<p>Customize your emblem live or generate a unique design with AI—right on our website. Preview, refine, and make it yours before ordering.<br/><br/></p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_wBMzkN",
+        "column_RHKTUC",
+        "column_REfT7U",
+        "column_BLTgtU"
+      ],
+      "settings": {
+        "title": "",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
     "1705574032ea599050": {
       "type": "apps",
       "settings": {
@@ -399,6 +399,7 @@
     },
     "featured_blog_JezEiz": {
       "type": "featured-blog",
+      "disabled": true,
       "settings": {
         "heading": "About Us",
         "heading_size": "h2",
@@ -423,8 +424,8 @@
     "1752288780048388a8",
     "multicolumn_6CbrDa",
     "17522895397c61f6f8",
-    "multicolumn_m7M4TB",
     "craftsmanship_process",
+    "multicolumn_m7M4TB",
     "1705574032ea599050",
     "featured_blog_JezEiz"
   ]
