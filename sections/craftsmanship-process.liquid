@@ -14,7 +14,7 @@
 >
   <div class="page-width craftsmanship-process__container">
     {%- if section.settings.title != blank or section.settings.tagline != blank -%}
-      <div class="craftsmanship-process__header">
+      <div class="craftsmanship-process__header{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {%- if section.settings.tagline != blank -%}
           <span class="craftsmanship-process__tagline">{{ section.settings.tagline }}</span>
         {%- endif -%}
@@ -34,8 +34,12 @@
     <ol class="craftsmanship-process__timeline" role="list">
       {%- for block in section.blocks -%}
         <li
-          class="craftsmanship-step"
+          class="craftsmanship-step{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
           {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
         >
           <div class="craftsmanship-step__badge-wrap">
             <span class="craftsmanship-step__badge" aria-hidden="true">

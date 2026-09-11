@@ -149,6 +149,10 @@
         "m_padding_bottom": 16
       }
     },
+    "dc_emblem_builder": {
+      "type": "dc-emblem-builder",
+      "settings": {}
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -420,6 +424,7 @@
   "order": [
     "image_banner",
     "image_scrolling_ACYgDa",
+    "dc_emblem_builder",
     "featured_collection",
     "rich_text_hjbhAC",
     "1752288780048388a8",

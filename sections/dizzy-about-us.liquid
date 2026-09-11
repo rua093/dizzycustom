@@ -33,7 +33,7 @@
     <div class="dizzy-about__hero-overlay"></div>
 
     <div class="page-width dizzy-about__hero-inner">
-      <div class="dizzy-about__hero-copy">
+      <div class="dizzy-about__hero-copy{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {%- if section.settings.hero_eyebrow != blank -%}
           <p class="dizzy-about__eyebrow dizzy-about__eyebrow--light">{{ section.settings.hero_eyebrow | escape }}</p>
         {%- endif -%}
@@ -59,7 +59,7 @@
   </div>
 
   <div class="page-width dizzy-about__story">
-    <div class="dizzy-about__story-copy">
+    <div class="dizzy-about__story-copy{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       {%- if section.settings.story_eyebrow != blank -%}
         <p class="dizzy-about__eyebrow">{{ section.settings.story_eyebrow | escape }}</p>
       {%- endif -%}
@@ -79,7 +79,7 @@
       {%- endif -%}
     </div>
 
-    <div class="dizzy-about__story-media">
+    <div class="dizzy-about__story-media{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       {%- if section.settings.story_image != blank -%}
         {{
           section.settings.story_image
@@ -108,7 +108,15 @@
     <div class="page-width dizzy-about__benefits" role="list">
       {%- for block in section.blocks -%}
         {%- if block.type == 'benefit' -%}
-          <div class="dizzy-about__benefit" role="listitem" {{ block.shopify_attributes }}>
+          <div
+            class="dizzy-about__benefit{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            role="listitem"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
             <span class="dizzy-about__benefit-icon" aria-hidden="true">
               {%- case block.settings.icon -%}
                 {%- when 'quality' -%}
@@ -135,7 +143,15 @@
     <div class="page-width dizzy-about__stats" role="list">
       {%- for block in section.blocks -%}
         {%- if block.type == 'stat' -%}
-          <div class="dizzy-about__stat" role="listitem" {{ block.shopify_attributes }}>
+          <div
+            class="dizzy-about__stat{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            role="listitem"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
             <strong>{{ block.settings.value | escape }}</strong>
             <span>{{ block.settings.label | escape }}</span>
           </div>
@@ -145,7 +161,7 @@
   </div>
 
   <div class="page-width dizzy-about__details">
-    <div class="dizzy-about__details-media">
+    <div class="dizzy-about__details-media{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       {%- if section.settings.details_image != blank -%}
         {{
           section.settings.details_image
@@ -169,7 +185,7 @@
       {%- endif -%}
     </div>
 
-    <div class="dizzy-about__details-copy">
+    <div class="dizzy-about__details-copy{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       {%- if section.settings.details_eyebrow != blank -%}
         <p class="dizzy-about__eyebrow">{{ section.settings.details_eyebrow | escape }}</p>
       {%- endif -%}

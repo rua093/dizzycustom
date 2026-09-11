@@ -212,7 +212,11 @@
             {%- endif -%}
           </div>
         </div>
-        {%- if show_quick_add -%}
+        {%- if show_quick_add and card_product.template_suffix == 'emblem-builder' -%}
+          <div class="quick-add">
+            <a href="{{ card_product.url }}" class="button button--full-width button--secondary">Customize your badge</a>
+          </div>
+        {%- elsif show_quick_add -%}
           <div class="quick-add no-js-hidden">
             {%- liquid
               assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id

@@ -40,10 +40,14 @@
     }
 
     #id-{{ section.id }} .logo-marquee__group img {
+      width: clamp(1rem, 1rem + 28vmin, {{ section.settings.max_width }});
       max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.max_width }});
+      height: auto;
+      max-height: clamp(1rem, 1rem + 28vmin, {{ section.settings.max_width }});
       aspect-ratio: 1;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 1rem;
+      flex-shrink: 0;
     }
 
     #id-{{ section.id }} .logo-marquee__group p {
@@ -90,22 +94,25 @@
       }
     }
       @media (max-width: 768px) {
-         #id-{{ section.id }} .logo-marquee__group img {
-            max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.t_max_width }});
-         }
-
-  }
-    @media (max-width: 480px) {
-      #id-{{ section.id }}.logo-text-wrapper {
-        padding-top:{{ section.settings.m_padding_top}}px;
-        padding-bottom:{{ section.settings.m_padding_bottom }}px;
+        #id-{{ section.id }} .logo-marquee__group img {
+          width: clamp(1rem, 1rem + 28vmin, {{ section.settings.t_max_width }});
+          max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.t_max_width }});
+          max-height: clamp(1rem, 1rem + 28vmin, {{ section.settings.t_max_width }});
+        }
       }
-             #id-{{ section.id }} .logo-marquee__group img {
-            max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.m_max_width }});
-         }
-  }
+      @media (max-width: 480px) {
+        #id-{{ section.id }}.logo-text-wrapper {
+          padding-top:{{ section.settings.m_padding_top}}px;
+          padding-bottom:{{ section.settings.m_padding_bottom }}px;
+        }
+        #id-{{ section.id }} .logo-marquee__group img {
+          width: clamp(1rem, 1rem + 28vmin, {{ section.settings.m_max_width }});
+          max-width: clamp(1rem, 1rem + 28vmin, {{ section.settings.m_max_width }});
+          max-height: clamp(1rem, 1rem + 28vmin, {{ section.settings.m_max_width }});
+        }
+      }
 </style>
-<section class="logo-text-wrapper" id="id-{{ section.id }}">
+<section class="logo-text-wrapper{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}" id="id-{{ section.id }}">
   <div
     class="logo-marquee logo-marquee--borders {{ section.settings.scroll_text_move }}"
     style="--duration: {{ section.settings.scroll_time }}s"
@@ -113,7 +120,13 @@
     <div class="logo-marquee__group">
       {% for block in section.blocks %}
         {% if block.settings.logo_image != blank %}
-          <img src="{{ block.settings.logo_image | img_url:'master' }}" alt="">
+          <img
+            src="{{ block.settings.logo_image | img_url: 'master' }}"
+            alt="{{ block.settings.logo_image.alt | escape }}"
+            width="{{ block.settings.logo_image.width }}"
+            height="{{ block.settings.logo_image.height }}"
+            loading="lazy"
+          >
         {% endif %}
       {% endfor %}
     </div>
@@ -121,7 +134,13 @@
     <div aria-hidden="true" class="logo-marquee__group">
       {% for block in section.blocks %}
         {% if block.settings.logo_image != blank %}
-          <img src="{{ block.settings.logo_image | img_url:'master' }}" alt="">
+          <img
+            src="{{ block.settings.logo_image | img_url: 'master' }}"
+            alt="{{ block.settings.logo_image.alt | escape }}"
+            width="{{ block.settings.logo_image.width }}"
+            height="{{ block.settings.logo_image.height }}"
+            loading="lazy"
+          >
         {% endif %}
       {% endfor %}
     </div>

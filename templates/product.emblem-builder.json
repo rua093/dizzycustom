@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "builder": {"type": "dc-emblem-builder", "settings": {"demo": false}}
+  },
+  "order": ["builder"]
+}
