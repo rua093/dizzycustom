@@ -1,0 +1,161 @@
+{{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign badge_product = section.settings.product
+  assign is_product_page = false
+  if request.page_type == 'product'
+    assign badge_product = product
+    assign is_product_page = true
+  endif
+  assign initial_variant = badge_product.selected_or_first_available_variant
+  assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
+  assign font_labels = 'Block,Lightning,Aggressive,Script,Electric,Ice,OEM' | split: ','
+-%}
+
+<section class="dc-builder-section color-{{ section.settings.color_scheme }} gradient" style="--dc-builder-space: {{ section.settings.padding }}px">
+  <div class="page-width">
+    {% if is_product_page %}
+      <header class="dc-builder-heading{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"{% if settings.animations_reveal_on_scroll %} data-cascade{% endif %}>
+        <h1>{{ product.title | escape }}</h1>
+      </header>
+    {% endif %}
+
+    <dc-emblem-builder
+      class="{% if settings.animations_reveal_on_scroll %}scroll-trigger animate--slide-in{% endif %}"
+      data-product-page="{{ is_product_page }}"
+      data-demo="{{ section.settings.demo }}"
+      {% if settings.animations_reveal_on_scroll %}
+        data-cascade
+      {% endif %}
+    >
+      <script type="application/json" data-builder-config>
+        {
+          "productUrl": {{ badge_product.url | default: '' | json }},
+          "defaultText": {{ section.settings.default_text | json }},
+          "maxLength": {{ section.settings.max_length | json }},
+          "fonts": [
+            {% for key in font_keys %}
+              {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
+              {"key": {{ key | json }}, "label": {{ font_labels[forloop.index0] | json }}, "url": {{ font_file | asset_url | json }}}{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ]
+        }
+      </script>
+      <div class="dc-builder-stage">
+        <span class="dc-builder-live"><span></span> Live preview</span>
+        <span class="dc-builder-stage-guide" id="BadgeHelp-{{ section.id }}">Letters, numbers, spaces and punctuation. Up to {{ section.settings.max_length }} characters.</span>
+        <canvas data-preview width="1200" height="460" role="img" aria-label="Your custom two-layer badge preview"></canvas>
+      </div>
+      <form class="dc-builder-controls" action="{{ routes.cart_add_url }}" method="post">
+        <fieldset class="dc-builder-fields" data-controls disabled>
+          <div class="dc-builder-col dc-builder-col--text-font">
+            <div class="dc-builder-text-group">
+              <div class="dc-builder-label-row">
+                <label for="BadgeText-{{ section.id }}">Your text</label>
+                <span data-count>0/{{ section.settings.max_length }}</span>
+              </div>
+              <input class="dc-builder-input" id="BadgeText-{{ section.id }}" data-text name="properties[Custom Text]" type="text" value="{{ section.settings.default_text | escape }}" maxlength="{{ section.settings.max_length }}" placeholder="Type your text…" required autocomplete="off" spellcheck="false" aria-describedby="BadgeHelp-{{ section.id }} BadgeError-{{ section.id }}">
+            </div>
+
+            <fieldset class="dc-builder-group">
+              <legend>Font</legend>
+              <div class="dc-builder-fonts">
+                {% for key in font_keys %}
+                  <button type="button" class="dc-builder-font" data-font="{{ key }}" aria-pressed="{% if key == 'lightning' %}true{% else %}false{% endif %}" style="--badge-font: 'DC Badge {{ key }}'">{{ font_labels[forloop.index0] }}</button>
+                {% endfor %}
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="dc-builder-col dc-builder-col--colors">
+            <fieldset class="dc-builder-group">
+              <legend>Colors</legend>
+              <div class="dc-builder-palette">
+                <div class="dc-builder-layers">
+                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small>Text</small><strong data-color-name="face">Mirror Red</strong></span></button>
+                  <button class="dc-builder-layer" type="button" data-layer="back" aria-pressed="false"><span class="dc-builder-chip" data-chip="back"></span><span><small>Backing</small><strong data-color-name="back">Gloss Black</strong></span></button>
+                </div>
+                <div class="dc-builder-finishes" role="group" aria-label="Material category">
+                  <button type="button" data-finish="solid" aria-pressed="false">Solid</button>
+                  <button type="button" data-finish="mirror" aria-pressed="true">Mirror</button>
+                  <button type="button" data-finish="patterns" aria-pressed="false">Patterns</button>
+                  <button type="button" data-finish="flake" aria-pressed="false">Metal flake</button>
+                </div>
+                <div class="dc-builder-swatches" data-swatches role="group" aria-label="Text color"></div>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="dc-builder-col dc-builder-col--mount-order">
+            <fieldset class="dc-builder-group">
+              <legend>Mounting</legend>
+              <div class="dc-builder-mounts">
+                <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="VHB Tape (Flat Surface)" data-mount="tape" checked><span><strong>VHB tape</strong><small>For any flat surface</small></span></label>
+                <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="Studs (Grille Mount)" data-mount="studs"><span><strong>Studs</strong><small>For grille mounting</small></span></label>
+              </div>
+            </fieldset>
+
+            {% if badge_product != blank %}
+              <div class="dc-builder-purchase-options">
+                <div{% if badge_product.has_only_default_variant %} hidden{% endif %}>
+                  <label for="BadgeVariant-{{ section.id }}">{{ badge_product.options | join: ' / ' | escape }}</label>
+                  <select class="dc-builder-input" name="id" id="BadgeVariant-{{ section.id }}" data-variant>
+                    {% for variant in badge_product.variants %}
+                      <option value="{{ variant.id }}" data-available="{{ variant.available }}" data-price="{{ variant.price | money_with_currency | escape }}" data-min="{{ variant.quantity_rule.min }}" data-step="{{ variant.quantity_rule.increment }}" {% if variant.quantity_rule.max != blank %}data-max="{{ variant.quantity_rule.max }}"{% endif %} {% if variant.id == initial_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title | escape }} — {{ variant.price | money_with_currency }}{% unless variant.available %} — Sold out{% endunless %}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% if is_product_page %}
+                  <div><label for="BadgeQuantity-{{ section.id }}">Quantity</label><input class="dc-builder-input" id="BadgeQuantity-{{ section.id }}" type="number" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}" min="{{ initial_variant.quantity_rule.min | default: 1 }}" step="{{ initial_variant.quantity_rule.increment | default: 1 }}"></div>
+                {% else %}
+                  <input type="hidden" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}">
+                {% endif %}
+              </div>
+              <p class="dc-builder-price"><span data-price-display>{{ initial_variant.price | money_with_currency }}</span> <small>per item <span data-quantity-summary></span></small></p>
+            {% endif %}
+            <input type="hidden" name="properties[Font]" data-property="font">
+            <input type="hidden" name="properties[Text Color]" data-property="face">
+            <input type="hidden" name="properties[Background Color]" data-property="back">
+            <p class="dc-builder-error" id="BadgeError-{{ section.id }}" data-error role="alert"></p>
+            <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled><span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% else %}Build my badge{% endif %}</span><span aria-hidden="true">→</span></button>
+            {% if badge_product != blank and is_product_page == false %}
+              <a class="dc-builder-product-link" data-product-link href="{{ badge_product.url }}?view=emblem-builder">Fine-tune sizing &amp; quantity on the product page <span aria-hidden="true">→</span></a>
+            {% endif %}
+          </div>
+        </fieldset>
+        <noscript><p>Enable JavaScript to customize and preview your badge before ordering.</p></noscript>
+      </form>
+    </dc-emblem-builder>
+    {% if request.design_mode and badge_product == blank %}
+      <p>Select a dedicated two-layer badge product in this section's settings to enable ordering. All fonts, finishes and mounting options must be included in its variant prices.</p>
+    {% endif %}
+    {% if is_product_page %}
+      <div class="dc-builder-description rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"{% if settings.animations_reveal_on_scroll %} data-cascade{% endif %}>{{ product.description }}</div>
+      <script type="application/ld+json">{{ product | structured_data }}</script>
+    {% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Dizzy Emblem Builder",
+  "tag": "div",
+  "disabled_on": {"groups": ["header", "footer"]},
+  "settings": [
+    {"type": "product", "id": "product", "label": "Two-layer badge product", "info": "Use a dedicated customizable product. Its variants set the price; all displayed fonts, finishes and mounting choices must be supported. Product pages use the current product."},
+    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "YOUR WORDS. YOUR STYLE."},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Make it unmistakably yours."},
+    {"type": "richtext", "id": "description", "label": "Description", "default": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>"},
+    {"type": "text", "id": "default_text", "label": "Starting text", "default": "DIZZY"},
+    {"type": "range", "id": "max_length", "label": "Maximum characters", "min": 4, "max": 32, "step": 1, "default": 16},
+    {"type": "checkbox", "id": "demo", "label": "Show rotating examples before interaction", "default": false},
+    {"type": "text", "id": "preview_note", "label": "Preview note", "default": "Digital preview. Actual colors and finishes may vary slightly."},
+    {"type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "background-1"},
+    {"type": "range", "id": "padding", "label": "Section spacing", "min": 0, "max": 100, "step": 4, "default": 48}
+  ],
+  "blocks": [{"type": "@app"}],
+  "presets": [{"name": "Dizzy Emblem Builder"}]
+}
+{% endschema %}

@@ -115,24 +115,54 @@
       }}
     </div>
   {%- endif -%}
+  {%- if section.settings.show_trust_strip -%}
+    <div class="banner__trust-strip">
+      {%- if section.settings.trust_strip_image != blank -%}
+        <img
+          src="{{ section.settings.trust_strip_image | image_url: width: 2172 }}"
+          alt="{{ section.settings.trust_strip_image.alt | default: 'Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers' | escape }}"
+          width="{{ section.settings.trust_strip_image.width }}"
+          height="{{ section.settings.trust_strip_image.height }}"
+          loading="eager"
+          decoding="async"
+        >
+      {%- else -%}
+        <img
+          src="{{ 'banner-trust-strip.png' | asset_url }}"
+          alt="Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers"
+          width="2172"
+          height="202"
+          loading="eager"
+          decoding="async"
+        >
+      {%- endif -%}
+    </div>
+  {%- endif -%}
   <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-    <div class="banner__box content-container content-container--full-width-mobile color-{{ section.settings.color_scheme }} gradient">
+    <div class="banner__box banner__box--dizzy content-container content-container--full-width-mobile color-{{ section.settings.color_scheme }} gradient">
       {%- for block in section.blocks -%}
         {%- case block.type -%}
+          {%- when 'caption' -%}
+            <p
+              class="banner__caption banner__caption--dizzy caption-with-letter-spacing"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.caption | escape }}
+            </p>
           {%- when 'heading' -%}
             <h2
-              class="banner__heading inline-richtext {{ block.settings.heading_size }}"
+              class="banner__heading banner__heading--dizzy inline-richtext {{ block.settings.heading_size }}"
               {{ block.shopify_attributes }}
             >
               {{ block.settings.heading }}
             </h2>
           {%- when 'text' -%}
-            <div class="banner__text rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+            <div class="banner__text banner__text--dizzy rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
               <p>{{ block.settings.text }}</p>
             </div>
           {%- when 'buttons' -%}
             <div
-              class="banner__buttons{% if block.settings.button_label_1 != blank and block.settings.button_label_2 != blank %} banner__buttons--multiple{% endif %}"
+              class="banner__buttons banner__buttons--dizzy{% if block.settings.button_label_1 != blank and block.settings.button_label_2 != blank %} banner__buttons--multiple{% endif %}"
               {{ block.shopify_attributes }}
             >
               {%- if block.settings.button_label_1 != blank -%}
@@ -142,9 +172,12 @@
                   {% else %}
                     href="{{ block.settings.button_link_1 }}"
                   {% endif %}
-                  class="button{% if block.settings.button_style_secondary_1 %} button--secondary{% else %} button--primary{% endif %}"
+                  class="button button--dizzy-banner-primary"
                 >
-                  {{- block.settings.button_label_1 | escape -}}
+                  <span>{{- block.settings.button_label_1 | escape -}}</span>
+                  <span class="icon-wrap" aria-hidden="true">
+                    {% render 'icon-arrow' %}
+                  </span>
                 </a>
               {%- endif -%}
               {%- if block.settings.button_label_2 != blank -%}
@@ -154,9 +187,9 @@
                   {% else %}
                     href="{{ block.settings.button_link_2 }}"
                   {% endif %}
-                  class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
+                  class="button button--dizzy-banner-secondary"
                 >
-                  {{- block.settings.button_label_2 | escape -}}
+                  <span>{{- block.settings.button_label_2 | escape -}}</span>
                 </a>
               {%- endif -%}
             </div>
@@ -359,9 +392,38 @@
       "id": "show_text_below",
       "default": true,
       "label": "t:sections.image-banner.settings.show_text_below.label"
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_strip",
+      "default": true,
+      "label": "Show trust badges strip"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_strip_image",
+      "label": "Custom trust badges image",
+      "info": "Leave blank to use default trust badges image"
     }
   ],
   "blocks": [
+    {
+      "type": "caption",
+      "name": "Caption",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "caption",
+          "default": "CUSTOM METAL EMBLEMS",
+          "label": "Caption"
+        }
+      ]
+    },
     {
       "type": "heading",
       "name": "t:sections.image-banner.blocks.heading.name",
@@ -430,44 +492,30 @@
     },
     {
       "type": "buttons",
-      "name": "t:sections.image-banner.blocks.buttons.name",
+      "name": "Buttons",
       "limit": 1,
       "settings": [
         {
           "type": "text",
           "id": "button_label_1",
-          "default": "Button label",
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_label_1.label",
-          "info": "t:sections.image-banner.blocks.buttons.settings.button_label_1.info"
+          "default": "Customize Your Emblem",
+          "label": "Button 1 label"
         },
         {
           "type": "url",
           "id": "button_link_1",
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_link_1.label"
-        },
-        {
-          "type": "checkbox",
-          "id": "button_style_secondary_1",
-          "default": false,
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_1.label"
+          "label": "Button 1 link"
         },
         {
           "type": "text",
           "id": "button_label_2",
-          "default": "Button label",
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_label_2.label",
-          "info": "t:sections.image-banner.blocks.buttons.settings.button_label_2.info"
+          "default": "Shop All Emblems",
+          "label": "Button 2 label"
         },
         {
           "type": "url",
           "id": "button_link_2",
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_link_2.label"
-        },
-        {
-          "type": "checkbox",
-          "id": "button_style_secondary_2",
-          "default": false,
-          "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_2.label"
+          "label": "Button 2 link"
         }
       ]
     }
@@ -476,6 +524,9 @@
     {
       "name": "t:sections.image-banner.presets.name",
       "blocks": [
+        {
+          "type": "caption"
+        },
         {
           "type": "heading"
         },

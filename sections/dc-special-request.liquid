@@ -23,8 +23,8 @@
 
 <section class="dc-special-request color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
   <div class="page-width">
-    <div class="dc-special-request__inner{% if section.settings.desktop_image_position == 'left' %} dc-special-request__inner--image-first{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-      <div class="dc-special-request__content">
+    <div class="dc-special-request__inner{% if section.settings.desktop_image_position == 'left' %} dc-special-request__inner--image-first{% endif %}">
+      <div class="dc-special-request__content{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {%- if section.settings.eyebrow != blank -%}
           <p class="dc-special-request__eyebrow caption-with-letter-spacing">{{ section.settings.eyebrow | escape }}</p>
         {%- endif -%}
@@ -51,7 +51,7 @@
         {%- endif -%}
       </div>
 
-      <div class="dc-special-request__media">
+      <div class="dc-special-request__media{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
         {%- if request_image != blank -%}
           {{
             request_image

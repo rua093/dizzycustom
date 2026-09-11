@@ -7,6 +7,7 @@
   - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' tags if the product matches the condition (optional)
   - price_class: {String} Adds a price class to the price element (optional)
   - show_compare_at_price: {Boolean} Renders the compare at price if the product matches the condition (optional)
+  - hide_from_price: {Boolean} Shows the minimum price without the "From" label when product pricing varies (optional)
 
   Usage:
   {% render 'price', product: product %}
@@ -32,7 +33,7 @@
     assign money_price_max = price_max | money_with_currency
   endif
 
-  if target == product and product.price_varies
+  if target == product and product.price_varies and hide_from_price != true
     assign money_price = 'products.product.price.from_price_html' | t: price: money_price
   endif
 -%}
@@ -56,13 +57,17 @@
     {%- endcomment -%}
     <div class="price__regular">
       {%- if product.quantity_price_breaks_configured? -%}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular">
+          {{- 'products.product.volume_pricing.price_range' | t: minimum: money_price_min, maximum: money_price_max -}}
+        </span>
         {%- if show_compare_at_price and compare_at_price -%}
           {%- unless product.price_varies == false and product.compare_at_price_varies %}
             <span class="visually-hidden visually-hidden--inline">
               {{- 'products.product.price.regular_price' | t -}}
             </span>
             <span>
-              <s class="price-item price-item--regular variant-item__old-price">
+              <s class="price-item price-item--regular variant-item__old-price price-item--last">
                 {% if settings.currency_code_enabled %}
                   {{ compare_at_price | money_with_currency }}
                 {% else %}
@@ -72,10 +77,6 @@
             </span>
           {%- endunless -%}
         {%- endif -%}
-        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
-        <span class="price-item price-item--regular">
-          {{- 'products.product.volume_pricing.price_range' | t: minimum: money_price_min, maximum: money_price_max -}}
-        </span>
       {%- else -%}
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
         <span class="price-item price-item--regular">
@@ -84,10 +85,14 @@
       {%- endif -%}
     </div>
     <div class="price__sale">
+      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+      <span class="price-item price-item--sale">
+        {{ money_price }}
+      </span>
       {%- unless product.price_varies == false and product.compare_at_price_varies %}
         <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
         <span>
-          <s class="price-item price-item--regular">
+          <s class="price-item price-item--regular price-item--last">
             {% if settings.currency_code_enabled %}
               {{ compare_at_price | money_with_currency }}
             {% else %}
@@ -96,10 +101,6 @@
           </s>
         </span>
       {%- endunless -%}
-      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
-      <span class="price-item price-item--sale price-item--last">
-        {{ money_price }}
-      </span>
     </div>
     <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
       <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>

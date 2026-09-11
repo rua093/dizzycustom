@@ -12,61 +12,184 @@
     "image_banner": {
       "type": "image-banner",
       "blocks": {
-        "button": {
+        "caption_1": {
+          "type": "caption",
+          "settings": {
+            "caption": "CUSTOM METAL EMBLEMS"
+          }
+        },
+        "heading_1": {
+          "type": "heading",
+          "settings": {
+            "heading": "MAKE IT YOURS",
+            "heading_size": "h1"
+          }
+        },
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "High-quality, custom emblems for cars, motorcycles and more. Timeless style. Lasting quality.",
+            "text_style": "body"
+          }
+        },
+        "buttons_1": {
           "type": "buttons",
           "settings": {
-            "button_label_1": "Design Your Emblem",
-            "button_link_1": "shopify://collections/dizzy-custom-emblems",
-            "button_style_secondary_1": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "button_label_1": "Customize Your Emblem",
+            "button_link_1": "/pages/contact",
+            "button_label_2": "Shop All Emblems",
+            "button_link_2": "/collections/dizzy-custom-emblems"
           }
         }
       },
       "block_order": [
-        "button"
+        "caption_1",
+        "heading_1",
+        "text_1",
+        "buttons_1"
       ],
       "settings": {
         "image": "shopify://shop_images/banner.webp",
         "image_overlay_opacity": 10,
         "image_height": "medium",
-        "desktop_content_position": "bottom-center",
+        "desktop_content_position": "middle-center",
         "show_text_box": false,
         "desktop_content_alignment": "center",
         "color_scheme": "inverse",
         "image_behavior": "none",
         "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
-        "show_text_below": true
+        "show_text_below": false,
+        "show_trust_strip": false
       }
     },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "All Emblems",
+        "title": "Best Selling Emblems",
         "heading_size": "h2",
-        "description": "",
+        "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
         "show_description": false,
-        "description_style": "body",
+        "description_style": "subtitle",
         "collection": "dizzy-custom-emblems",
-        "products_to_show": 5,
-        "columns_desktop": 5,
+        "products_to_show": 8,
+        "columns_desktop": 4,
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
         "enable_desktop_slider": false,
         "color_scheme": "inverse",
-        "image_ratio": "adapt",
+        "image_ratio": "square",
         "image_shape": "default",
         "show_secondary_image": true,
         "show_vendor": false,
         "show_rating": true,
-        "enable_quick_add": false,
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
+        "enable_quick_add": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
         "padding_top": 40,
         "padding_bottom": 36
+      }
+    },
+    "dc_emblem_builder": {
+      "type": "dc-emblem-builder",
+      "settings": {
+        "product": "",
+        "eyebrow": "YOUR WORDS. YOUR STYLE.",
+        "heading": "Make it unmistakably yours.",
+        "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
+        "default_text": "DIZZY",
+        "max_length": 16,
+        "demo": true,
+        "preview_note": "Digital preview. Actual colors and finishes may vary slightly.",
+        "color_scheme": "",
+        "padding": 48
+      }
+    },
+    "image_scrolling_ACYgDa": {
+      "type": "image-scrolling",
+      "blocks": {
+        "block_VXHBDj": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/ford.png"
+          }
+        },
+        "block_HGAtQn": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/lamborghini-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_bDYqfg": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/mazda-brand-logo-car-symbol-black-and-white-design-vector-46098405_ec2d8ac1-3ec6-4a6e-8f71-8a3fe977cd0e.jpg"
+          }
+        },
+        "block_QDijnr": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/porsche-logo-car-brand-symbol-black-white-design-vector-46125298.jpg"
+          }
+        },
+        "block_p3yM4K": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/infiniti-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_RhJUmt": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/toyota-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_LQaJxr": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/rolls-royce-brand-logo-symbol-with-name-white-design-british-car-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_jzNpxX": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/nissan-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_yFiFKK": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/maserati-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "block_VXHBDj",
+        "block_HGAtQn",
+        "block_bDYqfg",
+        "block_QDijnr",
+        "block_p3yM4K",
+        "block_RhJUmt",
+        "block_LQaJxr",
+        "block_jzNpxX",
+        "block_yFiFKK"
+      ],
+      "settings": {
+        "bg_color": "#000000",
+        "show_border": false,
+        "border_color": "",
+        "border_thickness": 1,
+        "scroll_time": "10",
+        "scroll_text_move": "logo-marquee--reverse",
+        "pause_text": "paused",
+        "max_width": "10rem",
+        "t_max_width": "15rem",
+        "m_max_width": "5rem",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "m_padding_top": 16,
+        "m_padding_bottom": 16
       }
     },
     "rich_text_hjbhAC": {
@@ -83,6 +206,7 @@
       "block_order": [
         "heading_cH3qAV"
       ],
+      "disabled": true,
       "name": "t:sections.rich-text.presets.name",
       "settings": {
         "desktop_content_position": "center",
@@ -105,6 +229,7 @@
         "column_Tzacyw": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
             "title": "Outstanding features",
             "text": "",
             "link_label": "",
@@ -114,6 +239,7 @@
         "column_BCgAjf": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/3lo_icaremblem_48691ec1-fb86-4b02-bd8f-f0e41cd15f3f.png",
             "title": "3 Luxury Finishes",
             "text": "",
             "link_label": "",
@@ -123,6 +249,7 @@
         "column_wDp6fP": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
             "title": "DizzyCustom vs. The Others",
             "text": "",
             "link_label": "",
@@ -159,12 +286,67 @@
         "include_margins": true
       }
     },
+    "craftsmanship_process": {
+      "type": "craftsmanship-process",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "image": "shopify://shop_images/ezgif-2-1158e28d0c.gif",
+            "title": "",
+            "text": ""
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "image": "shopify://shop_images/ezgif-2-4e1f56d5b6.gif",
+            "title": "",
+            "text": ""
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "image": "shopify://shop_images/ezgif-2-8330449140.gif",
+            "title": "",
+            "text": ""
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "step_number": "04",
+            "image": "shopify://shop_images/ezgif-2-341d43c44f.gif",
+            "title": "",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4"
+      ],
+      "settings": {
+        "tagline": "",
+        "title": "How Dizzy Custom Make Your Emblem?",
+        "description": "",
+        "padding_top": 36,
+        "padding_bottom": 44
+      }
+    },
     "multicolumn_m7M4TB": {
       "type": "multicolumn",
       "blocks": {
         "column_wBMzkN": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/pngegg.png",
             "title": "<strong>Global Reach, Local Care</strong>",
             "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping with in 10-12 business days.</p>",
             "link_label": "",
@@ -174,6 +356,7 @@
         "column_RHKTUC": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/kisspng-check-mark-computer-icons-tick-inside-vector-5ae15b5f6abf63.3423985415247184314372.png",
             "title": "<strong>Seamless Elegance, Effortless Installation</strong>",
             "text": "<p>Dizzy's emblems not only exude elegance but also come with easy installation, ensuring a hassle-free process for every customer.</p>",
             "link_label": "",
@@ -183,8 +366,19 @@
         "column_REfT7U": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/kisspng-computer-icons-clip-art-box-scalable-vector-graphi-box-closed-svg-png-icon-free-download-65594-o-5b6e1442a7aa02.7279711415339408026868.png",
             "title": "<strong>Securely Packaged Elegance</strong>",
             "text": "<p>Our meticulous packaging guarantees that your personalized masterpiece arrives in pristine condition, ready to adorn your vehicle.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_BLTgtU": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_11_2026_03_45_26_PM.png",
+            "title": "Create Your Emblem, Your Way",
+            "text": "<p>Customize your emblem live or generate a unique design with AI—right on our website. Preview, refine, and make it yours before ordering.<br/><br/></p>",
             "link_label": "",
             "link": ""
           }
@@ -193,152 +387,17 @@
       "block_order": [
         "column_wBMzkN",
         "column_RHKTUC",
-        "column_REfT7U"
+        "column_REfT7U",
+        "column_BLTgtU"
       ],
       "settings": {
-        "title": "Why Dizzy Special?",
+        "title": "",
         "heading_size": "h2",
         "image_width": "third",
         "image_ratio": "adapt",
-        "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "primary",
-        "button_label": "",
-        "button_link": "",
-        "color_scheme": "inverse",
-        "columns_mobile": "1",
-        "swipe_on_mobile": true,
-        "padding_top": 20,
-        "padding_bottom": 20
-      }
-    },
-    "image_scrolling_ACYgDa": {
-      "type": "image-scrolling",
-      "blocks": {
-        "block_VXHBDj": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_HGAtQn": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_bDYqfg": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_QDijnr": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_p3yM4K": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_RhJUmt": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_LQaJxr": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_jzNpxX": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_yFiFKK": {
-          "type": "block",
-          "settings": {}
-        },
-        "block_eccd9K": {
-          "type": "block",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "block_VXHBDj",
-        "block_HGAtQn",
-        "block_bDYqfg",
-        "block_QDijnr",
-        "block_p3yM4K",
-        "block_RhJUmt",
-        "block_LQaJxr",
-        "block_jzNpxX",
-        "block_yFiFKK",
-        "block_eccd9K"
-      ],
-      "settings": {
-        "bg_color": "#000000",
-        "show_border": false,
-        "border_color": "",
-        "border_thickness": 1,
-        "scroll_time": "10",
-        "scroll_text_move": "logo-marquee--reverse",
-        "pause_text": "paused",
-        "max_width": "10rem",
-        "t_max_width": "15rem",
-        "m_max_width": "5rem",
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "m_padding_top": 16,
-        "m_padding_bottom": 16
-      }
-    },
-    "multicolumn_EedCKm": {
-      "type": "multicolumn",
-      "blocks": {
-        "column_N39VXD": {
-          "type": "column",
-          "settings": {
-            "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_eYMjek": {
-          "type": "column",
-          "settings": {
-            "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_6PnU8G": {
-          "type": "column",
-          "settings": {
-            "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_QUypBp": {
-          "type": "column",
-          "settings": {
-            "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column_N39VXD",
-        "column_eYMjek",
-        "column_6PnU8G",
-        "column_QUypBp"
-      ],
-      "settings": {
-        "title": "How Dizzy Custom Make Your Emblem?",
-        "heading_size": "h2",
-        "image_width": "full",
-        "image_ratio": "adapt",
         "columns_desktop": 4,
         "column_alignment": "center",
-        "background_style": "none",
+        "background_style": "primary",
         "button_label": "",
         "button_link": "",
         "color_scheme": "inverse",
@@ -356,6 +415,7 @@
     },
     "featured_blog_JezEiz": {
       "type": "featured-blog",
+      "disabled": true,
       "settings": {
         "heading": "About Us",
         "heading_size": "h2",
@@ -374,14 +434,15 @@
   },
   "order": [
     "image_banner",
+    "dc_emblem_builder",
+    "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
     "1752288780048388a8",
     "multicolumn_6CbrDa",
     "17522895397c61f6f8",
+    "craftsmanship_process",
     "multicolumn_m7M4TB",
-    "image_scrolling_ACYgDa",
-    "multicolumn_EedCKm",
     "1705574032ea599050",
     "featured_blog_JezEiz"
   ]

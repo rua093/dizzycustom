@@ -24,8 +24,8 @@
     "body_scale": 100,
     "page_width": 1200,
     "spacing_sections": 0,
-    "spacing_grid_horizontal": 12,
-    "spacing_grid_vertical": 8,
+    "spacing_grid_horizontal": 24,
+    "spacing_grid_vertical": 32,
     "animations_reveal_on_scroll": true,
     "animations_hover_elements": "default",
     "buttons_border_thickness": 1,
@@ -129,7 +129,7 @@
     "predictive_search_show_vendor": false,
     "predictive_search_show_price": false,
     "currency_code_enabled": false,
-    "cart_type": "page",
+    "cart_type": "drawer",
     "show_vendor": false,
     "show_cart_note": true,
     "cart_drawer_collection": "dizzy-custom-emblems",
@@ -174,12 +174,12 @@
       },
       "background-2": {
         "settings": {
-          "background": "#3d3d3d",
-          "background_gradient": "radial-gradient(rgba(0, 89, 121, 1), rgba(57, 195, 245, 1) 100%)",
+          "background": "#0d395f",
+          "background_gradient": "",
           "text": "#ffffff",
-          "button": "#121212",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#000000",
+          "button": "#ffffff",
+          "button_label": "#0d395f",
+          "secondary_button_label": "#ffffff",
           "shadow": "#121212"
         }
       },
@@ -411,8 +411,6 @@
     }
   },
   "platform_customizations": {
-    "custom_css": [
-      ".header__search {display: none !important;}"
-    ]
+    "custom_css": []
   }
 }
