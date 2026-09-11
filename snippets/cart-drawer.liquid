@@ -54,8 +54,10 @@
               <circle cx="18" cy="21" r="1.4" fill="currentColor" />
             </svg>
           </span>
+          <h2 class="dizzy-cart-drawer__heading">Your Cart</h2>
+          <span class="dizzy-cart-drawer__divider" aria-hidden="true"></span>
           <span class="dizzy-cart-drawer__count" aria-label="{{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}">
-            {{ cart.item_count }}
+            {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}
           </span>
         </div>
         <button
@@ -87,23 +89,21 @@
           </div>
         </div>
       {%- else -%}
-        <div class="dizzy-cart-drawer__promo" role="status">
-          Discount price valid for 24 hours only.
-        </div>
-
-        <div class="dizzy-cart-drawer__shipping">
-          <p class="dizzy-cart-drawer__shipping-title">
-            {%- if free_shipping_remaining > 0 -%}
-              Get {{ free_shipping_goal }} Emblems or more to unlock FREE Shipping
-            {%- else -%}
-              FREE Shipping unlocked
-            {%- endif -%}
-          </p>
-          <div class="dizzy-cart-drawer__shipping-track" aria-hidden="true">
-            <span class="dizzy-cart-drawer__shipping-fill" style="width: {{ free_shipping_progress }}%;"></span>
-            <span class="dizzy-cart-drawer__shipping-icon">
-              {%- render 'icon-truck', class: 'dizzy-cart-drawer__shipping-svg' -%}
-            </span>
+        <div class="dizzy-cart-drawer__shipping" role="status">
+          <span class="dizzy-cart-drawer__shipping-icon" aria-hidden="true">
+            {%- render 'icon-truck', class: 'dizzy-cart-drawer__shipping-svg' -%}
+          </span>
+          <div class="dizzy-cart-drawer__shipping-content">
+            <p class="dizzy-cart-drawer__shipping-title">
+              {%- if free_shipping_remaining > 0 -%}
+                Get {{ free_shipping_goal }} Emblems or more to unlock <strong>FREE Shipping</strong>
+              {%- else -%}
+                <strong>FREE Shipping</strong> unlocked
+              {%- endif -%}
+            </p>
+            <div class="dizzy-cart-drawer__shipping-track" aria-hidden="true">
+              <span class="dizzy-cart-drawer__shipping-fill" style="width: {{ free_shipping_progress }}%;"></span>
+            </div>
           </div>
         </div>
 
@@ -255,6 +255,30 @@
                               </quantity-input>
                             </div>
 
+                            <div class="cart-item__totals right dizzy-cart-drawer__item-totals">
+                              <div class="cart-item__price-wrapper">
+                                {%- if item.original_line_price != item.final_line_price -%}
+                                  <div class="cart-item__discounted-prices">
+                                    <span class="visually-hidden">
+                                      {{ 'products.product.price.regular_price' | t }}
+                                    </span>
+                                    <s class="cart-item__old-price price price--end">
+                                      {{ item.original_line_price | money }}
+                                    </s>
+                                    <span class="visually-hidden">
+                                      {{ 'products.product.price.sale_price' | t }}
+                                    </span>
+                                    <span class="price price--end">
+                                      {{ item.final_line_price | money }}
+                                    </span>
+                                  </div>
+                                {%- else -%}
+                                  <span class="price price--end">
+                                    {{ item.original_line_price | money }}
+                                  </span>
+                                {%- endif -%}
+                              </div>
+                            </div>
                           </div>
 
                           <div
@@ -292,31 +316,6 @@
                           {% render 'icon-remove' %}
                         </button>
                       </cart-remove-button>
-
-                      <div class="cart-item__totals right dizzy-cart-drawer__item-totals">
-                        <div class="cart-item__price-wrapper">
-                          {%- if item.original_line_price != item.final_line_price -%}
-                            <div class="cart-item__discounted-prices">
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.regular_price' | t }}
-                              </span>
-                              <s class="cart-item__old-price price price--end">
-                                {{ item.original_line_price | money }}
-                              </s>
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.sale_price' | t }}
-                              </span>
-                              <span class="price price--end">
-                                {{ item.final_line_price | money }}
-                              </span>
-                            </div>
-                          {%- else -%}
-                            <span class="price price--end">
-                              {{ item.original_line_price | money }}
-                            </span>
-                          {%- endif -%}
-                        </div>
-                      </div>
                     </li>
                   {%- endfor -%}
                 </ul>
@@ -332,36 +331,35 @@
         </cart-drawer-items>
 
         <div class="drawer__footer cart-drawer__footer dizzy-cart-drawer__footer">
-          <details class="dizzy-cart-drawer__discount">
-            <summary class="dizzy-cart-drawer__discount-summary">
-              <svg
-                class="icon dizzy-cart-drawer__discount-svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path
-                  d="M4 8.5V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2.5a3.5 3.5 0 0 0 0 7V18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2.5a3.5 3.5 0 0 0 0-7Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-                <path d="M10 8v8M14 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-              </svg>
-              <span>Apply Discount</span>
-            </summary>
+          <div class="dizzy-cart-drawer__discount">
             <form class="dizzy-cart-drawer__discount-form" data-cart-discount-form>
               <label class="visually-hidden" for="CartDrawer-DiscountCode">Discount code</label>
-              <input
-                id="CartDrawer-DiscountCode"
-                class="dizzy-cart-drawer__discount-input"
-                type="text"
-                name="discount"
-                placeholder="Discount code"
-                autocomplete="off"
-              >
+              <div class="dizzy-cart-drawer__discount-field">
+                <svg
+                  class="icon dizzy-cart-drawer__discount-svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M4 8.5V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2.5a3.5 3.5 0 0 0 0 7V18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2.5a3.5 3.5 0 0 0 0-7Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+                  <path d="M10 8v8M14 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <input
+                  id="CartDrawer-DiscountCode"
+                  class="dizzy-cart-drawer__discount-input"
+                  type="text"
+                  name="discount"
+                  placeholder="Discount code"
+                  autocomplete="off"
+                >
+              </div>
               <button class="dizzy-cart-drawer__discount-button" type="submit">Apply</button>
               <p class="dizzy-cart-drawer__discount-message" data-cart-discount-message role="status"></p>
             </form>
@@ -376,13 +374,14 @@
                 {%- endfor -%}
               </ul>
             {%- endif -%}
-          </details>
+          </div>
 
           <div class="dizzy-cart-drawer__subtotal">
             <div class="totals dizzy-cart-drawer__totals" role="status">
               <h2 class="totals__total">Subtotal</h2>
               <p class="totals__total-value">{{ cart.total_price | money }}</p>
             </div>
+            <small class="tax-note caption-large rte">Shipping &amp; taxes calculated at checkout.</small>
           </div>
 
           <div class="cart__ctas dizzy-cart-drawer__ctas">
@@ -408,7 +407,7 @@
 
           {%- if shop.enabled_payment_types.size > 0 -%}
             <div class="dizzy-cart-drawer__payment">
-              <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+              <p class="dizzy-cart-drawer__payment-title">We accept</p>
               <ul class="list list-payment" role="list">
                 {%- for type in shop.enabled_payment_types -%}
                   <li class="list-payment__item">
