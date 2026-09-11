@@ -13,6 +13,10 @@
     margin-top: {{ section.settings.margin_top | times: 0.75 | round: 0 }}px;
   }
 
+  #shopify-section-{{ section.id }} .dizzy-footer__newsletter-band {
+    --dizzy-footer-newsletter-image: url('{{ 'footer_email.webp' | asset_url }}');
+  }
+
   #shopify-section-{{ section.id }} .dizzy-footer__inner {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
@@ -337,10 +341,9 @@
         <aside class="dizzy-footer__shipping" aria-label="{{ section.settings.shipping_heading | escape }}">
           <div class="dizzy-footer__shipping-header">
             <span class="dizzy-footer__shipping-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M3.5 12h17M12 3c2.4 2.45 3.6 5.45 3.6 9S14.4 18.55 12 21c-2.4-2.45-3.6-5.45-3.6-9S9.6 5.45 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
+              <div class="dizzy-footer__shipping-icon" aria-hidden="true">
+                {% render 'icon-world', class: 'dizzy-footer__shipping-svg' %}
+              </div>
             </span>
             <div>
               {%- if section.settings.shipping_heading != blank -%}

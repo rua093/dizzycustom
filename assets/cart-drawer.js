@@ -14,7 +14,29 @@ class CartDrawer extends HTMLElement {
     if (!discountForm || !this.contains(discountForm)) return;
 
     event.preventDefault();
+
+    if (this.isCartMutationLocked()) return;
+
     this.applyDiscount(discountForm);
+  }
+
+  isCartMutationLocked() {
+    return this.dataset.cartMutation === 'true';
+  }
+
+  setCartMutationLoading(isLoading) {
+    this.dataset.cartMutation = isLoading ? 'true' : 'false';
+    this.classList.toggle('is-cart-updating', isLoading);
+    this.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+
+    this.querySelectorAll('[data-cart-mutation-control]').forEach((control) => {
+      control.disabled = isLoading;
+    });
+
+    this.querySelectorAll('cart-drawer-items, #CartDrawer-CartItems').forEach((element) => {
+      element.classList.toggle('cart__items--disabled', isLoading);
+      element.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+    });
   }
 
   setHeaderCartIconAccessibility() {
@@ -119,17 +141,19 @@ class CartDrawer extends HTMLElement {
   }
 
   applyDiscount(form) {
+    if (this.isCartMutationLocked()) return;
+
     const input = form.querySelector('[name="discount"]');
-    const message = form.querySelector('[data-cart-discount-message]');
     const discount = input.value.trim();
 
     if (!discount) {
-      if (message) message.textContent = 'Enter a discount code.';
+      this.setDiscountMessage(form, 'Enter a discount code.', 'error');
       input.focus();
       return;
     }
 
-    if (message) message.textContent = 'Applying discount...';
+    this.setDiscountMessage(form, 'Applying discount...', 'loading');
+    this.setCartMutationLoading(true);
     this.setDiscountFormLoading(form, true);
 
     const body = JSON.stringify({
@@ -139,22 +163,56 @@ class CartDrawer extends HTMLElement {
     });
 
     fetch(`${routes.cart_update_url}`, { ...fetchConfig(), ...{ body } })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) throw new Error('Discount request failed');
+        return response.json();
+      })
       .then((parsedState) => {
+        const applied = this.hasAppliedDiscount(parsedState);
         this.renderContents(parsedState);
+        this.setDiscountMessage(
+          this.querySelector('[data-cart-discount-form]'),
+          applied ? 'Discount code applied.' : 'Discount code could not be applied.',
+          applied ? 'success' : 'error'
+        );
       })
       .catch(() => {
-        if (message) message.textContent = window.cartStrings.error;
+        this.setDiscountMessage(
+          this.querySelector('[data-cart-discount-form]'),
+          'Unable to apply discount code. Please try again.',
+          'error'
+        );
       })
       .finally(() => {
         this.setDiscountFormLoading(form, false);
+        this.setCartMutationLoading(false);
       });
   }
 
   setDiscountFormLoading(form, isLoading) {
+    form.classList.toggle('is-loading', isLoading);
+    form.setAttribute('aria-busy', isLoading ? 'true' : 'false');
     form.querySelectorAll('input, button').forEach((element) => {
       element.disabled = isLoading;
     });
+  }
+
+  setDiscountMessage(form, text, state) {
+    const message = form?.querySelector('[data-cart-discount-message]');
+    if (!message) return;
+
+    message.textContent = text;
+    message.classList.toggle('is-success', state === 'success');
+    message.classList.toggle('is-error', state === 'error');
+    message.classList.toggle('is-loading', state === 'loading');
+  }
+
+  hasAppliedDiscount(parsedState) {
+    const sectionHtml = parsedState.sections?.['cart-drawer'];
+    if (!sectionHtml) return false;
+
+    const section = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    return Boolean(section.querySelector('.dizzy-cart-drawer__applied-discounts li'));
   }
 }
 

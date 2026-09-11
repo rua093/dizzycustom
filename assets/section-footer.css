@@ -15,15 +15,30 @@
 }
 
 .dizzy-footer__newsletter-band {
+  position: relative;
+  isolation: isolate;
   background-color: var(--dizzy-footer-newsletter-bg);
-  background-image: linear-gradient(100deg, rgba(5, 22, 37, 0.98), rgba(8, 42, 68, 0.9));
+  background-image: none;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   border-bottom: 0.1rem solid rgba(255, 255, 255, 0.13);
 }
 
+.dizzy-footer__newsletter-band::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(4, 18, 31, 0.12), rgba(7, 31, 52, 0.08)), var(--dizzy-footer-newsletter-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  content: '';
+}
+
 .dizzy-footer__newsletter-layout {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 2.4rem;
   padding-top: 3.2rem;
@@ -433,7 +448,8 @@
 
   .dizzy-footer__main-grid {
     align-items: start;
-    grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 0.8fr)) minmax(0, 1.15fr);
+    grid-template-columns:
+      minmax(0, 1.35fr) minmax(0, 0.78fr) minmax(0, 0.92fr) minmax(0, 0.84fr) minmax(0, 1.18fr);
   }
 
   .dizzy-footer__brand,
@@ -456,15 +472,31 @@
 
   .dizzy-footer__main-grid {
     column-gap: 3rem;
+    grid-template-columns:
+      minmax(24rem, 1.32fr) minmax(14rem, 0.78fr) minmax(17rem, 0.95fr) minmax(16rem, 0.86fr) minmax(22rem, 1.16fr);
   }
 
   .dizzy-footer__column,
   .dizzy-footer__shipping {
     padding-left: 3.4rem;
   }
+
+  .dizzy-footer__column-heading,
+  .dizzy-footer__link,
+  .dizzy-footer__richtext a {
+    white-space: nowrap;
+  }
+
+  .dizzy-footer__shipping .dizzy-footer__column-heading {
+    white-space: nowrap;
+  }
 }
 
 @media screen and (max-width: 749px) {
+  .dizzy-footer__newsletter-band::before {
+    background-position: 68% center;
+  }
+
   .dizzy-footer__newsletter-layout {
     padding-top: 2.8rem;
     padding-bottom: 2.8rem;
@@ -562,4 +594,13 @@
 
 .dizzy-footer__follow-on-shop {
   margin-top: 1.6rem;
+}
+
+.dizzy-footer__shipping-icon {
+  color: #ffffff;
+}
+
+.dizzy-footer__shipping-svg {
+  width: 2.8rem;
+  height: 2.8rem;
 }
