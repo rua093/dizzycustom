@@ -349,6 +349,11 @@
 
       this.setHeaderHeight();
 
+      if (typeof ResizeObserver !== 'undefined') {
+        this.headerResizeObserver = new ResizeObserver(() => this.setHeaderHeight());
+        this.headerResizeObserver.observe(this.header);
+      }
+
       window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
 
       if (this.headerIsAlwaysSticky) {
@@ -375,6 +380,7 @@
     disconnectedCallback() {
       this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
       window.removeEventListener('scroll', this.onScrollHandler);
+      this.headerResizeObserver?.disconnect();
     }
 
     createObserver() {

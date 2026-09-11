@@ -46,7 +46,6 @@
         <span class="dc-builder-live"><span></span> Live preview</span>
         <span class="dc-builder-stage-guide" id="BadgeHelp-{{ section.id }}">Letters, numbers, spaces and punctuation. Up to {{ section.settings.max_length }} characters.</span>
         <canvas data-preview width="1200" height="460" role="img" aria-label="Your custom two-layer badge preview"></canvas>
-        <p class="dc-builder-stage-note" data-demo-note hidden>Explore the possibilities. Start typing to make it yours.</p>
       </div>
       <form class="dc-builder-controls" action="{{ routes.cart_add_url }}" method="post">
         <fieldset class="dc-builder-fields" data-controls disabled>
@@ -63,7 +62,7 @@
               <legend>Font</legend>
               <div class="dc-builder-fonts">
                 {% for key in font_keys %}
-                  <button type="button" class="dc-builder-font" data-font="{{ key }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" style="--badge-font: 'DC Badge {{ key }}'">{{ font_labels[forloop.index0] }}</button>
+                  <button type="button" class="dc-builder-font" data-font="{{ key }}" aria-pressed="{% if key == 'lightning' %}true{% else %}false{% endif %}" style="--badge-font: 'DC Badge {{ key }}'">{{ font_labels[forloop.index0] }}</button>
                 {% endfor %}
               </div>
             </fieldset>
@@ -74,12 +73,12 @@
               <legend>Colors</legend>
               <div class="dc-builder-palette">
                 <div class="dc-builder-layers">
-                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small>Text</small><strong data-color-name="face">Red</strong></span></button>
+                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small>Text</small><strong data-color-name="face">Mirror Red</strong></span></button>
                   <button class="dc-builder-layer" type="button" data-layer="back" aria-pressed="false"><span class="dc-builder-chip" data-chip="back"></span><span><small>Backing</small><strong data-color-name="back">Gloss Black</strong></span></button>
                 </div>
                 <div class="dc-builder-finishes" role="group" aria-label="Material category">
-                  <button type="button" data-finish="solid" aria-pressed="true">Solid</button>
-                  <button type="button" data-finish="mirror" aria-pressed="false">Mirror</button>
+                  <button type="button" data-finish="solid" aria-pressed="false">Solid</button>
+                  <button type="button" data-finish="mirror" aria-pressed="true">Mirror</button>
                   <button type="button" data-finish="patterns" aria-pressed="false">Patterns</button>
                   <button type="button" data-finish="flake" aria-pressed="false">Metal flake</button>
                 </div>
@@ -151,7 +150,7 @@
     {"type": "richtext", "id": "description", "label": "Description", "default": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>"},
     {"type": "text", "id": "default_text", "label": "Starting text", "default": "DIZZY"},
     {"type": "range", "id": "max_length", "label": "Maximum characters", "min": 4, "max": 32, "step": 1, "default": 16},
-    {"type": "checkbox", "id": "demo", "label": "Show rotating examples before interaction", "default": true},
+    {"type": "checkbox", "id": "demo", "label": "Show rotating examples before interaction", "default": false},
     {"type": "text", "id": "preview_note", "label": "Preview note", "default": "Digital preview. Actual colors and finishes may vary slightly."},
     {"type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "background-1"},
     {"type": "range", "id": "padding", "label": "Section spacing", "min": 0, "max": 100, "step": 4, "default": 48}

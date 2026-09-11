@@ -91,7 +91,6 @@ dc-emblem-builder *, dc-emblem-builder *::before, dc-emblem-builder *::after { b
   pointer-events: none;
   z-index: 1;
 }
-.dc-builder-stage-note { position: absolute; bottom: 1rem; left: 1.6rem; right: 1.6rem; margin: 0; text-align: center; font-size: 1.1rem; color: #c6cdd4; }
 
 .dc-builder-controls { padding: 2.8rem 3rem 3rem; }
 .dc-builder-fields { padding: 0; margin: 0; border: 0; min-width: 0; }
@@ -199,10 +198,14 @@ dc-emblem-builder button:disabled { cursor: not-allowed; opacity: .55; }
   .dc-builder-section { padding-block: calc(var(--dc-builder-space) * .8); }
   .dc-builder-stage {
     position: sticky;
-    top: calc(var(--header-height, 0px) + 0.5rem);
+    top: var(--header-height, 0px);
     z-index: 2;
     border-radius: 0;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transition: top 0.15s ease-out;
+  }
+  :root:has(.shopify-section-header-hidden) .dc-builder-stage {
+    top: 0;
   }
   .dc-builder-stage canvas {
     aspect-ratio: 16 / 7.5;
@@ -214,9 +217,6 @@ dc-emblem-builder button:disabled { cursor: not-allowed; opacity: .55; }
     padding: .4rem .8rem;
     font-size: 1rem;
     max-width: calc(100% - 1.6rem);
-  }
-  .dc-builder-stage-note {
-    bottom: 2.8rem;
   }
   .dc-builder-controls { padding: 2.4rem 1.8rem; }
   .dc-builder-col {

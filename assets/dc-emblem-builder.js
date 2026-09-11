@@ -25,12 +25,6 @@
   ].map(([id, label, color, group, effect]) => ({ id, label, color, group, effect: effect || group }));
   const materials = new Map(finishes.map((finish) => [finish.id, finish]));
   const loadedFonts = new Map();
-  const scenes = [
-    ['DIZZY', 'bold', 'red', 'gloss_black'], ['NIGHT RUN', 'lightning', 'mirror_silver', 'gloss_black'],
-    ['FEARLESS', 'aggressive', 'mf_red', 'gloss_black'], ['Custom', 'script', 'mirror_gold', 'gloss_black'],
-    ['ELECTRIC', 'electric', 'mirror_blue', 'white'], ['ICE COLD', 'ice', 'white', 'mirror_blue'],
-    ['EDITION', 'oem', 'brushed_stainless', 'gloss_black']
-  ];
 
   function loadFont(font) {
     const cacheKey = `${font.key}:${font.url}`;
@@ -56,9 +50,9 @@
       this.variant = this.querySelector('[data-variant]');
       this.quantity = this.querySelector('[data-quantity]');
       this.error = this.querySelector('[data-error]');
-      this.state = { text: this.config.defaultText.slice(0, this.config.maxLength), font: 'bold', face: 'red', back: 'gloss_black', mount: 'tape' };
+      this.state = { text: this.config.defaultText.slice(0, this.config.maxLength), font: 'lightning', face: 'mirror_red', back: 'gloss_black', mount: 'tape' };
       this.layer = 'face';
-      this.group = 'solid';
+      this.group = 'mirror';
       this.textures = new Map();
       this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       this.restore();
@@ -113,24 +107,10 @@
         if (result.status === 'fulfilled') this.readyFonts.add(key);
       });
       this.update();
-      if (!this.interacted && this.dataset.demo === 'true' && this.dataset.productPage !== 'true' && !this.reducedMotion.matches && results.every((result) => result.status === 'fulfilled')) {
-        this.querySelector('[data-demo-note]').hidden = false;
-        let index = 0;
-        this.demoTimer = setInterval(() => {
-          const [text, font, face, back] = scenes[index++ % scenes.length];
-          Object.assign(this.state, { text: text.slice(0, this.config.maxLength), font, face, back });
-          this.group = materials.get(this.state[this.layer]).group;
-          this.buildSwatches();
-          this.update();
-        }, 3200);
-      }
     }
 
     stopDemo() {
       this.interacted = true;
-      clearInterval(this.demoTimer);
-      const note = this.querySelector('[data-demo-note]');
-      if (note) note.hidden = true;
     }
 
     restore() {
