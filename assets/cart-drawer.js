@@ -4,7 +4,17 @@ class CartDrawer extends HTMLElement {
 
     this.addEventListener('keyup', (evt) => evt.code === 'Escape' && this.close());
     this.querySelector('#CartDrawer-Overlay').addEventListener('click', this.close.bind(this));
+    this.addEventListener('submit', this.onSubmit.bind(this));
     this.setHeaderCartIconAccessibility();
+  }
+
+  onSubmit(event) {
+    const discountForm = event.target.closest('[data-cart-discount-form]');
+
+    if (!discountForm || !this.contains(discountForm)) return;
+
+    event.preventDefault();
+    this.applyDiscount(discountForm);
   }
 
   setHeaderCartIconAccessibility() {
@@ -35,9 +45,7 @@ class CartDrawer extends HTMLElement {
     this.addEventListener(
       'transitionend',
       () => {
-        const containerToTrapFocusOn = this.classList.contains('is-empty')
-          ? this.querySelector('.drawer__inner-empty')
-          : document.getElementById('CartDrawer');
+        const containerToTrapFocusOn = this.querySelector('.drawer__inner');
         const focusElement = this.querySelector('.drawer__inner') || this.querySelector('.drawer__close');
         trapFocus(containerToTrapFocusOn, focusElement);
       },
@@ -69,6 +77,7 @@ class CartDrawer extends HTMLElement {
   }
 
   renderContents(parsedState) {
+    this.classList.toggle('is-empty', parsedState.item_count === 0);
     this.querySelector('.drawer__inner').classList.contains('is-empty') &&
       this.querySelector('.drawer__inner').classList.remove('is-empty');
     this.productId = parsedState.id;
@@ -107,6 +116,45 @@ class CartDrawer extends HTMLElement {
 
   setActiveElement(element) {
     this.activeElement = element;
+  }
+
+  applyDiscount(form) {
+    const input = form.querySelector('[name="discount"]');
+    const message = form.querySelector('[data-cart-discount-message]');
+    const discount = input.value.trim();
+
+    if (!discount) {
+      if (message) message.textContent = 'Enter a discount code.';
+      input.focus();
+      return;
+    }
+
+    if (message) message.textContent = 'Applying discount...';
+    this.setDiscountFormLoading(form, true);
+
+    const body = JSON.stringify({
+      discount,
+      sections: this.getSectionsToRender().map((section) => section.id),
+      sections_url: window.location.pathname,
+    });
+
+    fetch(`${routes.cart_update_url}`, { ...fetchConfig(), ...{ body } })
+      .then((response) => response.json())
+      .then((parsedState) => {
+        this.renderContents(parsedState);
+      })
+      .catch(() => {
+        if (message) message.textContent = window.cartStrings.error;
+      })
+      .finally(() => {
+        this.setDiscountFormLoading(form, false);
+      });
+  }
+
+  setDiscountFormLoading(form, isLoading) {
+    form.querySelectorAll('input, button').forEach((element) => {
+      element.disabled = isLoading;
+    });
   }
 }
 

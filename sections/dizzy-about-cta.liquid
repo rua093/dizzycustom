@@ -1,0 +1,106 @@
+{{ 'section-dizzy-about.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="dizzy-about-cta"
+  style="--dizzy-about-accent: {{ section.settings.accent_color }};"
+>
+  <div class="dizzy-about-cta__media" aria-hidden="true">
+    {%- if section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          widths: '750, 1100, 1500, 2000, 2400',
+          sizes: '100vw',
+          loading: 'lazy',
+          class: 'dizzy-about-cta__image',
+          alt: ''
+      }}
+    {%- else -%}
+      <img
+        src="{{ 'dizzycustom-about-cta-mountain-drive.webp' | asset_url }}"
+        alt=""
+        width="1916"
+        height="821"
+        loading="lazy"
+        class="dizzy-about-cta__image"
+      >
+    {%- endif -%}
+  </div>
+  <div class="dizzy-about-cta__overlay"></div>
+
+  <div class="page-width dizzy-about-cta__inner">
+    <div class="dizzy-about-cta__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="dizzy-about__eyebrow dizzy-about__eyebrow--light">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a class="dizzy-about__button dizzy-about__button--primary" href="{{ section.settings.button_link }}">
+          {{ section.settings.button_label | escape }}
+          <span aria-hidden="true">→</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Dizzy About CTA",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "YOUR RIDE. YOUR STORY."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ready to Make It Yours?"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Explore our collection and create a custom emblem today.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#1297e8"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dizzy About CTA"
+    }
+  ]
+}
+{% endschema %}
