@@ -238,9 +238,10 @@ input::-webkit-search-decoration {
 
   .header__search--inline .predictive-search {
     top: calc(100% + 0.6rem);
-    left: 0;
+    left: auto;
     right: 0;
-    width: 100%;
+    width: 36rem;
+    max-width: calc(100vw - 2rem);
     background: #ffffff;
     border: 0.1rem solid rgba(0, 0, 0, 0.1);
     border-radius: 1.2rem;
@@ -248,6 +249,10 @@ input::-webkit-search-decoration {
     z-index: 100;
     max-height: 44rem;
     overflow-y: auto;
+  }
+
+  .header__search--inline .predictive-search__item {
+    min-width: 0;
   }
 }
 

@@ -13,6 +13,10 @@
     margin-top: {{ section.settings.margin_top | times: 0.75 | round: 0 }}px;
   }
 
+  #shopify-section-{{ section.id }} .dizzy-footer__newsletter-band {
+    --dizzy-footer-newsletter-image: url('{{ 'footer_email.webp' | asset_url }}');
+  }
+
   #shopify-section-{{ section.id }} .dizzy-footer__inner {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
