@@ -20,13 +20,20 @@
 <section class="dc-installation-guide color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
   <div class="page-width">
     {%- if section.settings.heading != blank -%}
-      <h2 class="dc-installation-guide__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+      <h2 class="dc-installation-guide__heading {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">{{ section.settings.heading }}</h2>
     {%- endif -%}
 
     {%- if step_blocks.size > 0 -%}
       <ol class="dc-installation-guide__steps" role="list">
         {%- for block in step_blocks -%}
-          <li class="dc-installation-guide__step" {{ block.shopify_attributes }}>
+          <li
+            class="dc-installation-guide__step{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+            {{ block.shopify_attributes }}
+          >
             <div class="dc-installation-guide__step-header">
               <span class="dc-installation-guide__step-number" aria-hidden="true">{{ forloop.index }}</span>
               {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
@@ -57,16 +64,23 @@
     {%- if tip_blocks.size > 0 -%}
       <div class="dc-installation-guide__tips-wrap">
         {%- if section.settings.tips_heading != blank -%}
-          <h2 class="dc-installation-guide__tips-heading h2">{{ section.settings.tips_heading }}</h2>
+          <h2 class="dc-installation-guide__tips-heading h2{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">{{ section.settings.tips_heading }}</h2>
         {%- endif -%}
         <ul class="dc-installation-guide__tips" role="list">
           {%- for block in tip_blocks -%}
-            <li class="dc-installation-guide__tip" {{ block.shopify_attributes }}>
+            <li
+              class="dc-installation-guide__tip{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+              {% if settings.animations_reveal_on_scroll %}
+                data-cascade
+                style="--animation-order: {{ forloop.index }};"
+              {% endif %}
+              {{ block.shopify_attributes }}
+            >
               <span class="dc-installation-guide__tip-icon" aria-hidden="true">
                 {%- if block.settings.icon == 'curve' -%}
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M5 18c0-7 4-12 11-12h3M16 3l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {%- render 'icon-tip-curved-surface' -%}
                 {%- else -%}
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M4 17h16M7 13l3 3 7-8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {%- render 'icon-tip-flat-surface' -%}
                 {%- endif -%}
               </span>
               <div>

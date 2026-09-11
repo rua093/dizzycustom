@@ -1,6 +1,6 @@
 <section
   id="MainProduct-{{ section.id }}"
-  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+  class="dc-main-product section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
   data-section="{{ section.id }}"
 >
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
@@ -9,19 +9,20 @@
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+  {{ 'component-dc-breadcrumb.css' | asset_url | stylesheet_tag }}
   {%- if product.quantity_price_breaks_configured? -%}
     {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
 
   {%- style -%}
     .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-top: 0;
       padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
 
     @media screen and (min-width: 750px) {
       .section-{{ section.id }}-padding {
-        padding-top: {{ section.settings.padding_top }}px;
+        padding-top: 0;
         padding-bottom: {{ section.settings.padding_bottom }}px;
       }
     }
@@ -61,6 +62,15 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- assign custom_emblems_collection = collections['custom-emblems'] -%}
+  <nav class="dc-pdp-breadcrumb page-width" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span class="dc-pdp-breadcrumb__separator" aria-hidden="true">›</span>
+    <a href="{% if custom_emblems_collection != blank %}{{ custom_emblems_collection.url }}{% else %}{{ routes.collections_url }}{% endif %}">Custom Emblems</a>
+    <span class="dc-pdp-breadcrumb__separator" aria-hidden="true">›</span>
+    <span class="dc-pdp-breadcrumb__current" aria-current="page">{{ product.title | escape }}</span>
+  </nav>
+
   <div class="page-width">
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
     <div class="grid__item product__media-wrapper{% if section.settings.media_position == 'right' %} medium-hide large-up-hide{% endif %}">
@@ -80,11 +90,24 @@
             {%- when '@app' -%}
               {% render block %}
             {%- when 'text' -%}
+              {%- liquid
+                assign dc_text_class = ''
+                if block.settings.text contains 'Made to order'
+                  assign dc_text_class = ' dc-product-shipping-note'
+                elsif block.settings.text contains '✓'
+                  assign dc_text_class = ' dc-product-benefit'
+                endif
+              -%}
               <p
-                class="product__text inline-richtext{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+                class="product__text inline-richtext{{ dc_text_class }}{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
                 {{ block.shopify_attributes }}
               >
-                {{- block.settings.text -}}
+                {%- if dc_text_class contains 'dc-product-benefit' -%}
+                  <span class="dc-product-benefit__icon" aria-hidden="true">✓</span>
+                  {{- block.settings.text | remove_first: '✓' | strip -}}
+                {%- else -%}
+                  {{- block.settings.text -}}
+                {%- endif -%}
               </p>
             {%- when 'title' -%}
               <div class="product__title" {{ block.shopify_attributes }}>

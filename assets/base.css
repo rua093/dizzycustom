@@ -3,6 +3,22 @@
   --alpha-button-border: 1;
   --alpha-link: 0.85;
   --alpha-badge-border: 0.1;
+  /* Shared type scale for the custom Dizzy sections. */
+  --dc-type-eyebrow: 14px;
+  --dc-type-body: 16px;
+  --dc-type-lead: 18px;
+  --dc-type-card-title: 20px;
+  --dc-type-section-title: 32px;
+  --dc-type-hero-title: 56px;
+  --dc-type-banner-title: 40px;
+}
+
+@media screen and (max-width: 749px) {
+  :root {
+    --dc-type-section-title: 28px;
+    --dc-type-hero-title: 36px;
+    --dc-type-banner-title: 32px;
+  }
 }
 
 .product-card-wrapper .card,
