@@ -1,0 +1,131 @@
+.dc-installation-guide__heading,
+.dc-installation-guide__tips-heading {
+  margin-top: 0;
+  font-size: 26px;
+  line-height: 1.25;
+}
+
+.dc-installation-guide__heading {
+  margin-bottom: 2.4rem;
+}
+
+.dc-installation-guide__steps,
+.dc-installation-guide__tips {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--grid-mobile-horizontal-spacing);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dc-installation-guide__step,
+.dc-installation-guide__tip {
+  overflow: hidden;
+  border-radius: var(--text-boxes-radius);
+  background: rgb(var(--color-background))
+    linear-gradient(rgba(var(--color-foreground), 0.04), rgba(var(--color-foreground), 0.04));
+}
+
+.dc-installation-guide__step-media {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.dc-installation-guide__step-header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 5.6rem;
+  padding: 1.2rem 1.6rem 1.2rem 0;
+  background: rgb(var(--color-background));
+}
+
+.dc-installation-guide__step-media img,
+.dc-installation-guide__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dc-installation-guide__step-number {
+  display: inline-flex;
+  flex: 0 0 3.2rem;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.8rem;
+  background: #1e4e86;
+  color: #ffffff;
+  font-weight: var(--font-body-weight-bold);
+}
+
+.dc-installation-guide__step-content {
+  padding: 1.6rem;
+}
+
+.dc-installation-guide__step-header h3,
+.dc-installation-guide__step-content h3,
+.dc-installation-guide__tip h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.dc-installation-guide__step-content .rte,
+.dc-installation-guide__tip .rte {
+  margin-top: 0.8rem;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.dc-installation-guide__tips-wrap {
+  margin-top: 4rem;
+}
+
+.dc-installation-guide__tips-heading {
+  margin-bottom: 2rem;
+}
+
+.dc-installation-guide__tip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.6rem;
+  padding: 2.4rem;
+}
+
+.dc-installation-guide__tip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #1e4e86;
+}
+
+.dc-installation-guide__tip-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (min-width: 750px) {
+  .dc-installation-guide__steps,
+  .dc-installation-guide__tips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-desktop-horizontal-spacing);
+  }
+
+  .dc-installation-guide__step-media {
+    aspect-ratio: 1.6 / 1;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .dc-installation-guide__steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

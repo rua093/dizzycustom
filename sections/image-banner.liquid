@@ -115,16 +115,27 @@
       }}
     </div>
   {%- endif -%}
-  {%- if request.page_type == 'index' -%}
+  {%- if section.settings.show_trust_strip -%}
     <div class="banner__trust-strip">
-      <img
-        src="{{ 'banner-trust-strip.png' | asset_url }}"
-        alt="Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers"
-        width="2172"
-        height="202"
-        loading="eager"
-        decoding="async"
-      >
+      {%- if section.settings.trust_strip_image != blank -%}
+        <img
+          src="{{ section.settings.trust_strip_image | image_url: width: 2172 }}"
+          alt="{{ section.settings.trust_strip_image.alt | default: 'Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers' | escape }}"
+          width="{{ section.settings.trust_strip_image.width }}"
+          height="{{ section.settings.trust_strip_image.height }}"
+          loading="eager"
+          decoding="async"
+        >
+      {%- else -%}
+        <img
+          src="{{ 'banner-trust-strip.png' | asset_url }}"
+          alt="Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers"
+          width="2172"
+          height="202"
+          loading="eager"
+          decoding="async"
+        >
+      {%- endif -%}
     </div>
   {%- endif -%}
   <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
@@ -381,6 +392,22 @@
       "id": "show_text_below",
       "default": true,
       "label": "t:sections.image-banner.settings.show_text_below.label"
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_strip",
+      "default": true,
+      "label": "Show trust badges strip"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_strip_image",
+      "label": "Custom trust badges image",
+      "info": "Leave blank to use default trust badges image"
     }
   ],
   "blocks": [

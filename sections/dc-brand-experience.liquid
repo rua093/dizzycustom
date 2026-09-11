@@ -1,0 +1,195 @@
+{{ 'section-dc-brand-experience.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign story_image = section.settings.image
+  if story_image == blank and product != blank
+    assign story_image = product.featured_image
+  endif
+  assign mobile_story_image = section.settings.mobile_image | default: story_image
+
+  assign button_link = section.settings.button_link
+  if button_link == blank and product != blank
+    assign main_section_prefix = section.id | split: '__' | first
+    assign main_section_id = main_section_prefix | append: '__main'
+    assign button_link = '#ProductInfo-' | append: main_section_id
+  endif
+-%}
+
+<section class="dc-brand-experience color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}">
+    <div class="dc-brand-experience__media">
+      {%- if story_image != blank -%}
+        <picture>
+          {%- if section.settings.mobile_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="
+                {{ mobile_story_image | image_url: width: 550 }} 550w,
+                {{ mobile_story_image | image_url: width: 750 }} 750w,
+                {{ mobile_story_image | image_url: width: 900 }} 900w
+              "
+              sizes="100vw"
+            >
+          {%- endif -%}
+          {{
+            story_image
+            | image_url: width: 2400
+            | image_tag:
+              loading: 'lazy',
+              widths: '750, 1100, 1500, 1800, 2172, 2400',
+              sizes: '100vw',
+              alt: story_image.alt
+          }}
+        </picture>
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg dc-brand-experience__placeholder' }}
+      {%- endif -%}
+    </div>
+
+    <div class="dc-brand-experience__content-layer page-width">
+      <div class="dc-brand-experience__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="dc-brand-experience__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="dc-brand-experience__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="dc-brand-experience__text rte">{{ section.settings.text }}</div>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a
+            class="button dc-brand-experience__button"
+            {% if button_link == blank %}
+              role="link" aria-disabled="true"
+            {% else %}
+              href="{{ button_link }}"
+            {% endif %}
+          >
+            <span>{{ section.settings.button_label | escape }}</span>
+            <span class="dc-brand-experience__button-icon" aria-hidden="true">{% render 'icon-arrow' %}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="dc-brand-experience__benefits page-width">
+        {%- if section.settings.benefits_heading != blank -%}
+          <h2 class="dc-brand-experience__benefits-heading h2">{{ section.settings.benefits_heading }}</h2>
+        {%- endif -%}
+        <ul class="dc-brand-experience__benefit-grid" role="list">
+          {%- for block in section.blocks -%}
+            <li class="dc-brand-experience__benefit" {{ block.shopify_attributes }}>
+              <span class="dc-brand-experience__benefit-icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'quality' -%}
+                    {%- render 'icon-premium-metal-quality' -%}
+                  {%- when 'customize' -%}
+                    {%- render 'icon-fully-customizable' -%}
+                  {%- when 'shield' -%}
+                    {%- render 'icon-built-for-road' -%}
+                  {%- when 'vehicle' -%}
+                    {%- render 'icon-fits-more-than-cars' -%}
+                {%- endcase -%}
+              </span>
+              {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading }}</h3>{%- endif -%}
+              {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "DC brand experience",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Story image" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile story image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "MAKE YOUR RIDE" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "TRULY YOURS" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "CUSTOMIZE YOURS TODAY" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "desktop_image_position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "label": "Desktop image position"
+    },
+    { "type": "inline_richtext", "id": "benefits_heading", "label": "Benefits heading", "default": "Why Choose DizzyCustom" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "inverse" },
+    { "type": "header", "content": "Section padding" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding bottom", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            { "value": "quality", "label": "Quality" },
+            { "value": "customize", "label": "Customize" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "vehicle", "label": "Vehicle" }
+          ],
+          "default": "quality",
+          "label": "Icon"
+        },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Benefit heading" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Share a clear reason customers can trust your product.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "DC brand experience",
+      "blocks": [
+        { "type": "benefit" },
+        { "type": "benefit" },
+        { "type": "benefit" },
+        { "type": "benefit" }
+      ]
+    }
+  ]
+}
+{% endschema %}
