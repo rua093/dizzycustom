@@ -326,71 +326,58 @@
         "padding_bottom": 20
       }
     },
-    "multicolumn_EedCKm": {
-      "type": "multicolumn",
+    "craftsmanship_process": {
+      "type": "craftsmanship-process",
       "blocks": {
-        "column_N39VXD": {
-          "type": "column",
+        "step_1": {
+          "type": "step",
           "settings": {
+            "step_number": "01",
             "image": "shopify://shop_images/ezgif-2-1158e28d0c.gif",
             "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
+            "text": ""
           }
         },
-        "column_eYMjek": {
-          "type": "column",
+        "step_2": {
+          "type": "step",
           "settings": {
+            "step_number": "02",
             "image": "shopify://shop_images/ezgif-2-4e1f56d5b6.gif",
             "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
+            "text": ""
           }
         },
-        "column_6PnU8G": {
-          "type": "column",
+        "step_3": {
+          "type": "step",
           "settings": {
+            "step_number": "03",
             "image": "shopify://shop_images/ezgif-2-8330449140.gif",
             "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
+            "text": ""
           }
         },
-        "column_QUypBp": {
-          "type": "column",
+        "step_4": {
+          "type": "step",
           "settings": {
+            "step_number": "04",
             "image": "shopify://shop_images/ezgif-2-341d43c44f.gif",
             "title": "",
-            "text": "",
-            "link_label": "",
-            "link": ""
+            "text": ""
           }
         }
       },
       "block_order": [
-        "column_N39VXD",
-        "column_eYMjek",
-        "column_6PnU8G",
-        "column_QUypBp"
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4"
       ],
       "settings": {
+        "tagline": "",
         "title": "How Dizzy Custom Make Your Emblem?",
-        "heading_size": "h2",
-        "image_width": "full",
-        "image_ratio": "adapt",
-        "columns_desktop": 4,
-        "column_alignment": "center",
-        "background_style": "none",
-        "button_label": "",
-        "button_link": "",
-        "color_scheme": "inverse",
-        "columns_mobile": "1",
-        "swipe_on_mobile": true,
-        "padding_top": 20,
-        "padding_bottom": 20
+        "description": "",
+        "padding_top": 36,
+        "padding_bottom": 44
       }
     },
     "1705574032ea599050": {
@@ -426,7 +413,7 @@
     "multicolumn_6CbrDa",
     "17522895397c61f6f8",
     "multicolumn_m7M4TB",
-    "multicolumn_EedCKm",
+    "craftsmanship_process",
     "1705574032ea599050",
     "featured_blog_JezEiz"
   ]

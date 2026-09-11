@@ -1,0 +1,195 @@
+{{ 'section-craftsmanship-process.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<section
+  id="CraftsmanshipProcess-{{ section.id }}"
+  class="craftsmanship-process section-{{ section.id }}-padding"
+  aria-labelledby="CraftsmanshipTitle-{{ section.id }}"
+>
+  <div class="page-width craftsmanship-process__container">
+    {%- if section.settings.title != blank or section.settings.tagline != blank -%}
+      <div class="craftsmanship-process__header">
+        {%- if section.settings.tagline != blank -%}
+          <span class="craftsmanship-process__tagline">{{ section.settings.tagline }}</span>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 id="CraftsmanshipTitle-{{ section.id }}" class="craftsmanship-process__title">
+            {{ section.settings.title }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="craftsmanship-process__description">
+            {{ section.settings.description }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ol class="craftsmanship-process__timeline" role="list">
+      {%- for block in section.blocks -%}
+        <li
+          class="craftsmanship-step"
+          {{ block.shopify_attributes }}
+        >
+          <div class="craftsmanship-step__badge-wrap">
+            <span class="craftsmanship-step__badge" aria-hidden="true">
+              {{ block.settings.step_number | default: forloop.index }}
+            </span>
+          </div>
+
+          <div class="craftsmanship-step__card">
+            {%- if block.settings.image != blank -%}
+              <div class="craftsmanship-step__media">
+                {{
+                  block.settings.image
+                  | image_url: width: 800
+                  | image_tag:
+                    loading: 'lazy',
+                    width: block.settings.image.width,
+                    height: block.settings.image.height,
+                    alt: block.settings.title | default: 'Craftsmanship step'
+                }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.title != blank or block.settings.text != blank -%}
+              <div class="craftsmanship-step__content">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="craftsmanship-step__title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="craftsmanship-step__text">
+                    {{ block.settings.text }}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Craftsmanship Process",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline / Sub-heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "How Dizzy Custom Make Your Emblem?",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Process Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "step_number",
+          "default": "01",
+          "label": "Step Number"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Step Image / GIF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step Title (optional)"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Step Description (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Craftsmanship Process",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "title": "",
+            "text": ""
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "title": "",
+            "text": ""
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "title": "",
+            "text": ""
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "step_number": "04",
+            "title": "",
+            "text": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
