@@ -33,6 +33,7 @@ if (!customElements.get('quick-add-modal')) {
             this.preventDuplicatedIDs();
             this.removeDOMElements();
             this.setInnerHTML(this.modalContent, this.productElement.innerHTML);
+            this.decorateQuickAddContent();
 
             if (window.Shopify && Shopify.PaymentButton) {
               Shopify.PaymentButton.init();
@@ -63,6 +64,36 @@ if (!customElements.get('quick-add-modal')) {
           });
           newScriptTag.appendChild(document.createTextNode(oldScriptTag.innerHTML));
           oldScriptTag.parentNode.replaceChild(newScriptTag, oldScriptTag);
+        });
+      }
+
+      decorateQuickAddContent() {
+        const textBlocks = this.modalContent.querySelectorAll('.product__info-container > .product__text');
+        const benefitRules = [
+          { match: 'Rust-free', icon: 'quality' },
+          { match: 'Install in 5 minutes', icon: 'installation' },
+          { match: 'Perfect for cars', icon: 'vehicle', wide: true },
+        ];
+
+        textBlocks.forEach((block) => {
+          const originalText = block.textContent.replace(/\s+/g, ' ').trim();
+          const benefit = benefitRules.find((rule) => originalText.includes(rule.match));
+          const isOrderNote = originalText.includes('Made to order');
+
+          if (!benefit && !isOrderNote) return;
+
+          const iconTemplate = this.querySelector(
+            `[data-quick-add-icon="${isOrderNote ? 'shipping' : benefit.icon}"]`
+          );
+          const copy = document.createElement('span');
+          copy.className = 'product__text-benefit-copy';
+          copy.textContent = originalText.replace(/^[\u2713\u{1F69A}]\s*/u, '');
+
+          block.classList.add(isOrderNote ? 'product__text--order-note' : 'product__text--benefit');
+          if (benefit?.wide) block.classList.add('product__text--benefit-wide');
+          block.replaceChildren();
+          if (iconTemplate) block.append(iconTemplate.content.cloneNode(true));
+          block.append(copy);
         });
       }
 

@@ -265,6 +265,26 @@
                     {% render 'icon-close' %}
                   </button>
                   <div id="QuickAddInfo-{{ card_product.id }}" class="quick-add-modal__content-info"></div>
+                  <template data-quick-add-icon="quality">
+                    <span class="product__text-benefit-icon" aria-hidden="true">
+                      {%- render 'icon-premium-metal-quality' -%}
+                    </span>
+                  </template>
+                  <template data-quick-add-icon="installation">
+                    <span class="product__text-benefit-icon" aria-hidden="true">
+                      {%- render 'icon-fully-customizable' -%}
+                    </span>
+                  </template>
+                  <template data-quick-add-icon="vehicle">
+                    <span class="product__text-benefit-icon" aria-hidden="true">
+                      {%- render 'icon-fits-more-than-cars' -%}
+                    </span>
+                  </template>
+                  <template data-quick-add-icon="shipping">
+                    <span class="product__text-order-icon" aria-hidden="true">
+                      {%- render 'icon-truck-speed' -%}
+                    </span>
+                  </template>
                 </div>
               </quick-add-modal>
             {%- else -%}
