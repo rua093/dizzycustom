@@ -30,7 +30,8 @@
 -%}
 
 <section class="dc-brand-experience color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
-  <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+  {%- if section.settings.show_story -%}
+    <div class="dc-brand-experience__story{% if section.settings.desktop_image_position == 'right' %} dc-brand-experience__story--image-right{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
     <div class="dc-brand-experience__media">
       {%- if story_image != blank -%}
         <picture>
@@ -86,9 +87,10 @@
         {%- endif -%}
       </div>
     </div>
-  </div>
+    </div>
+  {%- endif -%}
 
-  {%- if section.blocks.size > 0 -%}
+  {%- if section.settings.show_benefits and section.blocks.size > 0 -%}
     <div class="dc-brand-experience__benefits page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {%- if section.settings.benefits_heading != blank -%}
           <h2 class="dc-brand-experience__benefits-heading h2">{{ section.settings.benefits_heading }}</h2>
@@ -242,6 +244,7 @@
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>" },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "CUSTOMIZE YOURS TODAY" },
     { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "checkbox", "id": "show_story", "label": "Show story hero", "default": true },
     {
       "type": "select",
       "id": "desktop_image_position",
@@ -253,6 +256,7 @@
       "label": "Desktop image position"
     },
     { "type": "inline_richtext", "id": "benefits_heading", "label": "Benefits heading", "default": "Why Choose DizzyCustom" },
+    { "type": "checkbox", "id": "show_benefits", "label": "Show benefits", "default": true },
     { "type": "header", "content": "Feature showcase" },
     { "type": "checkbox", "id": "show_feature_showcase", "label": "Show feature showcase", "default": true },
     { "type": "image_picker", "id": "craftsmanship_image", "label": "Craftsmanship image" },

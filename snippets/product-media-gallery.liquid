@@ -181,13 +181,14 @@
         {%- endunless -%}
       {%- endfor -%}
     </ul>
-    {%- unless is_duplicate -%}
-      <div class="slider-buttons no-js-hidden quick-add-hidden{% if hide_mobile_slider %} small-hide{% endif %}">
+    {%- if media_count > 1 -%}
+      <div class="product-media-gallery__viewer-buttons slider-buttons no-js-hidden quick-add-hidden{% if hide_mobile_slider %} small-hide{% endif %}">
         <button
           type="button"
           class="slider-button slider-button--prev"
           name="previous"
           aria-label="{{ 'general.slider.previous_slide' | t }}"
+          aria-controls="Slider-Gallery-{{ section.id }}{{ id_append }}"
         >
           {% render 'icon-caret' %}
         </button>
@@ -202,11 +203,12 @@
           class="slider-button slider-button--next"
           name="next"
           aria-label="{{ 'general.slider.next_slide' | t }}"
+          aria-controls="Slider-Gallery-{{ section.id }}{{ id_append }}"
         >
           {% render 'icon-caret' %}
         </button>
       </div>
-    {%- endunless -%}
+    {%- endif -%}
   </slider-component>
   {%- if first_3d_model -%}
     <button
@@ -232,11 +234,12 @@
     >
       <button
         type="button"
-        class="slider-button slider-button--prev{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}"
+        class="thumbnail-slider__navigation"
         name="previous"
+        hidden
         aria-label="{{ 'general.slider.previous_slide' | t }}"
-        aria-controls="GalleryThumbnails-{{ section.id }}"
-        data-step="3"
+        aria-controls="Slider-Thumbnails-{{ section.id }}{{ id_append }}"
+        data-step="1"
       >
         {% render 'icon-caret' %}
       </button>
@@ -357,11 +360,12 @@
       </ul>
       <button
         type="button"
-        class="slider-button slider-button--next{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}"
+        class="thumbnail-slider__navigation"
         name="next"
+        hidden
         aria-label="{{ 'general.slider.next_slide' | t }}"
-        aria-controls="GalleryThumbnails-{{ section.id }}"
-        data-step="3"
+        aria-controls="Slider-Thumbnails-{{ section.id }}{{ id_append }}"
+        data-step="1"
       >
         {% render 'icon-caret' %}
       </button>

@@ -26,6 +26,19 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  /* Force view-all link to use brand blue, matching the desktop "View all products" link */
+  #shopify-section-{{ section.id }} .collection__view-all a,
+  #shopify-section-{{ section.id }} .collection__view-all-top {
+    color: #0d5cff;
+    --color-link: 13, 92, 255;
+  }
+
+  #shopify-section-{{ section.id }} .collection__view-all a:hover,
+  #shopify-section-{{ section.id }} .collection__view-all-top:hover {
+    color: #0d5cff;
+    opacity: 0.8;
+  }
 {%- endstyle -%}
 
 {%- liquid
