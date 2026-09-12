@@ -86,7 +86,7 @@
         "show_rating": true,
         "enable_quick_add": true,
         "columns_mobile": "2",
-        "swipe_on_mobile": true,
+        "swipe_on_mobile": false,
         "padding_top": 40,
         "padding_bottom": 36
       }
@@ -231,6 +231,7 @@
           "settings": {
             "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
             "title": "Outstanding features",
+            "tab_title": "Features",
             "text": "",
             "link_label": "",
             "link": ""
@@ -241,6 +242,7 @@
           "settings": {
             "image": "shopify://shop_images/3lo_icaremblem_48691ec1-fb86-4b02-bd8f-f0e41cd15f3f.png",
             "title": "3 Luxury Finishes",
+            "tab_title": "3 Finishes",
             "text": "",
             "link_label": "",
             "link": ""
@@ -251,6 +253,7 @@
           "settings": {
             "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
             "title": "DizzyCustom vs. The Others",
+            "tab_title": "vs. Others",
             "text": "",
             "link_label": "",
             "link": ""
@@ -258,9 +261,9 @@
         }
       },
       "block_order": [
-        "column_Tzacyw",
+        "column_wDp6fP",
         "column_BCgAjf",
-        "column_wDp6fP"
+        "column_Tzacyw"
       ],
       "name": "t:sections.multicolumn.presets.name",
       "settings": {
@@ -276,6 +279,7 @@
         "color_scheme": "",
         "columns_mobile": "1",
         "swipe_on_mobile": false,
+        "enable_mobile_tabs": true,
         "padding_top": 36,
         "padding_bottom": 36
       }
@@ -348,7 +352,7 @@
           "settings": {
             "image": "shopify://shop_images/pngegg.png",
             "title": "<strong>Global Reach, Local Care</strong>",
-            "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping with in 10-12 business days.</p>",
+            "text": "<p>Dizzy offers worldwide shipping, extending our commitment to exceptional service globally. Shipping within 10-12 business days.</p>",
             "link_label": "",
             "link": ""
           }
@@ -377,8 +381,8 @@
           "type": "column",
           "settings": {
             "image": "shopify://shop_images/ChatGPT_Image_Sep_11_2026_03_45_26_PM.png",
-            "title": "Create Your Emblem, Your Way",
-            "text": "<p>Customize your emblem live or generate a unique design with AI—right on our website. Preview, refine, and make it yours before ordering.<br/><br/></p>",
+            "title": "<strong>Create Your Emblem, Your Way</strong>",
+            "text": "<p>Customize your emblem live or generate a unique design with AI—right on our website. Preview, refine, and make it yours before ordering.</p>",
             "link_label": "",
             "link": ""
           }
@@ -401,8 +405,8 @@
         "button_label": "",
         "button_link": "",
         "color_scheme": "inverse",
-        "columns_mobile": "1",
-        "swipe_on_mobile": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
         "padding_top": 20,
         "padding_bottom": 20
       }

@@ -90,7 +90,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 6rem;
   list-style: none;
-  padding: 0;
+  padding: 1.6rem 0 0 0;
   margin: 0 auto;
   max-width: 108rem;
   position: relative;
@@ -101,12 +101,12 @@
   .craftsmanship-process__timeline::before {
     content: '';
     position: absolute;
-    top: 2rem;
+    top: 3.6rem;
     left: calc(12.5% + 2rem);
     right: calc(12.5% + 2rem);
     height: 0.2rem;
-    background: linear-gradient(90deg, #1c87dc 0%, rgba(28, 135, 220, 0.4) 50%, #1c87dc 100%);
-    box-shadow: 0 0 0.8rem rgba(28, 135, 220, 0.5);
+    background: #1c87dc;
+    box-shadow: 0 0 0.8rem rgba(28, 135, 220, 0.6);
     z-index: 1;
   }
 }
@@ -148,13 +148,6 @@
   transition: all var(--duration-default) ease;
 }
 
-.craftsmanship-step:hover .craftsmanship-step__badge {
-  background: #1c87dc;
-  color: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 0 2.2rem rgba(28, 135, 220, 0.8);
-}
-
 /* Media Card (Glassmorphic Frame for GIF with Neon Rim & Depth) */
 .craftsmanship-step__card {
   display: flex;
@@ -171,15 +164,6 @@
     inset 0 0.1rem 0.15rem rgba(255, 255, 255, 0.25);
   height: 100%;
   transition: transform var(--duration-default) ease, border-color var(--duration-default) ease, box-shadow var(--duration-default) ease;
-}
-
-.craftsmanship-step:hover .craftsmanship-step__card {
-  transform: translateY(-0.8rem);
-  border-color: rgba(56, 189, 248, 0.85);
-  box-shadow:
-    0 2.4rem 5rem rgba(0, 0, 0, 0.75),
-    0 0 3.2rem rgba(28, 135, 220, 0.6),
-    inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.4);
 }
 
 .craftsmanship-step__media {
@@ -200,10 +184,6 @@
   transition: box-shadow var(--duration-default) ease;
 }
 
-.craftsmanship-step:hover .craftsmanship-step__media::after {
-  box-shadow: inset 0 0 0 0.15rem rgba(56, 189, 248, 0.4), inset 0 0 1.5rem rgba(0, 0, 0, 0.15);
-}
-
 .craftsmanship-step__media img {
   display: block;
   width: 100%;
@@ -212,8 +192,30 @@
   transition: transform 0.5s ease;
 }
 
-.craftsmanship-step:hover .craftsmanship-step__media img {
-  transform: scale(1.05);
+@media (hover: hover) {
+  .craftsmanship-step:hover .craftsmanship-step__badge {
+    background: #1c87dc;
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 2.2rem rgba(28, 135, 220, 0.8);
+  }
+
+  .craftsmanship-step:hover .craftsmanship-step__card {
+    transform: translateY(-0.8rem);
+    border-color: rgba(56, 189, 248, 0.85);
+    box-shadow:
+      0 2.4rem 5rem rgba(0, 0, 0, 0.75),
+      0 0 3.2rem rgba(28, 135, 220, 0.6),
+      inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.4);
+  }
+
+  .craftsmanship-step:hover .craftsmanship-step__media::after {
+    box-shadow: inset 0 0 0 0.15rem rgba(56, 189, 248, 0.4), inset 0 0 1.5rem rgba(0, 0, 0, 0.15);
+  }
+
+  .craftsmanship-step:hover .craftsmanship-step__media img {
+    transform: scale(1.05);
+  }
 }
 
 /* Content below media */
@@ -242,6 +244,11 @@
   line-height: 1.5;
   margin: 0;
   flex: 1 1 auto;
+}
+
+/* Navigation: Dots & Counter (Hidden on Desktop & Tablet) */
+.craftsmanship-process__nav {
+  display: none;
 }
 
 /* ==========================================================================
@@ -283,8 +290,9 @@
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    gap: 2.2rem;
-    padding: 0 1.5rem 1.2rem 1.5rem;
+    gap: 1.8rem;
+    padding: 1.6rem 1.6rem 1.4rem 1.6rem;
+    scroll-padding-inline: 1.6rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -293,25 +301,102 @@
     display: none;
   }
 
-  .craftsmanship-step {
-    flex: 0 0 58%;
-    max-width: 58%;
-    scroll-snap-align: start;
+  /* Disable hover/tap lift and zoom on mobile */
+  .craftsmanship-step:hover .craftsmanship-step__card,
+  .craftsmanship-step:active .craftsmanship-step__card,
+  .craftsmanship-step:focus .craftsmanship-step__card,
+  .craftsmanship-step:focus-within .craftsmanship-step__card {
+    transform: none;
   }
 
+  .craftsmanship-step:hover .craftsmanship-step__badge,
+  .craftsmanship-step:active .craftsmanship-step__badge {
+    transform: none;
+  }
+
+  .craftsmanship-step:hover .craftsmanship-step__media img,
+  .craftsmanship-step:active .craftsmanship-step__media img {
+    transform: none;
+  }
+
+  .craftsmanship-step {
+    flex: 0 0 74%;
+    max-width: 74%;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  /* Crisp, stable card border on mobile (no sub-pixel jitter or composite lag) */
+  .craftsmanship-step__card {
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    background: #0b1422;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    box-shadow:
+      0 1.2rem 2.8rem rgba(0, 0, 0, 0.6),
+      0 0 1.6rem rgba(28, 135, 220, 0.25);
+  }
+
+  .craftsmanship-step__media::after {
+    box-shadow: inset 0 0 1.8rem rgba(0, 0, 0, 0.25);
+  }
+
+  /* Connecting Timeline track between badges on mobile */
   .craftsmanship-step__badge-wrap {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.4rem;
+    position: relative;
+    z-index: 3;
+  }
+
+  .craftsmanship-step__badge-wrap::before,
+  .craftsmanship-step__badge-wrap::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    height: 0.2rem;
+    background: #1c87dc;
+    box-shadow: 0 0 0.8rem rgba(28, 135, 220, 0.6);
+    z-index: 1;
+  }
+
+  .craftsmanship-step__badge-wrap::before {
+    left: -1rem;
+    right: 50%;
+  }
+
+  .craftsmanship-step__badge-wrap::after {
+    left: 50%;
+    right: -1rem;
+  }
+
+  .craftsmanship-step:first-child .craftsmanship-step__badge-wrap::before {
+    display: none;
+  }
+
+  .craftsmanship-step:last-child .craftsmanship-step__badge-wrap::after {
+    display: none;
   }
 
   .craftsmanship-step__badge {
-    width: 3.4rem;
-    height: 3.4rem;
-    font-size: 1.25rem;
+    position: relative;
+    z-index: 2;
+    width: 3.6rem;
+    height: 3.6rem;
+    font-size: 1.3rem;
   }
 
+  /* Optimized Media Aspect Ratio on mobile */
   .craftsmanship-step__media {
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 4 / 5;
+  }
+
+  .craftsmanship-step__media img {
+    object-position: center bottom;
   }
 
   .craftsmanship-step__content {
@@ -324,5 +409,45 @@
 
   .craftsmanship-step__text {
     font-size: 1.3rem;
+  }
+
+  /* Mobile Navigation: Dots */
+  .craftsmanship-process__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin: 1.8rem auto 0 auto;
+    padding: 0.8rem 1.4rem;
+    background: rgba(11, 23, 35, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 9999px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(28, 135, 220, 0.2);
+  }
+
+  .craftsmanship-process__dots {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .craftsmanship-process__dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .craftsmanship-process__dot.is-active {
+    width: 2.4rem;
+    border-radius: 1rem;
+    background: #1c87dc;
+    box-shadow: 0 0 1.2rem rgba(28, 135, 220, 0.85);
   }
 }
