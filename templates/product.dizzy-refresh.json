@@ -250,6 +250,8 @@
         "heading_size": "h2",
         "products_to_show": 4,
         "columns_desktop": 4,
+        "show_view_all": true,
+        "view_all_link": "shopify://collections/dizzy-custom-emblems",
         "color_scheme": "background-1",
         "image_ratio": "square",
         "image_shape": "default",
@@ -324,8 +326,10 @@
         "text": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>",
         "button_label": "CUSTOMIZE YOURS TODAY",
         "button_link": "",
+        "show_story": false,
         "desktop_image_position": "left",
         "benefits_heading": "Why Choose DizzyCustom",
+        "show_benefits": false,
         "show_feature_showcase": true,
         "craftsmanship_image": "shopify://shop_images/ezgif-2-7a7cf4e2dc.gif",
         "craftsmanship_image_label": "CRAFTED BY HAND",
@@ -344,6 +348,25 @@
         "color_scheme": "inverse",
         "padding_top": 0,
         "padding_bottom": 0
+      }
+    },
+    "dc_brand_benefits": {
+      "type": "dc-brand-experience",
+      "blocks": {
+        "benefit_quality": { "type": "benefit", "settings": { "icon": "quality", "heading": "Premium Metal Quality", "text": "<p>Durable metal with a polished, long-lasting finish.</p>" } },
+        "benefit_custom": { "type": "benefit", "settings": { "icon": "customize", "heading": "Fully Customizable", "text": "<p>Your wording, finish and style—made to express what matters to you.</p>" } },
+        "benefit_road": { "type": "benefit", "settings": { "icon": "shield", "heading": "Built for the Road", "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>" } },
+        "benefit_vehicles": { "type": "benefit", "settings": { "icon": "vehicle", "heading": "Fits More Than Cars", "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>" } }
+      },
+      "block_order": ["benefit_quality", "benefit_custom", "benefit_road", "benefit_vehicles"],
+      "settings": {
+        "show_story": false,
+        "benefits_heading": "Why Choose DizzyCustom",
+        "show_benefits": true,
+        "show_feature_showcase": false,
+        "color_scheme": "inverse",
+        "padding_top": 32,
+        "padding_bottom": 32
       }
     },
     "dc_installation_guide": {
@@ -385,16 +408,16 @@
           "type": "tip",
           "settings": {
             "icon": "flat",
-            "heading": "Flat Surfaces (e.g. cars, guitars)",
-            "text": "<p>Work best on flat areas. Ensure the surface is clean and dry for maximum adhesion.</p>"
+            "heading": "Estimate the Curve of the Surface",
+            "text": "<p>Before removing the backing, gently place the emblem on the surface to get a feel for the curve.</p>"
           }
         },
         "tip_curve": {
           "type": "tip",
           "settings": {
             "icon": "curve",
-            "heading": "Curved Surfaces (e.g. motorbikes, helmets)",
-            "text": "<p>For curved surfaces, choose a smaller size and press firmly from the center to the edges.</p>"
+            "heading": "Pre-Bend the Emblem to Match the Curve",
+            "text": "<p>Slightly warm up the non-adhesive side of the emblem and bend it to follow the estimated curve.</p><p>Then shape the emblem to fit the curve, and press it down from the center outward to prevent wrinkles or lifted edges.</p>"
           }
         }
       },
@@ -855,7 +878,7 @@
         "columns_desktop": 5,
         "full_width": false,
         "show_view_all": true,
-        "view_all_style": "solid",
+        "view_all_style": "link",
         "enable_desktop_slider": false,
         "color_scheme": "inverse",
         "image_ratio": "adapt",
@@ -975,6 +998,7 @@
     "multicolumn_mrpKL4",
     "1705119654de2e3b3c",
     "featured_collection_43WFLW",
+    "dc_brand_benefits",
     "dc_special_request",
     "collapsible_content_EKCrAk"
   ]

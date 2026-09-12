@@ -125,10 +125,18 @@
 }
 
 .dc-installation-guide__tip .rte {
-  margin-top: 0.6rem;
+  margin-top: 1.6rem;
   font-size: 15px;
   line-height: 1.45;
   color: rgba(var(--color-foreground), 0.72);
+}
+
+.dc-installation-guide__tip .rte p {
+  margin: 0;
+}
+
+.dc-installation-guide__tip .rte p + p {
+  margin-top: 0;
 }
 
 @media screen and (min-width: 750px) {
@@ -150,5 +158,99 @@
 @media screen and (min-width: 1200px) {
   .dc-installation-guide__steps {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 749px) {
+  section.dc-installation-guide {
+    padding-top: 2.4rem;
+    padding-bottom: 2.4rem;
+  }
+
+  .dc-installation-guide__heading,
+  .dc-installation-guide__tips-heading {
+    font-size: 2.2rem;
+  }
+
+  .dc-installation-guide__heading,
+  .dc-installation-guide__tips-heading {
+    margin-bottom: 1.6rem;
+  }
+
+  .dc-installation-guide__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .dc-installation-guide__step {
+    border-radius: 0.8rem;
+  }
+
+  .dc-installation-guide__step-header {
+    gap: 0.6rem;
+    min-height: 3.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .dc-installation-guide__step-number {
+    flex-basis: 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .dc-installation-guide__step-header h3 {
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .dc-installation-guide__step-media {
+    aspect-ratio: 1.45 / 1;
+  }
+
+  .dc-installation-guide__step-content {
+    padding: 0.8rem;
+  }
+
+  .dc-installation-guide__step-content .rte {
+    margin-top: 0;
+    font-size: 1.1rem;
+    line-height: 1.35;
+  }
+
+  .dc-installation-guide__step-content .rte p {
+    margin: 0;
+  }
+
+  .dc-installation-guide__tips-wrap {
+    margin-top: 2.4rem;
+  }
+
+  .dc-installation-guide__tips {
+    gap: 0.8rem;
+  }
+
+  .dc-installation-guide__tip {
+    gap: 1rem;
+    min-height: 0;
+    padding: 1.2rem;
+    border-radius: 0.8rem;
+  }
+
+  .dc-installation-guide__tip-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    margin-top: 0;
+  }
+
+  .dc-installation-guide__tip h3 {
+    font-size: 1.4rem;
+  }
+
+  .dc-installation-guide__tip .rte {
+    margin-top: 0.6rem;
+    font-size: 1.2rem;
+    line-height: 1.4;
   }
 }

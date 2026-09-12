@@ -115,6 +115,11 @@
   margin-top: 3.6rem;
 }
 
+/* A benefits-only instance does not need the story-to-benefits separation. */
+.dc-brand-experience > .dc-brand-experience__benefits:first-child {
+  margin-top: 0;
+}
+
 .dc-brand-experience__benefits-heading {
   margin: 0 0 3rem;
   font-size: var(--dc-type-section-title);
@@ -204,7 +209,7 @@
   min-height: 28rem;
   padding: 3rem;
   background:
-    radial-gradient(circle at 0% 0%, rgba(174, 211, 255, 0.62) 0%, rgba(210, 231, 255, 0.34) 34%, rgba(238, 246, 255, 0) 68%),
+    radial-gradient(circle at 0% 0%, rgba(132, 190, 255, 0.76) 0%, rgba(192, 224, 255, 0.42) 34%, rgba(238, 246, 255, 0) 68%),
     radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.68) 30%, rgba(255, 255, 255, 0) 58%),
     linear-gradient(315deg, #ffffff 0%, #f7fbff 50%, #e5f1ff 100%);
   color: #071226;
@@ -212,7 +217,7 @@
 
 .dc-brand-experience__feature-row--reverse .dc-brand-experience__feature-content {
   background:
-    radial-gradient(circle at 100% 100%, rgba(174, 211, 255, 0.62) 0%, rgba(210, 231, 255, 0.34) 34%, rgba(238, 246, 255, 0) 68%),
+    radial-gradient(circle at 100% 100%, rgba(132, 190, 255, 0.76) 0%, rgba(192, 224, 255, 0.42) 34%, rgba(238, 246, 255, 0) 68%),
     radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.68) 30%, rgba(255, 255, 255, 0) 58%),
     linear-gradient(135deg, #ffffff 0%, #f7fbff 48%, #e5f1ff 100%);
 }
@@ -457,16 +462,108 @@
 }
 
 @media screen and (max-width: 749px) {
+  .dc-brand-experience__showcase-wrap {
+    margin-top: 2.4rem;
+  }
+
+  .dc-brand-experience__showcase {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .dc-brand-experience__feature-row {
+    display: contents;
+  }
+
+  .dc-brand-experience__feature-content,
+  .dc-brand-experience__feature-media {
+    min-height: 18rem;
+    height: auto;
+  }
+
+  .dc-brand-experience__feature-content {
+    padding: 1.6rem;
+  }
+
+  .dc-brand-experience__feature-eyebrow {
+    margin-bottom: 0.8rem;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+
   .dc-brand-experience__feature-heading {
-    font-size: 30px;
+    font-size: 22px;
+    line-height: 1.1;
   }
 
   .dc-brand-experience__feature-text {
-    font-size: var(--dc-type-body);
+    margin-top: 1rem;
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   .dc-brand-experience__feature-label,
   .dc-brand-experience__media-label {
-    letter-spacing: 0.16em;
+    gap: 0.8rem;
+    margin-top: 1.6rem;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  .dc-brand-experience__feature-label > span,
+  .dc-brand-experience__media-label > span {
+    flex-basis: 2.8rem;
+    width: 2.8rem;
+    height: 0.2rem;
+  }
+
+  .dc-brand-experience__media-label {
+    right: 1.4rem;
+    bottom: 1.4rem;
+    left: 1.4rem;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Fix alternating layout on mobile: --reverse row must show image left, text right.
+     display:contents merges all 4 cells into the parent grid, so we need
+     higher order values that place media2 before content2. */
+  .dc-brand-experience__feature-row--reverse .dc-brand-experience__feature-media {
+    order: 3;
+  }
+
+  .dc-brand-experience__feature-row--reverse .dc-brand-experience__feature-content {
+    order: 4;
+  }
+
+  .dc-brand-experience__benefits-heading {
+    margin-bottom: 1.6rem;
+    font-size: 2.2rem;
+  }
+
+  .dc-brand-experience__benefit-grid {
+    gap: 0.8rem;
+  }
+
+  .dc-brand-experience__benefit {
+    padding: 1.6rem 1.2rem;
+    border-radius: 0.8rem;
+  }
+
+  .dc-brand-experience__benefit-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .dc-brand-experience__benefit h3 {
+    font-size: 1.4rem;
+    line-height: 1.25;
+  }
+
+  .dc-brand-experience__benefit .rte {
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
+    line-height: 1.4;
   }
 }

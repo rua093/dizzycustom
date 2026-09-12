@@ -20,15 +20,34 @@
   }
 {%- endstyle -%}
 
+{%- liquid
+  assign view_all_url = section.settings.view_all_link
+  if view_all_url == blank
+    assign view_all_url = collections['dizzy-custom-emblems'].url | default: routes.all_products_collection_url
+  endif
+-%}
+
 <div class="color-{{ section.settings.color_scheme }} gradient no-js-hidden">
-  <product-recommendations
-    class="related-products page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
-  >
-    {% if recommendations.performed and recommendations.products_count > 0 %}
+  <div class="related-products page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div class="related-products__header">
       <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">
         {{ section.settings.heading }}
       </h2>
+      {%- if section.settings.show_view_all != false -%}
+        <a
+          class="related-products__view-all"
+          href="{{ view_all_url }}"
+        >
+          <span>View all products</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      {%- endif -%}
+    </div>
+    <product-recommendations
+      class="related-products__content"
+      data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
+    >
+      {% if recommendations.performed and recommendations.products_count > 0 %}
       <ul
         class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
         role="list"
@@ -46,8 +65,9 @@
           </li>
         {% endfor %}
       </ul>
-    {% endif %}
-  </product-recommendations>
+      {% endif %}
+    </product-recommendations>
+  </div>
   {% if section.settings.image_shape == 'arch' %}
     {% render 'mask-arch' %}
   {%- endif -%}
@@ -106,6 +126,17 @@
       "step": 1,
       "default": 4,
       "label": "t:sections.related-products.settings.columns_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "Show view all products link"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all products link"
     },
     {
       "type": "color_scheme",
