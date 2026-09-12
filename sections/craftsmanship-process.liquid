@@ -78,6 +78,81 @@
         </li>
       {%- endfor -%}
     </ol>
+
+    {%- if section.blocks.size > 1 -%}
+      <div class="craftsmanship-process__nav" aria-label="Craftsmanship timeline navigation">
+        <div class="craftsmanship-process__dots" role="tablist">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="craftsmanship-process__dot{% if forloop.first %} is-active{% endif %}"
+              data-step-index="{{ forloop.index0 }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="Step {{ block.settings.step_number | default: forloop.index }}"
+            ></button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <script>
+        (() => {
+          const section = document.getElementById('CraftsmanshipProcess-{{ section.id }}');
+          if (!section) return;
+          const timeline = section.querySelector('.craftsmanship-process__timeline');
+          const dots = section.querySelectorAll('.craftsmanship-process__dot');
+          const steps = section.querySelectorAll('.craftsmanship-step');
+          if (!timeline || !dots.length || !steps.length) return;
+
+          let activeIndex = 0;
+          const updateActive = (index) => {
+            if (index === activeIndex || index < 0 || index >= dots.length) return;
+            activeIndex = index;
+            dots.forEach((dot, i) => {
+              const isActive = i === index;
+              dot.classList.toggle('is-active', isActive);
+              dot.setAttribute('aria-selected', String(isActive));
+            });
+          };
+
+          dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+              const step = steps[index];
+              if (step) {
+                const paddingLeft = parseFloat(window.getComputedStyle(timeline).paddingLeft) || 16;
+                timeline.scrollTo({
+                  left: step.offsetLeft - timeline.offsetLeft - paddingLeft,
+                  behavior: 'smooth'
+                });
+                updateActive(index);
+              }
+            });
+          });
+
+          if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const index = Array.from(steps).indexOf(entry.target);
+                  if (index !== -1) updateActive(index);
+                }
+              });
+            }, {
+              root: timeline,
+              threshold: 0.55
+            });
+            steps.forEach((step) => observer.observe(step));
+          } else {
+            timeline.addEventListener('scroll', () => {
+              const scrollLeft = timeline.scrollLeft;
+              const itemWidth = steps[0].offsetWidth + (parseFloat(window.getComputedStyle(timeline).gap) || 18);
+              const index = Math.round(scrollLeft / itemWidth);
+              updateActive(index);
+            }, { passive: true });
+          }
+        })();
+      </script>
+    {%- endif -%}
   </div>
 </section>
 

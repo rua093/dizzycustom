@@ -2601,8 +2601,8 @@ product-info .loading__spinner:not(.hidden) ~ *,
 }
 
 .header__icon--cart .icon {
-  height: 2.2rem;
-  width: 2.2rem;
+  height: 2rem;
+  width: 2rem;
   padding: 0;
 }
 
@@ -2785,6 +2785,8 @@ details[open] .modal-overlay::after {
   opacity: 1;
   transform: scale(1);
   transition: transform 150ms ease, opacity 150ms ease;
+  height: 1.5rem;
+  width: 1.7rem;
 }
 
 details:not([open]) > .header__icon--menu .icon-close,

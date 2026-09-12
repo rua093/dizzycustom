@@ -8,6 +8,7 @@
   {% render 'header-search', input_id: 'My-Id'%}
 {% endcomment %}
 
+{%- unless mobile_only -%}
 <!-- Desktop: Persistent Inline Search Bar -->
 <div class="header__search header__search--inline small-hide medium-hide">
   {%- if settings.predictive_search_enabled -%}
@@ -71,7 +72,9 @@
     </search-form>
   {%- endif -%}
 </div>
+{%- endunless -%}
 
+{%- unless desktop_only -%}
 <!-- Mobile: Compact search icon modal toggle -->
 <details-modal class="header__search header__search--modal large-up-hide">
   <details>
@@ -172,3 +175,4 @@
     </div>
   </details>
 </details-modal>
+{%- endunless -%}

@@ -216,3 +216,189 @@
     display: list-item;
   }
 }
+
+/* ==========================================================================
+   Responsive: Mobile 2-Column Grid Polish
+   ========================================================================== */
+@media screen and (max-width: 749px) {
+  .grid--2-col-tablet-down {
+    row-gap: 1.4rem;
+  }
+
+  .grid--2-col-tablet-down .multicolumn-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 1.2rem;
+    overflow: hidden;
+  }
+
+  .grid--2-col-tablet-down .multicolumn-card-spacing {
+    padding-top: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .grid--2-col-tablet-down .multicolumn-card__info {
+    padding: 1.4rem 1.2rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+  }
+
+  .grid--2-col-tablet-down .multicolumn-card__info h3 {
+    font-size: 1.45rem;
+    line-height: 1.25;
+  }
+
+  .grid--2-col-tablet-down .multicolumn-card__info .rte p {
+    font-size: 1.22rem;
+    line-height: 1.4;
+  }
+}
+
+/* ==========================================================================
+   Mobile Interactive Tabs Component for Multicolumn (Minimal Underline Style)
+   ========================================================================== */
+.multicolumn-mobile-tabs {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  .multicolumn--mobile-tabs-enabled .title-wrapper-with-link {
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 1.6rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .multicolumn--mobile-tabs-enabled .title-wrapper-with-link .title {
+    text-align: center;
+    font-size: 2.2rem;
+    line-height: 1.3;
+  }
+
+  .multicolumn-mobile-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 0 1rem 0.2rem;
+    margin: -0.6rem 0 1.8rem;
+    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  }
+
+  .multicolumn-mobile-tab-divider {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(var(--color-foreground), 0.2);
+    font-size: 1.4rem;
+    font-weight: 300;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .multicolumn-mobile-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 0.8rem 1.1rem;
+    font-family: var(--font-body-family);
+    font-size: 1.4rem;
+    letter-spacing: 0.02rem;
+    font-weight: 450;
+    line-height: 1.2;
+    white-space: nowrap;
+    border: none;
+    background: transparent;
+    color: rgba(var(--color-foreground), 0.55);
+    cursor: pointer;
+    transition: color var(--duration-default) ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .multicolumn-mobile-tab:hover {
+    color: #03182a;
+  }
+
+  .multicolumn-mobile-tab.is-active {
+    color: #03182a;
+    font-weight: 700;
+  }
+
+  /* Dark blue indicator bar underneath active tab */
+  .multicolumn-mobile-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -0.1rem;
+    left: 0.6rem;
+    right: 0.6rem;
+    height: 0.25rem;
+    background: #03182a;
+    border-radius: 0.2rem 0.2rem 0 0;
+    opacity: 0;
+    transform: scaleX(0.4);
+    transition: opacity var(--duration-default) ease, transform var(--duration-default) ease;
+  }
+
+  .multicolumn-mobile-tab.is-active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  /* Show only the active panel on mobile when tabs are enabled */
+  .multicolumn-list--mobile-tabs .multicolumn-list__item:not(.is-active) {
+    display: none !important;
+  }
+
+  .multicolumn-list--mobile-tabs .multicolumn-list__item.is-active {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    animation: multicolumnTabFade 0.25s ease-out;
+  }
+
+  .multicolumn-list--mobile-tabs .multicolumn-list__item.is-active .media,
+  .multicolumn-list--mobile-tabs .multicolumn-list__item.is-active img {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  @keyframes multicolumnTabFade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .multicolumn-list--mobile-tabs .multicolumn-card {
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 0.8rem 2.4rem rgba(7, 24, 42, 0.08);
+    border: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  }
+
+  .multicolumn-list--mobile-tabs .multicolumn-card-spacing {
+    padding-top: 1.8rem;
+    padding-bottom: 1.8rem;
+    margin-left: 1.8rem;
+    margin-right: 1.8rem;
+  }
+
+  .multicolumn-list--mobile-tabs .multicolumn-card__info {
+    display: none;
+  }
+}
+
+.no-js .multicolumn-list--mobile-tabs .multicolumn-list__item {
+  display: block !important;
+}
+

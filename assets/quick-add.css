@@ -276,19 +276,7 @@ quick-add-modal .product-form__buttons {
 
 @media screen and (max-width: 749px) {
   .product-card-wrapper--dizzy .quick-add {
-    margin-top: 0.8rem;
-  }
-
-  .product-card-wrapper--dizzy .quick-add__submit {
-    min-height: 3.8rem;
-    font-size: 1.25rem;
-    grid-template-columns: 3.4rem minmax(0, 1fr);
-    border-radius: 0.6rem;
-  }
-
-  .product-card-wrapper--dizzy .quick-add__icon .icon {
-    width: 1.6rem;
-    height: 1.6rem;
+    display: none;
   }
 }
 
