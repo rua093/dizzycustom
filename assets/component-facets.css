@@ -99,7 +99,7 @@
   transition: none;
 }
 
-.facet-filters button {
+.facet-filters .facets__button-no-js {
   margin-left: 2.5rem;
 }
 
@@ -1578,6 +1578,7 @@ input.mobile-facets__checkbox {
   border-radius: 1.4rem !important;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.04), 0 0 1px rgba(0, 0, 0, 0.08) !important;
   z-index: 105 !important;
+  overflow: visible !important;
   transform-origin: top right !important;
   animation: facetSortFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -1609,6 +1610,8 @@ input.mobile-facets__checkbox {
 
 .facet-filters__sort-option {
   width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
