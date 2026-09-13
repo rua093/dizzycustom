@@ -431,24 +431,93 @@
 
 .facets__price {
   display: flex;
-  padding: 2rem;
-}
-
-.facets__price .field + .field-currency {
-  margin-left: 2rem;
-}
-
-.facets__price .field {
   align-items: center;
+  padding: 1.6rem 2rem;
+  gap: 1rem;
 }
 
 .facets__price .field-currency {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0;
   align-self: center;
-  margin-right: 0.6rem;
+}
+
+.facets__price .field + .field-currency {
+  margin-left: 0.5rem;
+}
+
+.facets__price .field {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  height: 4.8rem;
+  min-height: 4.8rem;
+  border: 0.12rem solid #e2e8f0;
+  border-radius: 0.8rem;
+  background: #ffffff;
+  padding: 0.4rem 1.2rem;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.facets__price .field::before,
+.facets__price .field::after {
+  display: none !important;
+  content: none !important;
+}
+
+.facets__price .field:hover {
+  border-color: #cbd5e1;
+}
+
+.facets__price .field:focus-within {
+  border-color: #0065a7;
+  box-shadow: 0 0 0 0.3rem rgba(0, 101, 167, 0.12);
 }
 
 .facets__price .field__label {
-  left: 1.5rem;
+  position: static;
+  transform: none;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+  pointer-events: none;
+  transition: color 0.15s ease;
+}
+
+.facets__price .field:focus-within .field__label {
+  color: #0065a7;
+}
+
+.facets__price .field__input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0f172a;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.facets__price .field__input::-webkit-outer-spin-button,
+.facets__price .field__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button.facets__button {
@@ -1427,6 +1496,12 @@ input.mobile-facets__checkbox {
   box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.04);
 }
 
+.facet-filters__field .select::before,
+.facet-filters__field .select::after {
+  display: none !important;
+  content: none !important;
+}
+
 .facet-filters__field .select:hover {
   border-color: #cbd5e1;
   background: #f8fafc;
@@ -1534,31 +1609,5 @@ input.mobile-facets__checkbox {
   text-decoration: underline;
 }
 
-/* 8. Price Range Filter Popup */
-.facets__price {
-  padding: 2rem;
-  gap: 1.2rem;
-}
 
-.facets__price .field {
-  height: 4rem;
-  min-height: 4rem;
-  border: 0.12rem solid #e2e8f0;
-  border-radius: 0.8rem;
-  background: #ffffff;
-  padding: 0 1rem;
-  transition: all 0.15s ease;
-}
-
-.facets__price .field:focus-within {
-  border-color: #0065a7;
-  box-shadow: 0 0 0 0.25rem rgba(0, 101, 167, 0.12);
-}
-
-.facets__price .field__input {
-  padding: 0;
-  font-size: 1.4rem;
-  font-weight: 500;
-  color: #0f172a;
-}
 
