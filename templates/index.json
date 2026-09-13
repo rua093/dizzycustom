@@ -63,38 +63,10 @@
         "show_trust_strip": false
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "Best Selling Emblems",
-        "heading_size": "h2",
-        "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
-        "show_description": false,
-        "description_style": "subtitle",
-        "collection": "dizzy-custom-emblems",
-        "products_to_show": 8,
-        "columns_desktop": 4,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "color_scheme": "inverse",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": true,
-        "enable_quick_add": true,
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 40,
-        "padding_bottom": 36
-      }
-    },
     "dc_emblem_builder": {
       "type": "dc-emblem-builder",
       "settings": {
-        "product": "",
+        "product": "custom-metal-emblem-for-car-and-motorbike-copy-2",
         "eyebrow": "YOUR WORDS. YOUR STYLE.",
         "heading": "Make it unmistakably yours.",
         "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
@@ -192,6 +164,34 @@
         "m_padding_bottom": 16
       }
     },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Best Selling Emblems",
+        "heading_size": "h2",
+        "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
+        "show_description": false,
+        "description_style": "subtitle",
+        "collection": "dizzy-custom-emblems",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "inverse",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "enable_quick_add": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 40,
+        "padding_bottom": 36
+      }
+    },
     "rich_text_hjbhAC": {
       "type": "rich-text",
       "blocks": {
@@ -226,12 +226,11 @@
     "multicolumn_6CbrDa": {
       "type": "multicolumn",
       "blocks": {
-        "column_Tzacyw": {
+        "column_wDp6fP": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
-            "title": "Outstanding features",
-            "tab_title": "Features",
+            "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
+            "title": "DizzyCustom vs. The Others",
             "text": "",
             "link_label": "",
             "link": ""
@@ -242,18 +241,16 @@
           "settings": {
             "image": "shopify://shop_images/3lo_icaremblem_48691ec1-fb86-4b02-bd8f-f0e41cd15f3f.png",
             "title": "3 Luxury Finishes",
-            "tab_title": "3 Finishes",
             "text": "",
             "link_label": "",
             "link": ""
           }
         },
-        "column_wDp6fP": {
+        "column_Tzacyw": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
-            "title": "DizzyCustom vs. The Others",
-            "tab_title": "vs. Others",
+            "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
+            "title": "Outstanding features",
             "text": "",
             "link_label": "",
             "link": ""
@@ -279,7 +276,6 @@
         "color_scheme": "",
         "columns_mobile": "1",
         "swipe_on_mobile": false,
-        "enable_mobile_tabs": true,
         "padding_top": 36,
         "padding_bottom": 36
       }
