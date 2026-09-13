@@ -522,27 +522,72 @@
                 <h2 class="facet-filters__label caption-large text-body">
                   <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
                 </h2>
-                <div class="select">
-                  {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
-                  <select
-                    name="sort_by"
-                    class="facet-filters__sort select__select caption-large"
-                    id="SortBy"
-                    aria-describedby="a11y-refresh-page-message"
-                  >
-                    {%- for option in results.sort_options -%}
-                      <option
-                        value="{{ option.value | escape }}"
-                        {% if option.value == sort_by %}
-                          selected="selected"
-                        {% endif %}
-                      >
-                        {{ option.name | escape }}
-                      </option>
-                    {%- endfor -%}
-                  </select>
-                  {% render 'icon-caret' %}
-                </div>
+                {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+                {%- assign current_sort_name = '' -%}
+                {%- for option in results.sort_options -%}
+                  {%- if option.value == sort_by -%}
+                    {%- assign current_sort_name = option.name -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if current_sort_name == '' -%}
+                  {%- assign current_sort_name = results.sort_options[0].name -%}
+                {%- endif -%}
+
+                <details class="disclosure-has-popup facets__disclosure facet-filters__sort-disclosure" id="Details-SortBy-{{ section.id }}">
+                  <summary class="facets__summary caption-large focus-offset facet-filters__sort-summary">
+                    <span class="facet-filters__sort-current">{{ current_sort_name | escape }}</span>
+                    {% render 'icon-caret' %}
+                  </summary>
+                  <div class="facets__display facet-filters__sort-display">
+                    <ul class="facet-filters__sort-list list-unstyled" role="list">
+                      {%- for option in results.sort_options -%}
+                        <li class="facet-filters__sort-item">
+                          <button
+                            type="button"
+                            class="facet-filters__sort-option{% if option.value == sort_by %} is-active{% endif %}"
+                            data-value="{{ option.value | escape }}"
+                            onclick="
+                              const form = this.closest('form');
+                              const select = form.querySelector('#SortBy');
+                              if (select) {
+                                select.value = this.dataset.value;
+                                select.dispatchEvent(new Event('input', { bubbles: true }));
+                                select.dispatchEvent(new Event('change', { bubbles: true }));
+                              }
+                              this.closest('details').removeAttribute('open');
+                            "
+                          >
+                            <span class="facet-filters__sort-option-name">{{ option.name | escape }}</span>
+                            {%- if option.value == sort_by -%}
+                              <svg class="icon icon-checkmark" width="1.2rem" height="0.9rem" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.5 3.5L2.83333 4.75L4.16667 6L9.5 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                            {%- endif -%}
+                          </button>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </details>
+
+                <select
+                  name="sort_by"
+                  class="facet-filters__sort select__select caption-large visually-hidden"
+                  id="SortBy"
+                  aria-describedby="a11y-refresh-page-message"
+                  tabindex="-1"
+                >
+                  {%- for option in results.sort_options -%}
+                    <option
+                      value="{{ option.value | escape }}"
+                      {% if option.value == sort_by %}
+                        selected="selected"
+                      {% endif %}
+                    >
+                      {{ option.name | escape }}
+                    </option>
+                  {%- endfor -%}
+                </select>
               </div>
 
               <noscript>
