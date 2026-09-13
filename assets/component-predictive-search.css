@@ -341,6 +341,6 @@ predictive-search[loading] .predictive-search__results-groups-wrapper ~ .predict
 
 .header__search--inline #predictive-search-results-groups-wrapper,
 .header__search--inline .predictive-search__results-groups-wrapper {
-  max-height: 23rem;
+  max-height: 20rem;
   overflow-y: auto;
 }
