@@ -5,6 +5,13 @@ if (!customElements.get('quick-add-modal')) {
       constructor() {
         super();
         this.modalContent = this.querySelector('[id^="QuickAddInfo-"]');
+        this.addEventListener(
+          'click',
+          (event) => {
+            if (event.target === this) event.stopImmediatePropagation();
+          },
+          true
+        );
       }
 
       hide(preventFocus = false) {
@@ -22,18 +29,23 @@ if (!customElements.get('quick-add-modal')) {
         opener.querySelector('.loading__spinner').classList.remove('hidden');
 
         fetch(opener.getAttribute('data-product-url'))
-          .then((response) => response.text())
+          .then((response) => {
+            if (!response.ok) throw new Error(`Quick detail request failed (${response.status})`);
+            return response.text();
+          })
           .then((responseText) => {
             const responseHTML = new DOMParser().parseFromString(responseText, 'text/html');
             this.productElement = responseHTML.querySelector('section[id^="MainProduct-"]');
+            if (!this.productElement) throw new Error('Quick detail product section was not found');
             this.productElement.classList.forEach((classApplied) => {
               if (classApplied.startsWith('color-') || classApplied === 'gradient')
                 this.modalContent.classList.add(classApplied);
             });
             this.preventDuplicatedIDs();
             this.removeDOMElements();
-            this.setInnerHTML(this.modalContent, this.productElement.innerHTML);
-            this.decorateQuickAddContent();
+            // Keep the PDP section wrapper so Quick detail uses the same scoped
+            // product and gallery styles as the full product page.
+            this.setInnerHTML(this.modalContent, this.productElement.outerHTML);
 
             if (window.Shopify && Shopify.PaymentButton) {
               Shopify.PaymentButton.init();
@@ -45,6 +57,11 @@ if (!customElements.get('quick-add-modal')) {
             this.updateImageSizes();
             this.preventVariantURLSwitching();
             super.show(opener);
+            requestAnimationFrame(() => this.refreshGallery());
+          })
+          .catch((error) => {
+            console.error(error);
+            window.location.assign(opener.getAttribute('data-product-url'));
           })
           .finally(() => {
             opener.removeAttribute('aria-disabled');
@@ -56,44 +73,42 @@ if (!customElements.get('quick-add-modal')) {
       setInnerHTML(element, html) {
         element.innerHTML = html;
 
-        // Reinjects the script tags to allow execution. By default, scripts are disabled when using element.innerHTML.
+        // JSON data must stay inside the product markup. Executable external
+        // assets are loaded once and kept outside the modal so reopening Quick
+        // Detail does not download or initialize the same component again.
         element.querySelectorAll('script').forEach((oldScriptTag) => {
+          const type = oldScriptTag.getAttribute('type');
+          if (type === 'application/json' || type === 'application/ld+json') return;
+
+          if (oldScriptTag.src) {
+            const isLoaded = Array.from(document.scripts).some(
+              (script) => !element.contains(script) && script.src === oldScriptTag.src
+            );
+            if (isLoaded) {
+              oldScriptTag.remove();
+              return;
+            }
+
+            const newScriptTag = document.createElement('script');
+            Array.from(oldScriptTag.attributes).forEach((attribute) => {
+              newScriptTag.setAttribute(attribute.name, attribute.value);
+            });
+            document.head.appendChild(newScriptTag);
+            oldScriptTag.remove();
+            return;
+          }
+
+          if (oldScriptTag.textContent.includes('product-form.js') && customElements.get('product-form')) {
+            oldScriptTag.remove();
+            return;
+          }
+
           const newScriptTag = document.createElement('script');
           Array.from(oldScriptTag.attributes).forEach((attribute) => {
             newScriptTag.setAttribute(attribute.name, attribute.value);
           });
           newScriptTag.appendChild(document.createTextNode(oldScriptTag.innerHTML));
           oldScriptTag.parentNode.replaceChild(newScriptTag, oldScriptTag);
-        });
-      }
-
-      decorateQuickAddContent() {
-        const textBlocks = this.modalContent.querySelectorAll('.product__info-container > .product__text');
-        const benefitRules = [
-          { match: 'Rust-free', icon: 'quality' },
-          { match: 'Install in 5 minutes', icon: 'installation' },
-          { match: 'Perfect for cars', icon: 'vehicle', wide: true },
-        ];
-
-        textBlocks.forEach((block) => {
-          const originalText = block.textContent.replace(/\s+/g, ' ').trim();
-          const benefit = benefitRules.find((rule) => originalText.includes(rule.match));
-          const isOrderNote = originalText.includes('Made to order');
-
-          if (!benefit && !isOrderNote) return;
-
-          const iconTemplate = this.querySelector(
-            `[data-quick-add-icon="${isOrderNote ? 'shipping' : benefit.icon}"]`
-          );
-          const copy = document.createElement('span');
-          copy.className = 'product__text-benefit-copy';
-          copy.textContent = originalText.replace(/^[\u2713\u{1F69A}]\s*/u, '');
-
-          block.classList.add(isOrderNote ? 'product__text--order-note' : 'product__text--benefit');
-          if (benefit?.wide) block.classList.add('product__text--benefit-wide');
-          block.replaceChildren();
-          if (iconTemplate) block.append(iconTemplate.content.cloneNode(true));
-          block.append(copy);
         });
       }
 
@@ -113,11 +128,25 @@ if (!customElements.get('quick-add-modal')) {
 
         const modalDialog = this.productElement.querySelectorAll('modal-dialog');
         if (modalDialog) modalDialog.forEach((modal) => modal.remove());
+
+        this.productElement.querySelectorAll('script[type="application/ld+json"]').forEach((script) => script.remove());
+        this.productElement.querySelectorAll('script').forEach((script) => {
+          if (script.src.includes('product-modal.js') || script.textContent.includes('function isIE()')) script.remove();
+        });
+
+        const stylesheetUrls = new Set();
+        this.productElement.querySelectorAll('link[rel="stylesheet"]').forEach((stylesheet) => {
+          if (stylesheetUrls.has(stylesheet.href)) stylesheet.remove();
+          else stylesheetUrls.add(stylesheet.href);
+        });
       }
 
       preventDuplicatedIDs() {
         const sectionId = this.productElement.dataset.section;
-        this.productElement.innerHTML = this.productElement.innerHTML.replaceAll(sectionId, `quickadd-${sectionId}`);
+        const quickAddSectionId = `quickadd-${sectionId}`;
+        this.productElement.id = this.productElement.id.replace(sectionId, quickAddSectionId);
+        this.productElement.dataset.section = quickAddSectionId;
+        this.productElement.innerHTML = this.productElement.innerHTML.replaceAll(sectionId, quickAddSectionId);
         this.productElement.querySelectorAll('variant-selects, variant-radios, product-info').forEach((element) => {
           element.dataset.originalSection = sectionId;
         });
@@ -129,6 +158,10 @@ if (!customElements.get('quick-add-modal')) {
 
         galleryList.setAttribute('role', 'presentation');
         galleryList.querySelectorAll('[id^="Slide-"]').forEach((li) => li.setAttribute('role', 'presentation'));
+      }
+
+      refreshGallery() {
+        this.modalContent.querySelectorAll('slider-component').forEach((slider) => slider.resetPages?.());
       }
 
       updateImageSizes() {

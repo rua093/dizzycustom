@@ -987,23 +987,32 @@ class VariantSelects extends HTMLElement {
 
   updateMedia() {
     // Group variants
-    const variantValues = this.currentVariant.options
-    const mediaGallery = document.querySelector(`[id^="MediaGallery-${this.dataset.section}"]`)
-    if (mediaGallery.hasAttribute("media-grouping-enabled")) {
-      mediaGallery.querySelectorAll('[data-media-group]').forEach(el => el.classList.add('hide-media'))
-      variantValues.forEach(value => { mediaGallery.querySelectorAll(`[data-media-group="${value}"]`).forEach(el => el.classList.remove('hide-media')) })
-      mediaGallery.querySelectorAll('slider-component').forEach(slider => { slider.initPages() })
+    if (!this.currentVariant) return;
+    const variantValues = this.currentVariant.options;
+    const productScope = this.closest('.dc-main-product') || document;
+    const mediaGallery = productScope.querySelector(`[id^="MediaGallery-${CSS.escape(this.dataset.section)}"]`);
+    if (mediaGallery?.hasAttribute('media-grouping-enabled')) {
+      mediaGallery.querySelectorAll('[data-media-group]').forEach((element) => element.classList.add('hide-media'));
+      variantValues.forEach((value) => {
+        mediaGallery
+          .querySelectorAll(`[data-media-group="${CSS.escape(value)}"]`)
+          .forEach((element) => element.classList.remove('hide-media'));
+      });
+      mediaGallery.querySelectorAll('slider-component').forEach((slider) => slider.resetPages());
     }
     // Group variants end
-    if (!this.currentVariant) return;
     if (!this.currentVariant.featured_media) return;
 
-    const mediaGalleries = document.querySelectorAll(`[id^="MediaGallery-${this.dataset.section}"]`);
+    const mediaGalleries = productScope.querySelectorAll(
+      `[id^="MediaGallery-${CSS.escape(this.dataset.section)}"]`
+    );
     mediaGalleries.forEach((mediaGallery) =>
       mediaGallery.setActiveMedia(`${this.dataset.section}-${this.currentVariant.featured_media.id}`, true)
     );
 
-    const modalContent = document.querySelector(`#ProductModal-${this.dataset.section} .product-media-modal__content`);
+    const modalContent = document.querySelector(
+      `#ProductModal-${CSS.escape(this.dataset.section)} .product-media-modal__content`
+    );
     if (!modalContent) return;
     const newMediaModal = modalContent.querySelector(`[data-media-id="${this.currentVariant.featured_media.id}"]`);
     modalContent.prepend(newMediaModal);
