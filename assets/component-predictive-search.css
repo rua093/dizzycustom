@@ -338,3 +338,9 @@ predictive-search[loading] .predictive-search__results-groups-wrapper ~ .predict
 .predictive-search__item--term[aria-selected='true'] .icon-arrow {
   transform: translateX(0.4rem);
 }
+
+.header__search--inline #predictive-search-results-groups-wrapper,
+.header__search--inline .predictive-search__results-groups-wrapper {
+  max-height: 23rem;
+  overflow-y: auto;
+}
