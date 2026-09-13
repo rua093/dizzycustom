@@ -79,6 +79,7 @@ Animations should enhance a layout that already works. Prefer `transform` and `o
 
 ## 7. Git And Shopify Boundaries
 
+- Never automatically commit or push code. Only commit and push when the user explicitly asks.
 - Never reset, clean, force push, rewrite history or restore unrelated files unless the user explicitly asks.
 - Git is the source of truth. Theme Editor changes must be inspected as a diff before integration.
 - Do not bulk pull, push to a shared/live theme, publish a theme or change remote Shopify configuration unless explicitly requested.
