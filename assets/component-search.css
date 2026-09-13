@@ -237,6 +237,7 @@ input::-webkit-search-decoration {
   }
 
   .header__search--inline .predictive-search {
+    display: none;
     top: calc(100% + 0.6rem);
     left: auto;
     right: 0;
@@ -249,6 +250,20 @@ input::-webkit-search-decoration {
     z-index: 100;
     max-height: 44rem;
     overflow-y: auto;
+  }
+
+  .header__search--inline predictive-search[open] .predictive-search,
+  .header__search--inline predictive-search[loading] .predictive-search {
+    display: block;
+  }
+
+  .header__search--inline predictive-search:not([loading]) .predictive-search__loading-state {
+    display: none;
+  }
+
+  .header__search--inline .spinner {
+    width: 2rem;
+    height: 2rem;
   }
 
   .header__search--inline .predictive-search__item {
