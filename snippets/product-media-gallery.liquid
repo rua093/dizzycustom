@@ -44,15 +44,15 @@
 -%}
 {%- liquid
   if section.settings.enable_group_media
-    assign optionNames = section.settings.media_grouping_option | split:","
-    assign option_name_present = false 
-    assign image_positions = ""
-    assign group_values = ""
-    for option in optionNames
+    assign option_names = section.settings.media_grouping_option | split: ','
+    assign option_name_present = false
+    assign image_positions = ''
+    assign group_values = ''
+    for option in option_names
       for product_option in product.options
         if option == product_option
             assign option_index = forloop.index0
-            assign option_name_present = true 
+            assign option_name_present = true
             break
         endif 
       endfor
@@ -75,7 +75,7 @@
       assign image_positions = image_positions | split: ','
       assign group_values = group_values | split: ','
       assign group_values_size = image_positions.size | minus : 1
-      assign data_group_arr = "" 
+      assign data_group_arr = ''
       for media in product.media
         for i in (0..group_values_size)
           if i == 0 
@@ -91,15 +91,13 @@
         endfor
       endfor 
       assign data_group_arr = data_group_arr | split:","
+      if product.selected_or_first_available_variant.featured_media != null
+        assign featured_media_index = product.selected_or_first_available_variant.featured_media.position | minus: 1
+        assign featured_media_group = data_group_arr[featured_media_index]
+      endif
     endif
   endif
 -%}
-<style>
-  .hide-media{
-    display:none;
-    width:0
-  }
-</style>
 <media-gallery
   {% if option_name_present %}
  media-grouping-enabled
@@ -127,6 +125,7 @@
       {%- if product.selected_or_first_available_variant.featured_media != null -%}
         {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
         <li
+          data-media-group="{{ featured_media_group }}"
           id="Slide-{{ section.id }}-{{ featured_media.id }}{{ id_append }}"
           class="product__media-item grid__item slider__slide is-active{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains featured_media.src %} product__media-item--variant{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
           data-media-id="{{ section.id }}-{{ featured_media.id }}"
@@ -268,6 +267,7 @@
             assign media_index = media_index | plus: 1
           -%}
           <li
+            data-media-group="{{ featured_media_group }}"
             id="Slide-Thumbnails-{{ section.id }}-0{{ id_append }}"
             class="thumbnail-list__item slider__slide{% if section.settings.hide_variants and variant_images contains featured_media.src %} thumbnail-list_item--variant{% endif %}"
             data-target="{{ section.id }}-{{ featured_media.id }}"

@@ -4,87 +4,176 @@ if (!customElements.get('media-gallery')) {
     class MediaGallery extends HTMLElement {
       constructor() {
         super();
+        this.initialized = false;
+        queueMicrotask(() => this.initialize());
+      }
+
+      connectedCallback() {
+        this.initialize();
+      }
+
+      initialize() {
+        if (this.initialized) return;
+
         this.elements = {
           liveRegion: this.querySelector('[id^="GalleryStatus"]'),
           viewer: this.querySelector('[id^="GalleryViewer"]'),
           thumbnails: this.querySelector('[id^="GalleryThumbnails"]'),
         };
+        if (!this.elements.viewer || !this.elements.thumbnails) return;
+
+        this.initialized = true;
+        this.dataset.galleryControlsReady = 'true';
+        this.pendingMediaId = undefined;
         this.mql = window.matchMedia('(min-width: 750px)');
         this.enableDesktopViewerDrag();
-        if (!this.elements.thumbnails) return;
+        this.enableDesktopThumbnailDrag();
+        this.elements.thumbnails.querySelectorAll('[data-target] > button').forEach((button) => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.setActiveMedia(button.closest('[data-target]').dataset.target, false);
+          });
+        });
 
         this.elements.viewer.addEventListener('slideChanged', debounce(this.onSlideChanged.bind(this), 500));
-        this.elements.thumbnails.querySelectorAll('[data-target]').forEach((mediaToSwitch) => {
-          mediaToSwitch
-            .querySelector('button')
-            .addEventListener('click', this.setActiveMedia.bind(this, mediaToSwitch.dataset.target, false));
-        });
-        this.enableDesktopThumbnailNavigation();
-        if (this.dataset.desktopLayout.includes('thumbnail') && this.mql.matches) this.removeListSemantic();
+        this.updateListSemantic();
+        this.mql.addEventListener('change', () => this.updateListSemantic());
       }
 
       enableDesktopViewerDrag() {
-        const slider = this.elements.viewer?.querySelector('[id^="Slider-Gallery"]');
+        const slider = this.elements.viewer?.slider;
         if (!slider || !this.dataset.desktopLayout.includes('thumbnail')) return;
 
+        this.enableDesktopMouseDrag(slider, {
+          onPointerDown: () => {
+            this.preserveThumbnailScroll = false;
+          },
+          canStart: (event) => {
+            if (event.target.closest('.product-media-gallery__viewer-buttons, model-viewer, iframe')) return false;
+
+            const video = event.target.closest('video');
+            return !video || event.clientY < video.getBoundingClientRect().bottom - 56;
+          },
+          onDragEnd: ({ startScrollLeft, deltaX }) => {
+            const slides = Array.from(slider.children).filter((slide) => slide.clientWidth > 0);
+            if (!slides.length) return;
+
+            const startSlide = slides.reduce((closest, slide) =>
+              Math.abs(slide.offsetLeft - startScrollLeft) < Math.abs(closest.offsetLeft - startScrollLeft)
+                ? slide
+                : closest
+            );
+            const startIndex = slides.indexOf(startSlide);
+            const swipeThreshold = Math.min(slider.clientWidth * 0.2, 140);
+            const targetIndex =
+              Math.abs(deltaX) > swipeThreshold
+                ? Math.min(Math.max(startIndex + (deltaX < 0 ? 1 : -1), 0), slides.length - 1)
+                : startIndex;
+
+            slider.scrollTo({
+              left: slides[targetIndex].offsetLeft,
+              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            });
+          },
+        });
+      }
+
+      enableDesktopThumbnailDrag() {
+        const slider = this.elements.thumbnails?.slider;
+        if (!slider || !this.dataset.desktopLayout.includes('thumbnail')) return;
+
+        this.enableDesktopMouseDrag(slider, {
+          canStart: () => slider.scrollWidth > slider.clientWidth,
+          onPointerDown: () => {
+            this.thumbnailPointerActive = true;
+          },
+          onTap: (target) => {
+            this.thumbnailPointerActive = false;
+            const thumbnail = target.closest('[data-target]');
+            if (thumbnail) this.setActiveMedia(thumbnail.dataset.target, false);
+          },
+          onDragEnd: () => {
+            this.thumbnailPointerActive = false;
+            this.preserveThumbnailScroll = true;
+          },
+        });
+      }
+
+      enableDesktopMouseDrag(slider, { canStart, onPointerDown = () => {}, onTap, onDragEnd = () => {} }) {
         let pointerId;
-        let startX = 0;
-        let startScrollLeft = 0;
-        let lastDistance = 0;
+        let startX;
+        let startScrollLeft;
+        let deltaX;
+        let pendingScrollLeft;
+        let scrollFrame;
         let hasDragged = false;
+        let pointerActionEnd;
+        let pressTarget;
+        let inlineScrollBehavior;
+
+        const updateScrollPosition = () => {
+          scrollFrame = undefined;
+          slider.scrollLeft = pendingScrollLeft;
+        };
+
+        const flushScrollPosition = () => {
+          if (scrollFrame === undefined) return;
+          cancelAnimationFrame(scrollFrame);
+          updateScrollPosition();
+        };
 
         const finishDrag = (event) => {
-          if (pointerId === undefined) return;
-          if (event.pointerId !== undefined && event.pointerId !== pointerId) return;
-          pointerId = undefined;
-          slider.classList.remove('is-dragging');
+          if (pointerId === undefined || (event.pointerId !== undefined && event.pointerId !== pointerId)) return;
 
-          if (!hasDragged) return;
-          const visibleSlides = Array.from(slider.children).filter((slide) => slide.clientWidth > 0);
-          if (!visibleSlides.length) return;
-          const startSlide = visibleSlides.reduce((closest, slide) =>
-            Math.abs(slide.offsetLeft - startScrollLeft) < Math.abs(closest.offsetLeft - startScrollLeft)
-              ? slide
-              : closest
-          );
-          const swipeThreshold = Math.min(slider.clientWidth * 0.2, 140);
-          const startIndex = Math.max(visibleSlides.indexOf(startSlide), 0);
-          const targetIndex =
-            Math.abs(lastDistance) > swipeThreshold
-              ? Math.min(Math.max(startIndex + (lastDistance < 0 ? 1 : -1), 0), visibleSlides.length - 1)
-              : -1;
-          const closestSlide = visibleSlides.reduce((closest, slide) =>
-            Math.abs(slide.offsetLeft - slider.scrollLeft) < Math.abs(closest.offsetLeft - slider.scrollLeft)
-              ? slide
-              : closest
-          );
-          const targetSlide = targetIndex >= 0 ? visibleSlides[targetIndex] : closestSlide;
-          slider.scrollTo({ left: targetSlide.offsetLeft });
+          const activePointerId = pointerId;
+          pointerId = undefined;
+          if (slider.hasPointerCapture(activePointerId)) slider.releasePointerCapture(activePointerId);
+          if (hasDragged) flushScrollPosition();
+          slider.classList.remove('is-dragging');
+          slider.style.scrollBehavior = inlineScrollBehavior;
+          if (hasDragged) {
+            slider.dataset.galleryDragEnded = 'true';
+            pointerActionEnd = { x: event.clientX, y: event.clientY, time: performance.now() };
+            onDragEnd({ startScrollLeft, deltaX });
+          } else if (onTap) {
+            pointerActionEnd = { x: event.clientX, y: event.clientY, time: performance.now() };
+            onTap(pressTarget);
+          }
         };
 
         slider.addEventListener('pointerdown', (event) => {
-          if (!this.mql.matches || event.pointerType !== 'mouse' || event.button !== 0) return;
-          if (event.target.closest('model-viewer, iframe')) return;
+          if (!this.mql.matches || event.pointerType !== 'mouse' || event.button !== 0 || !canStart(event)) return;
 
-          event.preventDefault();
+          pointerActionEnd = undefined;
+          delete slider.dataset.galleryDragEnded;
+          pressTarget = event.target;
+          this.pendingMediaId = undefined;
+          inlineScrollBehavior = slider.style.scrollBehavior;
+          slider.style.scrollBehavior = 'auto';
+          slider.scrollTo({ left: slider.scrollLeft, behavior: 'auto' });
+          onPointerDown();
           pointerId = event.pointerId;
           startX = event.clientX;
           startScrollLeft = slider.scrollLeft;
-          lastDistance = 0;
+          deltaX = 0;
+          pendingScrollLeft = startScrollLeft;
           hasDragged = false;
-          slider.setPointerCapture(pointerId);
-          slider.classList.add('is-dragging');
         });
 
         slider.addEventListener('pointermove', (event) => {
           if (event.pointerId !== pointerId) return;
-          const distance = event.clientX - startX;
-          lastDistance = distance;
-          if (Math.abs(distance) > 5) hasDragged = true;
-          if (!hasDragged) return;
 
+          deltaX = event.clientX - startX;
+          if (!hasDragged && Math.abs(deltaX) < 5) return;
+
+          if (!hasDragged) {
+            hasDragged = true;
+            slider.setPointerCapture(pointerId);
+          }
           event.preventDefault();
-          slider.scrollLeft = startScrollLeft - distance;
+          slider.classList.add('is-dragging');
+          pendingScrollLeft = startScrollLeft - deltaX;
+          if (scrollFrame === undefined) scrollFrame = requestAnimationFrame(updateScrollPosition);
         });
 
         slider.addEventListener('pointerup', finishDrag);
@@ -94,163 +183,30 @@ if (!customElements.get('media-gallery')) {
         slider.addEventListener(
           'click',
           (event) => {
-            if (!hasDragged) return;
+            if (!pointerActionEnd) return;
+
+            const elapsed = performance.now() - pointerActionEnd.time;
+            const distance = Math.hypot(event.clientX - pointerActionEnd.x, event.clientY - pointerActionEnd.y);
+            pointerActionEnd = undefined;
+            if (elapsed > 250 || distance > 12) return;
+
             event.preventDefault();
-            event.stopPropagation();
-            hasDragged = false;
+            event.stopImmediatePropagation();
+            delete slider.dataset.galleryDragEnded;
           },
           true
         );
-      }
-
-      enableDesktopThumbnailNavigation() {
-        const thumbnailSlider = this.elements.thumbnails?.querySelector('[id^="Slider-Thumbnails"]');
-        if (!thumbnailSlider || !this.dataset.desktopLayout.includes('thumbnail')) return;
-
-        let pointerId;
-        let startX = 0;
-        let startScrollLeft = 0;
-        let lastDistance = 0;
-        let hasDragged = false;
-
-        const finishDrag = (event) => {
-          if (pointerId === undefined) return;
-          if (event.pointerId !== undefined && event.pointerId !== pointerId) return;
-          pointerId = undefined;
-          thumbnailSlider.classList.remove('is-dragging');
-
-          if (!hasDragged) return;
-          if (Math.abs(thumbnailSlider.scrollLeft - startScrollLeft) < 1) {
-            this.selectAdjacentThumbnail(lastDistance < 0 ? 1 : -1);
-            return;
-          }
-
-          const thumbnail = this.getThumbnailClosestToCenter();
-          if (thumbnail?.dataset.target) this.setActiveMedia(thumbnail.dataset.target, false);
-        };
-
-        this.elements.thumbnails.querySelectorAll(':scope > .slider-button').forEach((button) => {
-          button.addEventListener(
-            'click',
-            (event) => {
-              if (!this.mql.matches) return;
-              event.preventDefault();
-              event.stopImmediatePropagation();
-              this.selectAdjacentThumbnail(event.currentTarget.name === 'next' ? 1 : -1);
-            },
-            true
-          );
-        });
-
-        thumbnailSlider.addEventListener('pointerdown', (event) => {
-          if (!this.mql.matches || event.pointerType !== 'mouse' || event.button !== 0) return;
-          if (event.target.closest('button')) return;
-
-          pointerId = event.pointerId;
-          startX = event.clientX;
-          startScrollLeft = thumbnailSlider.scrollLeft;
-          lastDistance = 0;
-          hasDragged = false;
-          thumbnailSlider.setPointerCapture(pointerId);
-          thumbnailSlider.classList.add('is-dragging');
-        });
-
-        thumbnailSlider.addEventListener('pointermove', (event) => {
-          if (event.pointerId !== pointerId) return;
-          const distance = event.clientX - startX;
-          lastDistance = distance;
-          if (Math.abs(distance) > 5) hasDragged = true;
-          if (!hasDragged) return;
-
-          event.preventDefault();
-          thumbnailSlider.scrollLeft = startScrollLeft - distance;
-        });
-
-        thumbnailSlider.addEventListener('pointerup', finishDrag);
-        thumbnailSlider.addEventListener('pointercancel', finishDrag);
-        thumbnailSlider.addEventListener('lostpointercapture', finishDrag);
-        thumbnailSlider.addEventListener('dragstart', (event) => event.preventDefault());
-        thumbnailSlider.addEventListener(
-          'click',
-          (event) => {
-            if (!hasDragged) return;
-            event.preventDefault();
-            event.stopPropagation();
-            hasDragged = false;
-          },
-          true
-        );
-
-        this.updateThumbnailNavigation();
-      }
-
-      getVisibleThumbnails() {
-        return Array.from(this.elements.thumbnails?.querySelectorAll('[data-target]') || []).filter(
-          (thumbnail) => thumbnail.clientWidth > 0
-        );
-      }
-
-      getActiveThumbnail(visibleThumbnails = this.getVisibleThumbnails()) {
-        return (
-          visibleThumbnails.find((thumbnail) => thumbnail.querySelector('button[aria-current]')) ||
-          visibleThumbnails.find(
-            (thumbnail) =>
-              thumbnail.dataset.target === this.elements.viewer.querySelector('.product__media-item.is-active')?.dataset.mediaId
-          ) ||
-          visibleThumbnails[0]
-        );
-      }
-
-      getThumbnailClosestToCenter() {
-        const thumbnailSlider = this.elements.thumbnails?.querySelector('[id^="Slider-Thumbnails"]');
-        const visibleThumbnails = this.getVisibleThumbnails();
-        if (!thumbnailSlider || !visibleThumbnails.length) return null;
-
-        const sliderRect = thumbnailSlider.getBoundingClientRect();
-        const sliderCenter = sliderRect.left + sliderRect.width / 2;
-
-        return visibleThumbnails.reduce((closest, thumbnail) => {
-          const thumbnailRect = thumbnail.getBoundingClientRect();
-          const thumbnailCenter = thumbnailRect.left + thumbnailRect.width / 2;
-          const closestRect = closest.getBoundingClientRect();
-          const closestCenter = closestRect.left + closestRect.width / 2;
-
-          return Math.abs(thumbnailCenter - sliderCenter) < Math.abs(closestCenter - sliderCenter)
-            ? thumbnail
-            : closest;
-        });
-      }
-
-      selectAdjacentThumbnail(direction) {
-        const visibleThumbnails = this.getVisibleThumbnails();
-        if (!visibleThumbnails.length) return;
-
-        const activeThumbnail = this.getActiveThumbnail(visibleThumbnails);
-        const activeIndex = Math.max(visibleThumbnails.indexOf(activeThumbnail), 0);
-        const nextIndex = Math.min(Math.max(activeIndex + direction, 0), visibleThumbnails.length - 1);
-        const nextThumbnail = visibleThumbnails[nextIndex];
-
-        if (!nextThumbnail || nextThumbnail === activeThumbnail) return;
-        this.setActiveMedia(nextThumbnail.dataset.target, false);
-      }
-
-      updateThumbnailNavigation() {
-        if (!this.elements.thumbnails || !this.mql.matches) return;
-
-        const visibleThumbnails = this.getVisibleThumbnails();
-        const activeThumbnail = this.getActiveThumbnail(visibleThumbnails);
-        const activeIndex = visibleThumbnails.indexOf(activeThumbnail);
-        const previousButton = this.elements.thumbnails.querySelector(':scope > .slider-button--prev');
-        const nextButton = this.elements.thumbnails.querySelector(':scope > .slider-button--next');
-
-        if (!previousButton || !nextButton || activeIndex < 0) return;
-        previousButton.toggleAttribute('disabled', activeIndex <= 0);
-        nextButton.toggleAttribute('disabled', activeIndex >= visibleThumbnails.length - 1);
       }
 
       onSlideChanged(event) {
         const activeMedia = event.detail.currentElement;
         if (!activeMedia) return;
+
+        // A smooth programmatic scroll can emit late slideChanged events. Ignore
+        // events from an interrupted navigation so they cannot select an older
+        // thumbnail and visually pull the gallery backwards.
+        if (this.pendingMediaId && activeMedia.dataset.mediaId !== this.pendingMediaId) return;
+        this.pendingMediaId = undefined;
 
         this.elements.viewer.querySelectorAll('[data-media-id]').forEach((element) => {
           element.classList.remove('is-active');
@@ -261,11 +217,17 @@ if (!customElements.get('media-gallery')) {
         const thumbnail = this.elements.thumbnails.querySelector(
           `[data-target="${activeMedia.dataset.mediaId}"]`
         );
-        this.setActiveThumbnail(thumbnail);
+        const shouldPreserveThumbnailScroll = this.thumbnailPointerActive || this.preserveThumbnailScroll;
+        this.setActiveThumbnail(thumbnail, !shouldPreserveThumbnailScroll);
+        if (!this.thumbnailPointerActive) this.preserveThumbnailScroll = false;
       }
 
       setActiveMedia(mediaId, prepend) {
         const activeMedia = this.elements.viewer.querySelector(`[data-media-id="${mediaId}"]`);
+        if (!activeMedia) return;
+
+        this.pendingMediaId = mediaId;
+        this.preserveThumbnailScroll = false;
         this.elements.viewer.querySelectorAll('[data-media-id]').forEach((element) => {
           element.classList.remove('is-active');
         });
@@ -275,13 +237,13 @@ if (!customElements.get('media-gallery')) {
           activeMedia.parentElement.prepend(activeMedia);
           if (this.elements.thumbnails) {
             const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
-            activeThumbnail.parentElement.prepend(activeThumbnail);
+            if (activeThumbnail) activeThumbnail.parentElement.prepend(activeThumbnail);
           }
           if (this.elements.viewer.slider) this.elements.viewer.resetPages();
         }
 
         this.preventStickyHeader();
-        window.setTimeout(() => {
+        requestAnimationFrame(() => {
           if (this.elements.thumbnails) {
             activeMedia.parentElement.scrollTo({ left: activeMedia.offsetLeft });
           }
@@ -293,19 +255,19 @@ if (!customElements.get('media-gallery')) {
 
         if (!this.elements.thumbnails) return;
         const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
+        if (!activeThumbnail) return;
         this.setActiveThumbnail(activeThumbnail);
         this.announceLiveRegion(activeMedia, activeThumbnail.dataset.mediaPosition);
       }
 
-      setActiveThumbnail(thumbnail) {
+      setActiveThumbnail(thumbnail, scrollIntoView = true) {
         if (!this.elements.thumbnails || !thumbnail) return;
 
         this.elements.thumbnails
           .querySelectorAll('button')
           .forEach((element) => element.removeAttribute('aria-current'));
         thumbnail.querySelector('button').setAttribute('aria-current', true);
-        this.updateThumbnailNavigation();
-        if (this.elements.thumbnails.isSlideVisible(thumbnail, 10)) return;
+        if (!scrollIntoView || this.elements.thumbnails.isSlideVisible(thumbnail, 10)) return;
 
         this.elements.thumbnails.slider.scrollTo({ left: thumbnail.offsetLeft });
       }
@@ -339,6 +301,15 @@ if (!customElements.get('media-gallery')) {
         if (!this.elements.viewer.slider) return;
         this.elements.viewer.slider.setAttribute('role', 'presentation');
         this.elements.viewer.sliderItems.forEach((slide) => slide.setAttribute('role', 'presentation'));
+      }
+
+      updateListSemantic() {
+        if (!this.elements.viewer.slider || !this.dataset.desktopLayout.includes('thumbnail')) return;
+
+        const role = this.mql.matches ? 'presentation' : 'list';
+        const slideRole = this.mql.matches ? 'presentation' : 'listitem';
+        this.elements.viewer.slider.setAttribute('role', role);
+        this.elements.viewer.sliderItems.forEach((slide) => slide.setAttribute('role', slideRole));
       }
     }
   );

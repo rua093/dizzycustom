@@ -1,63 +1,54 @@
-// create a container and set the full-size image as its background
-function createOverlay(image) {
-  const overlayImage = document.createElement('img');
-  overlayImage.setAttribute('src', `${image.src}`);
-  overlay = document.createElement('div');
-  prepareOverlay(overlay, overlayImage);
+(() => {
+  if (window.dizzyMagnifyInitialized) return;
+  window.dizzyMagnifyInitialized = true;
 
-  image.style.opacity = '50%';
-  toggleLoadingSpinner(image);
+  const zoomRatio = 2;
 
-  overlayImage.onload = () => {
-    toggleLoadingSpinner(image);
-    image.parentElement.insertBefore(overlay, image);
-    image.style.opacity = '100%';
-  };
+  function setSpinner(image, isLoading) {
+    const spinner = image.closest('.product__modal-opener')?.querySelector('.loading__spinner');
+    spinner?.classList.toggle('hidden', !isLoading);
+  }
 
-  return overlay;
-}
+  function positionOverlay(overlay, image, event) {
+    const bounds = image.getBoundingClientRect();
+    const x = Math.min(Math.max(event.clientX - bounds.left, 0), bounds.width);
+    const y = Math.min(Math.max(event.clientY - bounds.top, 0), bounds.height);
 
-function prepareOverlay(container, image) {
-  container.setAttribute('class', 'image-magnify-full-size');
-  container.setAttribute('aria-hidden', 'true');
-  container.style.backgroundImage = `url('${image.src}')`;
-  container.style.backgroundColor = 'var(--gradient-background)';
-}
+    overlay.style.backgroundPosition = `${(x / bounds.width) * 100}% ${(y / bounds.height) * 100}%`;
+  }
 
-function toggleLoadingSpinner(image) {
-  const loadingSpinner = image.parentElement.parentElement.querySelector(`.loading__spinner`);
-  loadingSpinner.classList.toggle('hidden');
-}
+  function openMagnifier(image, event) {
+    const media = image.parentElement;
+    if (!media || media.querySelector('.image-magnify-full-size')) return;
 
-function moveWithHover(image, event, zoomRatio) {
-  // calculate mouse position
-  const ratio = image.height / image.width;
-  const container = event.target.getBoundingClientRect();
-  const xPosition = event.clientX - container.left;
-  const yPosition = event.clientY - container.top;
-  const xPercent = `${xPosition / (image.clientWidth / 100)}%`;
-  const yPercent = `${yPosition / ((image.clientWidth * ratio) / 100)}%`;
+    const source = image.currentSrc || image.src;
+    const preloadImage = new Image();
+    const overlay = document.createElement('div');
+    overlay.className = 'image-magnify-full-size';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.backgroundColor = 'var(--gradient-background)';
+    overlay.style.backgroundImage = `url("${source.replaceAll('"', '\\"')}")`;
+    overlay.style.backgroundSize = `${image.clientWidth * zoomRatio}px`;
 
-  // determine what to show in the frame
-  overlay.style.backgroundPosition = `${xPercent} ${yPercent}`;
-  overlay.style.backgroundSize = `${image.width * zoomRatio}px`;
-}
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', close);
+    overlay.addEventListener('mousemove', (moveEvent) => positionOverlay(overlay, image, moveEvent));
 
-function magnify(image, zoomRatio) {
-  const overlay = createOverlay(image);
-  overlay.onclick = () => overlay.remove();
-  overlay.onmousemove = (event) => moveWithHover(image, event, zoomRatio);
-  overlay.onmouseleave = () => overlay.remove();
-}
-
-function enableZoomOnHover(zoomRatio) {
-  const images = document.querySelectorAll('.image-magnify-hover');
-  images.forEach((image) => {
-    image.onclick = (event) => {
-      magnify(image, zoomRatio);
-      moveWithHover(image, event, zoomRatio);
+    setSpinner(image, true);
+    preloadImage.onload = () => {
+      setSpinner(image, false);
+      if (!image.isConnected || media.querySelector('.image-magnify-full-size')) return;
+      media.insertBefore(overlay, image);
+      positionOverlay(overlay, image, event);
     };
-  });
-}
+    preloadImage.onerror = () => setSpinner(image, false);
+    preloadImage.src = source;
+  }
 
-enableZoomOnHover(2);
+  // Event delegation also covers product images injected later by Quick Detail.
+  document.addEventListener('click', (event) => {
+    const image = event.target.closest('.image-magnify-hover');
+    if (!image || image.closest('.product__media-list')?.dataset.galleryDragEnded === 'true') return;
+    openMagnifier(image, event);
+  }, true);
+})();
