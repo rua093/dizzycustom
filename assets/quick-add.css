@@ -216,20 +216,10 @@ quick-add-modal .dc-main-product .product__column-sticky {
 }
 
 @media screen and (max-width: 749px) {
-  .product-card-wrapper--dizzy .quick-add {
-    margin-top: 0.8rem;
-  }
-
-  .product-card-wrapper--dizzy .quick-add__submit {
-    min-height: 3.8rem;
-    font-size: 1.25rem;
-    grid-template-columns: 3.4rem minmax(0, 1fr);
-    border-radius: 0.6rem;
-  }
-
-  .product-card-wrapper--dizzy .quick-add__icon .icon {
-    width: 1.6rem;
-    height: 1.6rem;
+  .product-card-wrapper--dizzy .quick-add,
+  .product-card-wrapper .quick-add,
+  .quick-add {
+    display: none !important;
   }
 }
 
