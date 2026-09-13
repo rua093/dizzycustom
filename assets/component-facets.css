@@ -1483,6 +1483,7 @@ input.mobile-facets__checkbox {
   display: flex !important;
   height: 3.8rem !important;
   padding-left: 2rem;
+  margin-right: 1.6rem !important;
 }
 
 .facet-filters__field {
@@ -1569,15 +1570,27 @@ input.mobile-facets__checkbox {
   right: 0 !important;
   left: auto !important;
   width: max-content !important;
-  min-width: 21rem !important;
-  max-width: 32rem !important;
+  min-width: 100% !important;
+  max-width: 26rem !important;
   padding: 0.6rem !important;
   background: #ffffff !important;
   border: 0.12rem solid #e2e8f0 !important;
   border-radius: 1.4rem !important;
-  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.04), 0 0 1px rgba(0, 0, 0, 0.08) !important;
   z-index: 105 !important;
-  overflow: hidden !important;
+  transform-origin: top right !important;
+  animation: facetSortFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes facetSortFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .facet-filters__sort-list {
@@ -1599,16 +1612,18 @@ input.mobile-facets__checkbox {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 0.9rem 1.4rem !important;
+  gap: 1.4rem !important;
+  padding: 0.85rem 1.2rem !important;
   font-size: 1.35rem !important;
   font-weight: 500 !important;
   color: #334155 !important;
   background: transparent !important;
   border: none !important;
-  border-radius: 0.8rem !important;
+  border-radius: 0.85rem !important;
   cursor: pointer !important;
   text-align: left !important;
   transition: all 0.15s ease !important;
+  white-space: nowrap !important;
 }
 
 .facet-filters__sort-option:hover {
@@ -1622,10 +1637,12 @@ input.mobile-facets__checkbox {
   font-weight: 600 !important;
 }
 
-.facet-filters__sort-option .icon-checkmark {
+.facet-filters__sort-icon-check {
   color: #0065a7 !important;
   flex-shrink: 0 !important;
-  margin-left: 1rem !important;
+  width: 1.4rem !important;
+  height: 1.4rem !important;
+  display: block !important;
 }
 
 /* 6. Product Count Alignment */
