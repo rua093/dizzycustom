@@ -231,7 +231,7 @@
           "settings": {
             "image": "shopify://shop_images/Ours_and_Others_CEM.jpg",
             "title": "DizzyCustom vs. The Others",
-            "tab_title": "",
+            "tab_title": "vs. Others",
             "text": "",
             "link_label": "",
             "link": ""
@@ -242,7 +242,7 @@
           "settings": {
             "image": "shopify://shop_images/3lo_icaremblem_48691ec1-fb86-4b02-bd8f-f0e41cd15f3f.png",
             "title": "3 Luxury Finishes",
-            "tab_title": "",
+            "tab_title": "3 Finishes",
             "text": "",
             "link_label": "",
             "link": ""
@@ -253,7 +253,7 @@
           "settings": {
             "image": "shopify://shop_images/1_52aabcff-d5e4-4495-88b6-43cd2b075215.jpg",
             "title": "Outstanding features",
-            "tab_title": "",
+            "tab_title": "Features",
             "text": "",
             "link_label": "",
             "link": ""
@@ -279,7 +279,7 @@
         "color_scheme": "",
         "columns_mobile": "1",
         "swipe_on_mobile": false,
-        "enable_mobile_tabs": false,
+        "enable_mobile_tabs": true,
         "padding_top": 36,
         "padding_bottom": 36
       }
