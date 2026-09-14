@@ -223,7 +223,7 @@
         "powerful_form_builder_app_block_YVnCEK": {
           "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
           "settings": {
-            "shortcode": ""
+            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc2\"></div>"
           }
         }
       },
@@ -456,6 +456,18 @@
       "settings": {
         "include_margins": true
       }
+    },
+    "17894082773e6a1def": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "17894085605c44ca14": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -471,6 +483,8 @@
     "multicolumn_m7M4TB",
     "1705574032ea599050",
     "featured_blog_JezEiz",
-    "17893729039a7275e6"
+    "17893729039a7275e6",
+    "17894082773e6a1def",
+    "17894085605c44ca14"
   ]
 }
