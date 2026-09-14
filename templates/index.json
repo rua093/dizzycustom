@@ -219,6 +219,17 @@
     },
     "1752288780048388a8": {
       "type": "apps",
+      "blocks": {
+        "powerful_form_builder_app_block_HYQKgA": {
+          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
+          "settings": {
+            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc2\"></div>"
+          }
+        }
+      },
+      "block_order": [
+        "powerful_form_builder_app_block_HYQKgA"
+      ],
       "settings": {
         "include_margins": true
       }
@@ -282,12 +293,6 @@
         "enable_mobile_tabs": true,
         "padding_top": 36,
         "padding_bottom": 36
-      }
-    },
-    "17522895397c61f6f8": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
       }
     },
     "craftsmanship_process": {
@@ -416,12 +421,6 @@
         "padding_bottom": 20
       }
     },
-    "1705574032ea599050": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
-      }
-    },
     "featured_blog_JezEiz": {
       "type": "featured-blog",
       "disabled": true,
@@ -439,41 +438,18 @@
         "padding_top": 20,
         "padding_bottom": 0
       }
-    },
-    "17893729039a7275e6": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
-      }
-    },
-    "17894082773e6a1def": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
-      }
-    },
-    "17894085605c44ca14": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
-      }
     }
   },
   "order": [
+    "1752288780048388a8",
     "image_banner",
     "dc_emblem_builder",
     "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
-    "1752288780048388a8",
     "multicolumn_6CbrDa",
-    "17522895397c61f6f8",
     "craftsmanship_process",
     "multicolumn_m7M4TB",
-    "1705574032ea599050",
-    "featured_blog_JezEiz",
-    "17893729039a7275e6",
-    "17894082773e6a1def",
-    "17894085605c44ca14"
+    "featured_blog_JezEiz"
   ]
 }
