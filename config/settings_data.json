@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "custom_emblem_product": "custom-metal-emblem",
     "optionName": "Surface",
     "swatchType": "color",
     "swatchColors": "Matte Finishing:matte-finishing.jpg\n\nMirror Finishing:mirror-finishing.png\n\nGold Plated:gold-plated.png",

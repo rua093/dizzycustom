@@ -1,0 +1,137 @@
+{%- liquid
+  assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
+  assign font_labels = 'Block,Lightning,Aggressive,Script,Electric,Ice,OEM' | split: ','
+
+  # Determine target product from Theme Editor setting (Section setting or Theme setting)
+  assign configured_product = section.settings.custom_emblem_product
+  if configured_product == blank
+    assign configured_product = settings.custom_emblem_product
+  endif
+
+  assign is_custom_product = false
+  if configured_product != blank
+    if product.id == configured_product.id or product.handle == configured_product.handle or product.handle == configured_product
+      assign is_custom_product = true
+    endif
+  endif
+
+  # Also match the live preview section products (both copy-2 and original)
+  if product.handle == 'custom-metal-emblem-for-car-and-motorbike-copy-2' or product.handle == 'custom-metal-emblem'
+    assign is_custom_product = true
+  endif
+-%}
+{%- if is_custom_product -%}
+{{ 'dc-pdp-customizer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'dc-pdp-customizer.js' | asset_url }}" defer="defer"></script>
+
+<div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper" data-custom-product="{{ is_custom_product }}">
+  <script type="application/json" id="dc-pdp-customizer-config">
+    {
+      "maxLength": 16,
+      "fonts": [
+        {% for key in font_keys %}
+          {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
+          {"key": {{ key | json }}, "label": {{ font_labels[forloop.index0] | json }}, "url": {{ font_file | asset_url | json }}}{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    }
+  </script>
+
+  <div class="dc-pdp-controls-card">
+    <!-- 1. Text Input -->
+    <div class="dc-pdp-field">
+      <div class="dc-pdp-field__header">
+        <label class="dc-pdp-field__label" for="dc-pdp-text-input">Your Custom Text</label>
+        <span class="dc-pdp-char-count" data-pdp-count>5/16</span>
+      </div>
+      <div class="dc-pdp-input-wrapper">
+        <input
+          id="dc-pdp-text-input"
+          type="text"
+          class="dc-pdp-input"
+          data-pdp-text
+          value="DIZZY"
+          maxlength="16"
+          placeholder="Type your letters…"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+    </div>
+
+    <!-- 2. Font Selector Pills -->
+    <div class="dc-pdp-field">
+      <label class="dc-pdp-field__label">Typography Font</label>
+      <div class="dc-pdp-fonts-list">
+        {% for key in font_keys %}
+          <button
+            type="button"
+            class="dc-pdp-font-btn{% if key == 'lightning' %} is-active{% endif %}"
+            data-pdp-font="{{ key }}"
+          >
+            {{ font_labels[forloop.index0] }}
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 3. Colors (Face & Backing) -->
+    <div class="dc-pdp-field">
+      <div class="dc-pdp-field__header">
+        <label class="dc-pdp-field__label">Metal Colors &amp; Finishes</label>
+      </div>
+
+      <!-- Layer Selector Tabs -->
+      <div class="dc-pdp-layer-tabs">
+        <button type="button" class="dc-pdp-layer-tab is-active" data-pdp-layer="face">
+          <span class="dc-pdp-layer-tab__chip" data-pdp-chip="face"></span>
+          <span class="dc-pdp-layer-tab__name">Text: <strong data-pdp-color-name="face">Mirror Red</strong></span>
+        </button>
+        <button type="button" class="dc-pdp-layer-tab" data-pdp-layer="back">
+          <span class="dc-pdp-layer-tab__chip" data-pdp-chip="back"></span>
+          <span class="dc-pdp-layer-tab__name">Backing: <strong data-pdp-color-name="back">Gloss Black</strong></span>
+        </button>
+      </div>
+
+      <!-- Finish Category Filter Tabs -->
+      <div class="dc-pdp-finish-tabs">
+        <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="solid">Solid</button>
+        <button type="button" class="dc-pdp-finish-tab is-active" data-pdp-finish="mirror">Mirror</button>
+        <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="patterns">Patterns</button>
+        <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="flake">Metal Flake</button>
+      </div>
+
+      <!-- Swatch Grid -->
+      <div class="dc-pdp-swatches" data-pdp-swatches role="group" aria-label="Color options"></div>
+    </div>
+
+    <!-- 4. Mounting Options -->
+    <div class="dc-pdp-field">
+      <label class="dc-pdp-field__label">Mounting Type</label>
+      <div class="dc-pdp-mounts-grid">
+        <label class="dc-pdp-mount-pill">
+          <input type="radio" name="pdp_mounting_choice" value="tape" data-pdp-mount="tape" checked>
+          <span class="dc-pdp-mount-pill__content">
+            <strong>VHB Tape</strong>
+            <small>Flat surface / body paint</small>
+          </span>
+        </label>
+        <label class="dc-pdp-mount-pill">
+          <input type="radio" name="pdp_mounting_choice" value="studs" data-pdp-mount="studs">
+          <span class="dc-pdp-mount-pill__content">
+            <strong>Studs Screws</strong>
+            <small>Grille mount</small>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden form properties attached directly to PDP Product Form -->
+  <input type="hidden" name="properties[Custom Text]" id="dc-pdp-prop-text" value="DIZZY" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+  <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Lightning" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+  <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="Mirror Red" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+  <input type="hidden" name="properties[Background Color]" id="dc-pdp-prop-back" value="Gloss Black" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+  <input type="hidden" name="properties[Mounting]" id="dc-pdp-prop-mount" value="VHB Tape (Flat Surface)" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+</div>
+{%- endif -%}

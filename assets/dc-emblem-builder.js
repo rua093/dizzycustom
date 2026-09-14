@@ -217,22 +217,26 @@
       const message = this.validationMessage();
       this.input.setAttribute('aria-invalid', String(Boolean(message && this.readyFonts)));
       this.error.textContent = message;
+      const isProductPage = this.dataset.productPage === 'true';
       const option = this.variant?.selectedOptions[0];
-      const available = option?.dataset.available === 'true';
+      const available = isProductPage ? (option?.dataset.available === 'true') : Boolean(this.config.productUrl);
       const quantitySummary = this.querySelector('[data-quantity-summary]');
-      if (quantitySummary) quantitySummary.textContent = `· Quantity: ${this.quantity.value}`;
+      if (quantitySummary && this.quantity) quantitySummary.textContent = `· Quantity: ${this.quantity.value}`;
       this.submit.disabled = Boolean(this.busy || !available || message);
-      this.querySelector('[data-submit-label]').textContent = this.busy ? 'Adding…' : !this.variant ? 'Ordering coming soon' : !available ? 'Sold out' : this.displayText() ? `Build “${this.displayText()}”` : 'Build my badge';
-      const link = this.querySelector('[data-product-link]');
-      if (link) {
-        const url = new URL(this.config.productUrl, location.origin);
-        url.searchParams.set('view', 'emblem-builder');
-        url.searchParams.set('dc_badge', '1');
-        for (const key of ['font', 'face', 'back', 'mount']) url.searchParams.set(key, this.state[key]);
-        url.searchParams.set('text', this.state.text);
-        if (option) url.searchParams.set('variant', option.value);
-        link.href = url.pathname + url.search;
+
+      let labelText = 'Build my badge';
+      if (this.busy) {
+        labelText = 'Adding…';
+      } else if (!this.config.productUrl) {
+        labelText = 'Ordering coming soon';
+      } else if (!isProductPage) {
+        labelText = this.displayText() ? `Select Size & Order “${this.displayText()}”` : 'Select Size & Order';
+      } else if (!available) {
+        labelText = 'Sold out';
+      } else if (this.displayText()) {
+        labelText = `Build “${this.displayText()}”`;
       }
+      this.querySelector('[data-submit-label]').textContent = labelText;
       this.scheduleRender();
     }
 
@@ -361,6 +365,17 @@
         this.input.focus();
         return;
       }
+      const isProductPage = this.dataset.productPage === 'true';
+      if (!isProductPage) {
+        if (!this.config.productUrl) return;
+        const url = new URL(this.config.productUrl, location.origin);
+        url.searchParams.set('dc_badge', '1');
+        for (const key of ['font', 'face', 'back', 'mount']) url.searchParams.set(key, this.state[key]);
+        url.searchParams.set('text', this.state.text);
+        location.assign(url.pathname + url.search);
+        return;
+      }
+
       const selected = this.variant?.selectedOptions[0];
       if (selected?.dataset.available !== 'true') return;
       const root = window.Shopify?.routes?.root || '/';

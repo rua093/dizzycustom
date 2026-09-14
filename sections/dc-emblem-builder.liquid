@@ -2,7 +2,7 @@
 <script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
 
 {%- liquid
-  assign badge_product = section.settings.product
+  assign badge_product = settings.custom_emblem_product | default: section.settings.product
   assign is_product_page = false
   if request.page_type == 'product'
     assign badge_product = product
@@ -96,7 +96,7 @@
               </div>
             </fieldset>
 
-            {% if badge_product != blank %}
+            {% if is_product_page and badge_product != blank %}
               <div class="dc-builder-purchase-options">
                 <div{% if badge_product.has_only_default_variant %} hidden{% endif %}>
                   <label for="BadgeVariant-{{ section.id }}">{{ badge_product.options | join: ' / ' | escape }}</label>
@@ -106,22 +106,17 @@
                     {% endfor %}
                   </select>
                 </div>
-                {% if is_product_page %}
-                  <div><label for="BadgeQuantity-{{ section.id }}">Quantity</label><input class="dc-builder-input" id="BadgeQuantity-{{ section.id }}" type="number" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}" min="{{ initial_variant.quantity_rule.min | default: 1 }}" step="{{ initial_variant.quantity_rule.increment | default: 1 }}"></div>
-                {% else %}
-                  <input type="hidden" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}">
-                {% endif %}
+                <div><label for="BadgeQuantity-{{ section.id }}">Quantity</label><input class="dc-builder-input" id="BadgeQuantity-{{ section.id }}" type="number" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}" min="{{ initial_variant.quantity_rule.min | default: 1 }}" step="{{ initial_variant.quantity_rule.increment | default: 1 }}"></div>
               </div>
               <p class="dc-builder-price"><span data-price-display>{{ initial_variant.price | money_with_currency }}</span> <small>per item <span data-quantity-summary></span></small></p>
+            {% elsif is_product_page == false and badge_product != blank %}
+              <p class="dc-builder-price"><span data-price-display>From {{ badge_product.price_min | money_with_currency }}</span> <small>· Select size on next step</small></p>
             {% endif %}
             <input type="hidden" name="properties[Font]" data-property="font">
             <input type="hidden" name="properties[Text Color]" data-property="face">
             <input type="hidden" name="properties[Background Color]" data-property="back">
             <p class="dc-builder-error" id="BadgeError-{{ section.id }}" data-error role="alert"></p>
-            <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled><span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% else %}Build my badge{% endif %}</span><span aria-hidden="true">→</span></button>
-            {% if badge_product != blank and is_product_page == false %}
-              <a class="dc-builder-product-link" data-product-link href="{{ badge_product.url }}?view=emblem-builder">Fine-tune sizing &amp; quantity on the product page <span aria-hidden="true">→</span></a>
-            {% endif %}
+            <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled><span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% elsif is_product_page %}Build my badge{% else %}Select Size &amp; Order{% endif %}</span><span aria-hidden="true">→</span></button>
           </div>
         </fieldset>
         <noscript><p>Enable JavaScript to customize and preview your badge before ordering.</p></noscript>
@@ -144,7 +139,7 @@
   "tag": "div",
   "disabled_on": {"groups": ["header", "footer"]},
   "settings": [
-    {"type": "product", "id": "product", "label": "Two-layer badge product", "info": "Use a dedicated customizable product. Its variants set the price; all displayed fonts, finishes and mounting choices must be supported. Product pages use the current product."},
+    {"type": "product", "id": "product", "label": "Two-layer badge product", "info": "Leave blank to automatically use the product selected in Theme Settings > Custom Emblem. Or select a product here to override."},
     {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "YOUR WORDS. YOUR STYLE."},
     {"type": "text", "id": "heading", "label": "Heading", "default": "Make it unmistakably yours."},
     {"type": "richtext", "id": "description", "label": "Description", "default": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>"},

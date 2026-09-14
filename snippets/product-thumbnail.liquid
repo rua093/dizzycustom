@@ -98,6 +98,26 @@
         sizes: sizes,
         widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946'
       }}
+      {%- assign configured_product = section.settings.custom_emblem_product | default: settings.custom_emblem_product -%}
+      {%- assign is_custom_thumb = false -%}
+      {%- if configured_product != blank -%}
+        {%- if product.id == configured_product.id or product.handle == configured_product.handle or product.handle == configured_product -%}
+          {%- assign is_custom_thumb = true -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- if product.handle == 'custom-metal-emblem-for-car-and-motorbike-copy-2' or product.handle == 'custom-metal-emblem' -%}
+        {%- assign is_custom_thumb = true -%}
+      {%- endif -%}
+
+      {%- if position == 1 and is_custom_thumb -%}
+        <div id="dc-pdp-canvas-wrapper" class="dc-pdp-media-canvas-overlay" style="display: none;">
+          <canvas id="dc-pdp-canvas" class="dc-pdp-canvas" width="800" height="800" role="img" aria-label="Live custom emblem preview"></canvas>
+          <span class="dc-pdp-live-badge" aria-hidden="true">
+            <span class="dc-pdp-live-dot"></span>
+            <span>Live Custom Preview</span>
+          </span>
+        </div>
+      {%- endif -%}
     </div>
     <button class="product__media-toggle quick-add-hidden product__media-zoom-{{ section.settings.image_zoom }}" type="button" aria-haspopup="dialog" data-media-id="{{ media.id }}">
       <span class="visually-hidden">
