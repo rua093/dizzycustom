@@ -52,6 +52,19 @@
   }
 }
 
+@media screen and (max-width: 749px) {
+  /* Remove mobile slider buttons and counter (< 1/11 >) under product media for all products */
+  .product__media-container .slider-buttons,
+  .product-media-gallery__viewer-buttons,
+  .dc-main-product .slider-buttons {
+    display: none;
+  }
+
+  .dc-main-product .product__media-list {
+    margin-bottom: 0.5rem;
+  }
+}
+
 @media screen and (min-width: 990px) {
   .product--large:not(.product--no-media) .product__media-wrapper {
     max-width: 65%;

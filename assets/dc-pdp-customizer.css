@@ -423,17 +423,6 @@
     z-index: 4;
   }
 
-  /* Remove mobile slider buttons and counter (< 1/11 >) under product media */
-  .dc-main-product .product__media-container .slider-buttons,
-  .dc-main-product .slider-buttons,
-  .dc-main-product .product-media-gallery__viewer-buttons {
-    display: none;
-  }
-
-  .dc-main-product .product__media-list {
-    margin-bottom: 0.5rem;
-  }
-
   .product__media-wrapper.dc-mobile-sticky {
     position: fixed;
     left: 0;
