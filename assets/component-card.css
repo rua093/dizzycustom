@@ -472,7 +472,7 @@
 }
 
 .product-card-wrapper--dizzy .rating-star {
-  --color-rating-star: 255, 192, 0;
+  --color-rating-star: rgb(255, 192, 0);
   --letter-spacing: 0.35;
   --font-size: 1.45;
 }
