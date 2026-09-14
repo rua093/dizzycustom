@@ -219,17 +219,6 @@
     },
     "1789409231f10d6dbe": {
       "type": "apps",
-      "blocks": {
-        "powerful_form_builder_app_block_k7pJxU": {
-          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
-          "settings": {
-            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjg1\"></div>"
-          }
-        }
-      },
-      "block_order": [
-        "powerful_form_builder_app_block_k7pJxU"
-      ],
       "settings": {
         "include_margins": true
       }
@@ -438,6 +427,23 @@
         "padding_top": 20,
         "padding_bottom": 0
       }
+    },
+    "1789410370f0d69c93": {
+      "type": "apps",
+      "blocks": {
+        "powerful_form_builder_app_block_zdaiYy": {
+          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
+          "settings": {
+            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc1\"></div>"
+          }
+        }
+      },
+      "block_order": [
+        "powerful_form_builder_app_block_zdaiYy"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -446,6 +452,7 @@
     "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
+    "1789410370f0d69c93",
     "1789409231f10d6dbe",
     "multicolumn_6CbrDa",
     "craftsmanship_process",
