@@ -98,7 +98,7 @@
             "heading": "What Makes Us Different?",
             "icon": "silhouette",
             "content": "",
-            "page": "datails"
+            "page": "why-we-special"
           }
         },
         "collapsible_tab_yYNFNm": {
@@ -153,7 +153,8 @@
         "padding_top": 20,
         "padding_bottom": 52,
         "enable_group_media": false,
-        "media_grouping_option": "Style"
+        "media_grouping_option": "Style",
+        "custom_emblem_product": ""
       }
     },
     "image_scrolling_B9NJi9": {
