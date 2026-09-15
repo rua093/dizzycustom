@@ -1,0 +1,141 @@
+{{ 'section-dc-product-faq.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .dc-product-faq {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .dc-product-faq {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="dc-product-faq" aria-labelledby="DcProductFaqHeading-{{ section.id }}">
+  <span
+    class="dc-product-faq__style-mark{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+    aria-hidden="true"
+  >Drive<br>Your<br>Style</span>
+  <div class="page-width">
+    <div class="dc-product-faq__inner">
+      <header class="dc-product-faq__header{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="dc-product-faq__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        <h2 id="DcProductFaqHeading-{{ section.id }}" class="dc-product-faq__heading">
+          {{ section.settings.heading | escape }}
+          {%- if section.settings.heading_accent != blank -%}
+            <span class="dc-product-faq__heading-accent"> {{ section.settings.heading_accent | escape }}</span>
+          {%- endif -%}
+        </h2>
+
+        {%- if section.settings.description != blank -%}
+          <div class="dc-product-faq__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </header>
+
+      <div class="dc-product-faq__list">
+        {%- for block in section.blocks -%}
+          <details
+            class="dc-product-faq__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {% if section.settings.open_first_item and forloop.first %}open{% endif %}
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
+            <summary class="dc-product-faq__summary">
+              <span class="dc-product-faq__question-icon">{% render 'icon-faq-question' %}</span>
+              <span class="dc-product-faq__question">{{ block.settings.question | escape }}</span>
+              <span class="dc-product-faq__caret" aria-hidden="true"></span>
+            </summary>
+            <div class="dc-product-faq__answer rte">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_brand_mark -%}
+        <div
+          class="dc-product-faq__brand{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          aria-hidden="true"
+        >
+          {%- if settings.logo != blank -%}
+            {{
+              settings.logo
+              | image_url: width: 320
+              | image_tag: class: 'dc-product-faq__brand-logo', loading: 'lazy', widths: '160, 240, 320'
+            }}
+          {%- else -%}
+            <p class="dc-product-faq__brand-name">DIZZY</p>
+          {%- endif -%}
+          <p class="dc-product-faq__brand-tagline">Let them stare</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{%- if section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.question | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "DC product FAQ",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Custom details. A bolder you." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently Asked" },
+    { "type": "text", "id": "heading_accent", "label": "Highlighted heading", "default": "Questions" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Everything you need to know about our custom emblems.<br>Still have a question? We’re here to help.</p>" },
+    { "type": "checkbox", "id": "open_first_item", "label": "Open first question", "default": false },
+    { "type": "checkbox", "id": "show_brand_mark", "label": "Show brand mark", "default": true },
+    { "type": "header", "content": "Section padding" },
+    { "type": "range", "id": "padding_top", "min": 24, "max": 120, "step": 4, "unit": "px", "label": "Padding top", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "min": 24, "max": 120, "step": 4, "unit": "px", "label": "Padding bottom", "default": 32 }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How durable are these emblems?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Our emblems are crafted by hand from high-quality stainless steel for long-lasting durability.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "DC product FAQ",
+      "blocks": [
+        { "type": "faq_item" },
+        { "type": "faq_item" },
+        { "type": "faq_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -21,7 +21,7 @@
         "heading_1": {
           "type": "heading",
           "settings": {
-            "heading": "MAKE IT YOURS",
+            "heading": "MAKE IT <em>YOURS</em>",
             "heading_size": "h1"
           }
         },
@@ -216,6 +216,10 @@
         "padding_top": 40,
         "padding_bottom": 52
       }
+    },
+    "dc_custom_request_anchor": {
+      "type": "dc-custom-request-anchor",
+      "settings": {}
     },
     "1789409231f10d6dbe": {
       "type": "apps",
@@ -452,6 +456,7 @@
     "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
+    "dc_custom_request_anchor",
     "1789410370f0d69c93",
     "1789409231f10d6dbe",
     "multicolumn_6CbrDa",

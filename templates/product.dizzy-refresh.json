@@ -102,21 +102,42 @@
           }
         },
         "collapsible_tab_yYNFNm": {
-          "type": "collapsible_tab",
+          "type": "whats_included",
           "settings": {
             "heading": "What You’ll Receive",
             "icon": "box",
-            "content": "<p>🏆 <strong>Premium Custom Emblem</strong> – Crafted from high-quality stainless steel for a durable, sleek look.</p><p>💌 <strong>Personalized Thank You Card</strong> – A special note from <strong>DizzyCustom</strong> to show our appreciation.</p><p>🎁 <strong>Luxury Packaging Box</strong> – Stylish, protective, and perfect for gifting.</p>",
-            "page": "what-in-the-box"
+            "intro": "Everything you need, thoughtfully packaged.",
+            "item_1_icon": "🏆",
+            "item_1_title": "Premium Custom Emblem",
+            "item_1_description": "Crafted from high-quality stainless steel for a durable, sleek look.",
+            "item_2_icon": "💌",
+            "item_2_title": "Personalized Thank You Card",
+            "item_2_description": "A special note from DizzyCustom to show our appreciation.",
+            "item_3_icon": "🎁",
+            "item_3_title": "Luxury Packaging Box",
+            "item_3_description": "Stylish, protective, and perfect for gifting.",
+            "page": "what-in-the-box",
+            "note": ""
           }
         },
         "collapsible_tab_UYfayn": {
-          "type": "collapsible_tab",
+          "type": "production_process",
           "settings": {
             "heading": "Production Process",
             "icon": "lightning_bolt",
-            "content": "<p><strong>Your Custom Emblems Are Meticulously Crafted. Craftsmanship at Its Best</strong> – Every emblem is carefully designed, manufactured, and finished with precision.</p><p>✍️<strong> Production Time:</strong> 1 - 3 days (Includes design, manufacturing, and quality control)</p><p>🚚<strong> Shipping:</strong> 5 - 8 days (Delivery time depends on your location)</p><p>📦 <strong>Estimated Arrival: Total 7 - 14 days</strong> from order to delivery</p><p>💯<strong> Quality Worth the Wait</strong> – <strong>See why our customers love us!</strong></p>",
-            "page": ""
+            "intro_heading": "Your Custom Emblems Are Meticulously Crafted.",
+            "intro_text": "<p><strong>Craftsmanship at Its Best</strong> – Every emblem is carefully designed, manufactured, and finished with precision.</p>",
+            "production_icon": "✍️",
+            "production_title": "<p>Production Time: <strong>1 - 3 days</strong></p>",
+            "production_description": "<p>Includes design, manufacturing, and quality control</p>",
+            "shipping_icon": "🚚",
+            "shipping_title": "<p>Shipping: <strong>5 - 8 days</strong></p>",
+            "shipping_description": "<p>Delivery time depends on your location</p>",
+            "arrival_icon": "📦",
+            "arrival_title": "<p>Estimated Arrival: <strong>Total 7 - 14 days</strong></p>",
+            "arrival_description": "<p>from order to delivery</p>",
+            "reassurance_icon": "💯",
+            "reassurance": "Quality Worth the Wait – See why our customers love us!"
           }
         }
       },
@@ -901,7 +922,7 @@
         "heading_size": "h1",
         "text": "<p>Looking for a unique design, logo, bulk order, or a size outside our standard options? Tell us what you have in mind and we will help bring it to life.</p>",
         "button_label": "Request a Custom Emblem",
-        "button_link": "shopify://pages/contact",
+        "button_link": "/#custom-emblem-request",
         "desktop_image_position": "right",
         "color_scheme": "inverse",
         "padding_top": 48,
@@ -909,51 +930,41 @@
       }
     },
     "collapsible_content_EKCrAk": {
-      "type": "collapsible-content",
+      "type": "dc-product-faq",
       "blocks": {
         "collapsible_row_XNL4FD": {
-          "type": "collapsible_row",
+          "type": "faq_item",
           "settings": {
-            "heading": "How durable are these emblems?",
-            "icon": "chat_bubble",
-            "row_content": "<ul><li>Our emblems are crafted by hand from high-quality stainless steal, ensuring durability and resistance against various environmental conditions.</li></ul>",
-            "page": ""
+            "question": "How durable are these emblems?",
+            "answer": "<p>Our emblems are crafted by hand from high-quality stainless steal, ensuring durability and resistance against various environmental conditions.</p>"
           }
         },
         "collapsible_row_mQ3Lnx": {
-          "type": "collapsible_row",
+          "type": "faq_item",
           "settings": {
-            "heading": "Can I include symbols or dates in my customization?",
-            "icon": "chat_bubble",
-            "row_content": "<ul><li>Absolutely! Beyond names, you can include symbols, dates, or mottos to create a more personalized and meaningful emblem.</li></ul>",
-            "page": ""
+            "question": "Can I include symbols or dates in my customization?",
+            "answer": "<p>Absolutely! Beyond names, you can include symbols, dates, or mottos to create a more personalized and meaningful emblem.</p>"
           }
         },
         "collapsible_row_aVbDzf": {
-          "type": "collapsible_row",
+          "type": "faq_item",
           "settings": {
-            "heading": "Can I easily remove the emblem and attach it somewhere else?",
-            "icon": "chat_bubble",
-            "row_content": "<ul><li>Whatever your reason to remove the emblem from your car is, you’ll have to be really cautious. If you’re not, you could damage the paint.</li><li>We recommend that you consult a professional to help with this issue.</li></ul>",
-            "page": ""
+            "question": "Can I easily remove the emblem and attach it somewhere else?",
+            "answer": "<p>Whatever your reason to remove the emblem from your car is, you’ll have to be really cautious. If you’re not, you could damage the paint.</p><p>We recommend that you consult a professional to help with this issue.</p>"
           }
         },
         "collapsible_row_fQeGWY": {
-          "type": "collapsible_row",
+          "type": "faq_item",
           "settings": {
-            "heading": "Can the default sizes be changed if it doesn't fit for me?",
-            "icon": "chat_bubble",
-            "row_content": "<ul><li>Yes! We can do any size you’d like. Just contact us beforehand, because bigger emblems can be more expensive and some emblems we can only make emblems so small.</li></ul>",
-            "page": ""
+            "question": "Can the default sizes be changed if it doesn't fit for me?",
+            "answer": "<p>Yes! We can do any size you’d like. Just contact us beforehand, because bigger emblems can be more expensive and some emblems we can only make emblems so small.</p>"
           }
         },
         "collapsible_row_gbLVtx": {
-          "type": "collapsible_row",
+          "type": "faq_item",
           "settings": {
-            "heading": "Is the installation process complicated?",
-            "icon": "chat_bubble",
-            "row_content": "<ul><li>Not at all! We provide clear instructions and may even include an installation kit with your purchase.You just need to use double-sided on back side tape to \"peel and stick\" it on your car.</li></ul>",
-            "page": ""
+            "question": "Is the installation process complicated?",
+            "answer": "<p>Not at all! We provide clear instructions and may even include an installation kit with your purchase.You just need to use double-sided on back side tape to \"peel and stick\" it on your car.</p>"
           }
         }
       },
@@ -965,18 +976,14 @@
         "collapsible_row_gbLVtx"
       ],
       "settings": {
-        "caption": "",
-        "heading": "FAQ",
-        "heading_size": "h0",
-        "heading_alignment": "center",
-        "layout": "none",
-        "color_scheme": "accent-1",
-        "container_color_scheme": "accent-1",
-        "open_first_collapsible_row": true,
-        "image_ratio": "adapt",
-        "desktop_layout": "image_second",
-        "padding_top": 0,
-        "padding_bottom": 0
+        "eyebrow": "Custom details. A bolder you.",
+        "heading": "Frequently Asked",
+        "heading_accent": "Questions",
+        "description": "<p>Everything you need to know about our custom emblems.<br>Still have a question? We’re here to help.</p>",
+        "open_first_item": false,
+        "show_brand_mark": true,
+        "padding_top": 40,
+        "padding_bottom": 32
       }
     }
   },
