@@ -486,7 +486,8 @@ fieldset.product-form__input .form__label {
   color: #fff;
 }
 
-.dc-main-product .price:not(.price--sold-out) .price__badge-sale,
+.dc-main-product .price--on-sale:not(.price--sold-out) .price__badge-sale,
+.dc-main-product .volume-pricing--sale-badge:not(.price--sold-out) .price__badge-sale,
 .dc-main-product .price--sold-out .price__badge-sold-out {
   display: inline-flex;
 }

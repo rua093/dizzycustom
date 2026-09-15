@@ -251,7 +251,7 @@
                     <div class="dc-production-process__steps">
                       <div class="dc-production-process__step">
                         <span class="dc-production-process__icon" aria-hidden="true">
-                          <img src="{{ 'dc-production-process-time.png' | asset_url }}" width="1254" height="1254" alt="" loading="lazy">
+                          <img src="{{ 'dc-production-process-time.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
                         </span>
                         <div class="dc-production-process__step-copy">
                           <div class="dc-production-process__step-title rte">{{ block.settings.production_title }}</div>
@@ -261,7 +261,7 @@
 
                       <div class="dc-production-process__step">
                         <span class="dc-production-process__icon" aria-hidden="true">
-                          <img src="{{ 'dc-production-process-shipping.png' | asset_url }}" width="1254" height="1254" alt="" loading="lazy">
+                          <img src="{{ 'dc-production-process-shipping.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
                         </span>
                         <div class="dc-production-process__step-copy">
                           <div class="dc-production-process__step-title rte">{{ block.settings.shipping_title }}</div>
@@ -271,7 +271,7 @@
 
                       <div class="dc-production-process__step">
                         <span class="dc-production-process__icon" aria-hidden="true">
-                          <img src="{{ 'dc-production-process-arrival.png' | asset_url }}" width="1254" height="1254" alt="" loading="lazy">
+                          <img src="{{ 'dc-production-process-arrival.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
                         </span>
                         <div class="dc-production-process__step-copy">
                           <div class="dc-production-process__step-title rte">{{ block.settings.arrival_title }}</div>
@@ -281,7 +281,7 @@
 
                       <div class="dc-production-process__step dc-production-process__step--reassurance">
                         <span class="dc-production-process__icon" aria-hidden="true">
-                          <img src="{{ 'dc-production-process-quality.png' | asset_url }}" width="1254" height="1254" alt="" loading="lazy">
+                          <img src="{{ 'dc-production-process-quality.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
                         </span>
                         <p>{{ block.settings.reassurance | escape }}</p>
                       </div>
@@ -311,16 +311,16 @@
                           assign description_key = 'item_' | append: index | append: '_description'
                           case index
                             when 1
-                              assign icon_asset = 'dc-whats-included-cup.png'
+                              assign icon_asset = 'dc-whats-included-cup.webp'
                             when 2
-                              assign icon_asset = 'dc-whats-included-thank-you-card.png'
+                              assign icon_asset = 'dc-whats-included-thank-you-card.webp'
                             when 3
-                              assign icon_asset = 'dc-whats-included-gift.png'
+                              assign icon_asset = 'dc-whats-included-gift.webp'
                           endcase
                         -%}
                         <div class="dc-whats-included__item">
                           <span class="dc-whats-included__icon" aria-hidden="true">
-                            <img src="{{ icon_asset | asset_url }}" width="1254" height="1254" alt="" loading="lazy">
+                            <img src="{{ icon_asset | asset_url }}" width="160" height="160" alt="" loading="lazy">
                           </span>
                           <div class="dc-whats-included__copy">
                             <p class="dc-whats-included__item-title">{{ block.settings[title_key] | escape }}</p>

@@ -137,11 +137,6 @@
         this.mediaWrapper.parentNode.insertBefore(this.mediaSpacer, this.mediaWrapper);
       }
 
-      this.atcButton = document.querySelector('.product-form__submit') ||
-                       document.querySelector('button[name="add"]') ||
-                       document.querySelector('.product-form__buttons') ||
-                       document.querySelector('.product-form');
-
       let ticking = false;
       const update = () => {
         this.updateMobileSticky();
@@ -205,13 +200,6 @@
       const headerOffset = this.getHeaderOffset();
       const isSticky = this.mediaWrapper.classList.contains('dc-mobile-sticky');
 
-      if (!this.atcButton || !document.body.contains(this.atcButton)) {
-        this.atcButton = document.querySelector('.product-form__submit') ||
-                         document.querySelector('button[name="add"]') ||
-                         document.querySelector('.product-form__buttons') ||
-                         document.querySelector('.product-form');
-      }
-
       if (!isSticky) {
         this.naturalMediaHeight = this.mediaWrapper.offsetHeight || 375;
         const mediaRect = this.mediaWrapper.getBoundingClientRect();
@@ -233,26 +221,20 @@
           this.mediaSpacer.style.height = '0px';
           return;
         }
+      }
 
+      if (this.mediaWrapper.classList.contains('dc-mobile-sticky')) {
         this.mediaWrapper.style.top = `${headerOffset}px`;
 
-        // Check boundary past the lowest edge of buy buttons (including "Buy it now" button)
-        const buyCandidates = [
-          document.querySelector('.shopify-payment-button'),
-          document.querySelector('.shopify-payment-button__button'),
-          document.querySelector('.product-form__buttons'),
-          document.querySelector('.product-form__submit'),
-          document.querySelector('button[name="add"]')
-        ].filter((el) => el && document.body.contains(el) && el.offsetHeight > 0);
-
-        if (buyCandidates.length > 0) {
-          const boundaryBottom = Math.max(...buyCandidates.map((el) => el.getBoundingClientRect().bottom));
+        // Keep the preview visible only until it would cover the first customizer control.
+        const controls = this.controlsContainer || document.querySelector('variant-radios, variant-selects');
+        if (controls && document.body.contains(controls)) {
+          const boundaryTop = controls.getBoundingClientRect().top;
           const stickyHeight = this.naturalMediaHeight || this.mediaWrapper.offsetHeight;
           const stickyBottom = headerOffset + stickyHeight;
 
-          // When scrolled past the lowest buy button ("Buy it now"), slide sticky media up out of view
-          if (boundaryBottom < stickyBottom) {
-            const diff = Math.round(boundaryBottom - stickyBottom);
+          if (boundaryTop < stickyBottom) {
+            const diff = Math.round(boundaryTop - stickyBottom);
             this.mediaWrapper.style.transform = `translateY(${diff}px)`;
           } else {
             this.mediaWrapper.style.transform = 'translateY(0)';
@@ -425,23 +407,30 @@
 
       // Font active state
       this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
-        btn.classList.toggle('is-active', btn.dataset.pdpFont === this.state.font);
+        const isActive = btn.dataset.pdpFont === this.state.font;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
 
       // Layer active state
       this.controlsContainer.querySelectorAll('[data-pdp-layer]').forEach((btn) => {
-        btn.classList.toggle('is-active', btn.dataset.pdpLayer === this.layer);
+        const isActive = btn.dataset.pdpLayer === this.layer;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
 
       // Finish tab active state
       this.controlsContainer.querySelectorAll('[data-pdp-finish]').forEach((btn) => {
-        btn.classList.toggle('is-active', btn.dataset.pdpFinish === this.group);
+        const isActive = btn.dataset.pdpFinish === this.group;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
 
       // Swatch active state
       this.controlsContainer.querySelectorAll('[data-swatch]').forEach((btn) => {
         const isActive = btn.dataset.swatch === this.state[this.layer];
         btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
 
       // Color labels & chips

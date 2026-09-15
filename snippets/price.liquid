@@ -118,14 +118,15 @@
     </small>
   </div>
  {%- if show_badges -%}
-    {%- assign difference = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price -%}
-    {%- assign float_difference = difference | times: 1.0 -%}
-    {%- assign discount_fraction = float_difference | divided_by: product.selected_or_first_available_variant.compare_at_price -%}
-    {%- assign discount_percentage = discount_fraction | times: 100 | round -%}
-    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
-      {% comment %}{{ 'products.product.on_sale' | t }}{% endcomment %}
-      {{- discount_percentage }}% OFF
-    </span>
+    {%- if compare_at_price > price -%}
+      {%- assign difference = compare_at_price | minus: price -%}
+      {%- assign float_difference = difference | times: 1.0 -%}
+      {%- assign discount_fraction = float_difference | divided_by: compare_at_price -%}
+      {%- assign discount_percentage = discount_fraction | times: 100 | round -%}
+      <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+        {{- discount_percentage }}% OFF
+      </span>
+    {%- endif -%}
 
     <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
       {{ 'products.product.sold_out' | t }}
