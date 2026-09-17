@@ -1,0 +1,1092 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating_Q3jtX8": {
+          "type": "rating",
+          "disabled": true,
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "text_9bBXa7": {
+          "type": "text",
+          "settings": {
+            "text": "✓Rust-free stainless steel",
+            "text_style": "body"
+          }
+        },
+        "text_Q3rmVL": {
+          "type": "text",
+          "settings": {
+            "text": "✓ Install in 5 minutes – no tools needed",
+            "text_style": "body"
+          }
+        },
+        "text_fNhciU": {
+          "type": "text",
+          "settings": {
+            "text": "✓ Perfect for cars, motorbikes & any smooth surface",
+            "text_style": "body"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false
+          }
+        },
+        "text_iGkwi3": {
+          "type": "text",
+          "settings": {
+            "text": "🚚 Made to order — handmade in 3–5 business days. Shipping usually 7–15 days depending on your country.",
+            "text_style": "body"
+          }
+        },
+        "description": {
+          "type": "description",
+          "disabled": true,
+          "settings": {}
+        },
+        "collapsible_tab_tcDPeT": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Description",
+            "icon": "clipboard",
+            "content": "",
+            "page": "description"
+          }
+        },
+        "collapsible_tab_GhaHkm": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "What Makes Us Different?",
+            "icon": "silhouette",
+            "content": "",
+            "page": "why-we-special"
+          }
+        },
+        "collapsible_tab_yYNFNm": {
+          "type": "whats_included",
+          "settings": {
+            "heading": "What You’ll Receive",
+            "icon": "box",
+            "intro": "Everything you need, thoughtfully packaged.",
+            "item_1_icon": "🏆",
+            "item_1_title": "Premium Custom Emblem",
+            "item_1_description": "Crafted from high-quality stainless steel for a durable, sleek look.",
+            "item_2_icon": "💌",
+            "item_2_title": "Personalized Thank You Card",
+            "item_2_description": "A special note from DizzyCustom to show our appreciation.",
+            "item_3_icon": "🎁",
+            "item_3_title": "Luxury Packaging Box",
+            "item_3_description": "Stylish, protective, and perfect for gifting.",
+            "page": "what-in-the-box",
+            "note": ""
+          }
+        },
+        "collapsible_tab_UYfayn": {
+          "type": "production_process",
+          "settings": {
+            "heading": "Production Process",
+            "icon": "lightning_bolt",
+            "intro_heading": "Your Custom Emblems Are Meticulously Crafted.",
+            "intro_text": "<p><strong>Craftsmanship at Its Best</strong> – Every emblem is carefully designed, manufactured, and finished with precision.</p>",
+            "production_icon": "✍️",
+            "production_title": "<p>Production Time: <strong>1 - 3 days</strong></p>",
+            "production_description": "<p>Includes design, manufacturing, and quality control</p>",
+            "shipping_icon": "🚚",
+            "shipping_title": "<p>Shipping: <strong>5 - 8 days</strong></p>",
+            "shipping_description": "<p>Delivery time depends on your location</p>",
+            "arrival_icon": "📦",
+            "arrival_title": "<p>Estimated Arrival: <strong>Total 7 - 14 days</strong></p>",
+            "arrival_description": "<p>from order to delivery</p>",
+            "reassurance_icon": "💯",
+            "reassurance": "Quality Worth the Wait – See why our customers love us!"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "rating_Q3jtX8",
+        "price",
+        "text_9bBXa7",
+        "text_Q3rmVL",
+        "text_fNhciU",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "text_iGkwi3",
+        "description",
+        "collapsible_tab_tcDPeT",
+        "collapsible_tab_GhaHkm",
+        "collapsible_tab_yYNFNm",
+        "collapsible_tab_UYfayn"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "inverse",
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "cover",
+        "gallery_layout": "thumbnail_slider",
+        "media_position": "left",
+        "image_zoom": "hover",
+        "mobile_thumbnails": "hide",
+        "hide_variants": true,
+        "enable_video_looping": true,
+        "padding_top": 20,
+        "padding_bottom": 52,
+        "enable_group_media": false,
+        "media_grouping_option": "Style",
+        "custom_emblem_product": ""
+      }
+    },
+    "image_scrolling_B9NJi9": {
+      "type": "image-scrolling",
+      "blocks": {
+        "block_H7C3MF": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/ford.png"
+          }
+        },
+        "block_tKkphh": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/lamborghini-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_HCWcB6": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/toyota-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_BFfn9D": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/porsche-logo-car-brand-symbol-black-white-design-vector-46125298.jpg"
+          }
+        },
+        "block_J6wkVN": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/rolls-royce-brand-logo-symbol-with-name-white-design-british-car-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_EMULVC": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/mazda-brand-logo-car-symbol-black-and-white-design-vector-46098405_ec2d8ac1-3ec6-4a6e-8f71-8a3fe977cd0e.jpg"
+          }
+        },
+        "block_ddKeUM": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/infiniti-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_y9hXt6": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/maserati-brand-logo-car-symbol-white-design-italian-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        },
+        "block_phQxzE": {
+          "type": "block",
+          "settings": {
+            "logo_image": "shopify://shop_images/nissan-brand-logo-car-symbol-white-design-japan-automobile-illustration-with-black-background-free-vector.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "block_H7C3MF",
+        "block_tKkphh",
+        "block_HCWcB6",
+        "block_BFfn9D",
+        "block_J6wkVN",
+        "block_EMULVC",
+        "block_ddKeUM",
+        "block_y9hXt6",
+        "block_phQxzE"
+      ],
+      "disabled": true,
+      "settings": {
+        "bg_color": "#000000",
+        "show_border": false,
+        "border_color": "",
+        "border_thickness": 1,
+        "scroll_time": "20",
+        "scroll_text_move": "logo-marquee--reverse",
+        "pause_text": "initial",
+        "max_width": "10rem",
+        "t_max_width": "15rem",
+        "m_max_width": "5rem",
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "m_padding_top": 16,
+        "m_padding_bottom": 16
+      }
+    },
+    "dc_brand_experience": {
+      "type": "dc-brand-experience",
+      "blocks": {
+        "benefit_quality": {
+          "type": "benefit",
+          "settings": {
+            "icon": "quality",
+            "heading": "Premium Metal Quality",
+            "text": "<p>Durable metal with a polished, long-lasting finish.</p>"
+          }
+        },
+        "benefit_custom": {
+          "type": "benefit",
+          "settings": {
+            "icon": "customize",
+            "heading": "Fully Customizable",
+            "text": "<p>Your wording, finish and style—made to express what matters to you.</p>"
+          }
+        },
+        "benefit_road": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "heading": "Built for the Road",
+            "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>"
+          }
+        },
+        "benefit_vehicles": {
+          "type": "benefit",
+          "settings": {
+            "icon": "vehicle",
+            "heading": "Fits More Than Cars",
+            "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "benefit_quality",
+        "benefit_custom",
+        "benefit_road",
+        "benefit_vehicles"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/madeyouridea.png",
+        "eyebrow": "MAKE YOUR RIDE",
+        "heading": "TRULY YOURS",
+        "heading_size": "h1",
+        "text": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>",
+        "button_label": "CUSTOMIZE YOURS TODAY",
+        "button_link": "",
+        "show_story": false,
+        "desktop_image_position": "left",
+        "benefits_heading": "Why Choose DizzyCustom",
+        "show_benefits": false,
+        "show_feature_showcase": true,
+        "craftsmanship_image": "shopify://shop_images/ezgif-2-7a7cf4e2dc.gif",
+        "craftsmanship_image_label": "CRAFTED BY HAND",
+        "craftsmanship_eyebrow": "CRAFTSMANSHIP",
+        "craftsmanship_accent": "Precision",
+        "craftsmanship_heading": "in Every Detail",
+        "craftsmanship_text": "<p>Every custom emblem is meticulously crafted by hand, ensuring a flawless finish that reflects your unique style and personality.</p>",
+        "craftsmanship_label": "HANDCRAFTED · BUILT TO STAND OUT",
+        "installation_image": "shopify://shop_images/compressed_2.gif",
+        "installation_image_label": "SIMPLE INSTALLATION",
+        "installation_eyebrow": "USER FRIENDLY",
+        "installation_accent": "Effortless",
+        "installation_heading": "Installation",
+        "installation_text": "<p>No tools, no hassle! Simply peel, stick, and enjoy a long-lasting, premium-quality emblem that stays in place for years.</p>",
+        "installation_label": "PEEL · STICK · DRIVE WITH CONFIDENCE",
+        "color_scheme": "inverse",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "dc_installation_guide": {
+      "type": "dc-installation-guide",
+      "blocks": {
+        "step_clean": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/Detail-20_278ac171-8d43-4a03-9444-6c837876bf17.jpg",
+            "heading": "Clean the Surface",
+            "text": "<p>Clean the area with an alcohol-based cleaner and make sure it is dry and free of wax or oil.</p>"
+          }
+        },
+        "step_mark": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/Detail-21_159b30ca-20ac-43ec-b793-3747fbc2403c.jpg",
+            "heading": "Mark the Position",
+            "text": "<p>Use masking tape or a dry-erase marker to preview the placement and keep the emblem aligned.</p>"
+          }
+        },
+        "step_apply": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/Detail-22_1c6c6fbd-36f3-4631-a35c-d3a4e120005d.jpg",
+            "heading": "Apply the Emblem",
+            "text": "<p>Remove the protective backing, place the emblem carefully and press firmly for 30–60 seconds.</p>"
+          }
+        },
+        "step_finish": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/Detail-23_e78db51a-fab3-41c0-9f5a-72cb519cfb79.jpg",
+            "heading": "Final Touch",
+            "text": "<p>Remove the guides, give the emblem a final press and wait 24 hours before washing.</p>"
+          }
+        },
+        "tip_flat": {
+          "type": "tip",
+          "settings": {
+            "icon": "flat",
+            "heading": "Estimate the Curve of the Surface",
+            "text": "<p>Before removing the backing, gently place the emblem on the surface to get a feel for the curve.</p>"
+          }
+        },
+        "tip_curve": {
+          "type": "tip",
+          "settings": {
+            "icon": "curve",
+            "heading": "Pre-Bend the Emblem to Match the Curve",
+            "text": "<p>Slightly warm up the non-adhesive side of the emblem and bend it to follow the estimated curve.</p><p>Then shape the emblem to fit the curve, and press it down from the center outward to prevent wrinkles or lifted edges.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "step_clean",
+        "step_mark",
+        "step_apply",
+        "step_finish",
+        "tip_flat",
+        "tip_curve"
+      ],
+      "settings": {
+        "heading": "How to Apply Your Emblem",
+        "heading_size": "h2",
+        "tips_heading": "Tips for the Best Result",
+        "color_scheme": "inverse",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "disabled": true,
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "show_view_all": true,
+        "view_all_link": "shopify://collections/dizzy-custom-emblems",
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "17116942862d54480a": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "172042640627ff6334": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "image_with_text_tbQfGL": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_JGrAnb": {
+          "type": "heading",
+          "settings": {
+            "heading": "<em><strong>Identity Expression</strong></em>",
+            "heading_size": "h1"
+          }
+        },
+        "text_axyfFQ": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Elevate your ride and make it uniquely yours! Our customizable car emblems bring you the power to express your individuality and stand out from the crowd.</p>",
+            "text_style": "subtitle"
+          }
+        },
+        "button_jdFYtE": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_JGrAnb",
+        "text_axyfFQ",
+        "button_jdFYtE"
+      ],
+      "disabled": true,
+      "settings": {
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "inverse",
+        "color_scheme": "inverse",
+        "image_behavior": "ambient",
+        "mobile_content_alignment": "center",
+        "padding_top": 20,
+        "padding_bottom": 0
+      }
+    },
+    "multicolumn_njiDHU": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_7q8nec": {
+          "type": "column",
+          "settings": {
+            "title": "Column",
+            "tab_title": "",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_hFj7DG": {
+          "type": "column",
+          "settings": {
+            "title": "Column",
+            "tab_title": "",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_U4c4RM": {
+          "type": "column",
+          "settings": {
+            "title": "Column",
+            "tab_title": "",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_7q8nec",
+        "column_hFj7DG",
+        "column_U4c4RM"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Multicolumn",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "button_label": "Button label",
+        "button_link": "",
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "enable_mobile_tabs": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_pG4P8A": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_tBz8YG": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>Make Your Ride Truly Yours</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_6JRMWT": {
+          "type": "text",
+          "settings": {
+            "text": "<p>More than an emblem, it is a statement. Every custom piece is carefully crafted by hand to reflect your style, passion and personality.</p>",
+            "text_style": "subtitle"
+          }
+        },
+        "button_tthHxR": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_tBz8YG",
+        "text_6JRMWT",
+        "button_tthHxR"
+      ],
+      "disabled": true,
+      "settings": {
+        "image": "shopify://shop_images/ezgif-2-7a7cf4e2dc.gif",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "inverse",
+        "color_scheme": "inverse",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "padding_top": 0,
+        "padding_bottom": 24
+      }
+    },
+    "multicolumn_mjQLwf": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_mPVtdW": {
+          "type": "column",
+          "settings": {
+            "title": "Premium Metal Quality",
+            "tab_title": "",
+            "text": "<p>Durable zinc-alloy metal with a polished, long-lasting finish.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_qTJz84": {
+          "type": "column",
+          "settings": {
+            "title": "Fully Customizable",
+            "tab_title": "",
+            "text": "<p>Your wording, finish and style—made to express what matters to you.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_E67H8R": {
+          "type": "column",
+          "settings": {
+            "title": "Built for the Road",
+            "tab_title": "",
+            "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_fits_more": {
+          "type": "column",
+          "settings": {
+            "title": "Fits More Than Cars",
+            "tab_title": "",
+            "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_mPVtdW",
+        "column_qTJz84",
+        "column_E67H8R",
+        "column_fits_more"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Why Choose DizzyCustom",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "enable_mobile_tabs": false,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "image_with_text_gMLYcA": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_wm7gL8": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>Effortless Installation</strong>",
+            "heading_size": "h2"
+          }
+        },
+        "text_H9RzTU": {
+          "type": "text",
+          "settings": {
+            "text": "<p>No tools, no hassle! Simply peel, stick, and enjoy a long-lasting, premium-quality emblem that stays in place for years.</p>",
+            "text_style": "subtitle"
+          }
+        },
+        "button_EwDaYY": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_wm7gL8",
+        "text_H9RzTU",
+        "button_EwDaYY"
+      ],
+      "disabled": true,
+      "settings": {
+        "image": "shopify://shop_images/compressed_2.gif",
+        "height": "medium",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "right",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "inverse",
+        "color_scheme": "inverse",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "image_with_text_77AdNN": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_a9nxa6": {
+          "type": "heading",
+          "settings": {
+            "heading": "<em><strong>Satisfaction and Pride</strong></em>",
+            "heading_size": "h1"
+          }
+        },
+        "text_LhV3C6": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Experience the joy of personalization without the fuss. Our emblems ensure you proudly display your custom emblem with minimal effort and maximum satisfaction.</p>",
+            "text_style": "subtitle"
+          }
+        },
+        "button_GzEh3A": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_a9nxa6",
+        "text_LhV3C6",
+        "button_GzEh3A"
+      ],
+      "disabled": true,
+      "settings": {
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "right",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "inverse",
+        "color_scheme": "inverse",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "multicolumn_ykVdx7": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_RDMd7P": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Detail-20_278ac171-8d43-4a03-9444-6c837876bf17.jpg",
+            "title": "1. Clean the Surface",
+            "tab_title": "",
+            "text": "<p>Clean the area with an alcohol-based cleaner and make sure it is dry and free of wax or oil.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_h9jMcT": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Detail-21_159b30ca-20ac-43ec-b793-3747fbc2403c.jpg",
+            "title": "2. Mark the Position",
+            "tab_title": "",
+            "text": "<p>Use masking tape or a dry-erase marker to preview the placement and keep the emblem aligned.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_q86ne8": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Detail-22_1c6c6fbd-36f3-4631-a35c-d3a4e120005d.jpg",
+            "title": "3. Apply the Emblem",
+            "tab_title": "",
+            "text": "<p>Remove the protective backing, place the emblem carefully and press firmly for 30–60 seconds.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_X8e7La": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Detail-23_e78db51a-fab3-41c0-9f5a-72cb519cfb79.jpg",
+            "title": "4. Final Touch",
+            "tab_title": "",
+            "text": "<p>Remove the guides, give the emblem a final press and wait 24 hours before washing.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_RDMd7P",
+        "column_h9jMcT",
+        "column_q86ne8",
+        "column_X8e7La"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "How to Apply Your Emblem",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "square",
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "enable_mobile_tabs": false,
+        "padding_top": 48,
+        "padding_bottom": 24
+      }
+    },
+    "multicolumn_mrpKL4": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_yymRgz": {
+          "type": "column",
+          "settings": {
+            "title": "Flat Surfaces",
+            "tab_title": "",
+            "text": "<p>Clean and dry the surface before application. Work slowly from one side and press firmly for maximum adhesion.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_CHGeDL": {
+          "type": "column",
+          "settings": {
+            "title": "Curved Surfaces",
+            "tab_title": "",
+            "text": "<p>Test the curve before removing the backing. Shape the emblem gently, then press from the center toward the edges.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_yymRgz",
+        "column_CHGeDL"
+      ],
+      "disabled": true,
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "Tips for the Best Result",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 2,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "enable_mobile_tabs": false,
+        "padding_top": 24,
+        "padding_bottom": 48
+      }
+    },
+    "1705119654de2e3b3c": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "featured_collection_43WFLW": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "You Might Also Like",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "dizzy-custom-emblems",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "link",
+        "enable_desktop_slider": false,
+        "color_scheme": "inverse",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 48,
+        "padding_bottom": 24
+      }
+    },
+    "dc_brand_benefits": {
+      "type": "dc-brand-experience",
+      "blocks": {
+        "benefit_quality": {
+          "type": "benefit",
+          "settings": {
+            "icon": "quality",
+            "heading": "Premium Metal Quality",
+            "text": "<p>Durable metal with a polished, long-lasting finish.</p>"
+          }
+        },
+        "benefit_custom": {
+          "type": "benefit",
+          "settings": {
+            "icon": "customize",
+            "heading": "Fully Customizable",
+            "text": "<p>Your wording, finish and style—made to express what matters to you.</p>"
+          }
+        },
+        "benefit_road": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "heading": "Built for the Road",
+            "text": "<p>Weatherproof, UV-resistant and backed with strong automotive adhesive.</p>"
+          }
+        },
+        "benefit_vehicles": {
+          "type": "benefit",
+          "settings": {
+            "icon": "vehicle",
+            "heading": "Fits More Than Cars",
+            "text": "<p>Made for cars, motorbikes, trucks, helmets, guitars and other smooth surfaces.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "benefit_quality",
+        "benefit_custom",
+        "benefit_road",
+        "benefit_vehicles"
+      ],
+      "settings": {
+        "eyebrow": "MAKE YOUR RIDE",
+        "heading": "TRULY YOURS",
+        "heading_size": "h1",
+        "text": "<p>More than just an emblem. It’s a statement. Custom metal emblems that reflect your style, passion and personality.</p>",
+        "button_label": "CUSTOMIZE YOURS TODAY",
+        "button_link": "",
+        "show_story": false,
+        "desktop_image_position": "left",
+        "benefits_heading": "Why Choose DizzyCustom",
+        "show_benefits": true,
+        "show_feature_showcase": false,
+        "craftsmanship_image_label": "CRAFTED BY HAND",
+        "craftsmanship_eyebrow": "CRAFTSMANSHIP",
+        "craftsmanship_accent": "Precision",
+        "craftsmanship_heading": "in Every Detail",
+        "craftsmanship_text": "<p>Every custom emblem is meticulously crafted by hand, ensuring a flawless finish that reflects your unique style and personality.</p>",
+        "craftsmanship_label": "HANDCRAFTED · BUILT TO STAND OUT",
+        "installation_image_label": "SIMPLE INSTALLATION",
+        "installation_eyebrow": "USER FRIENDLY",
+        "installation_accent": "Effortless",
+        "installation_heading": "Installation",
+        "installation_text": "<p>No tools, no hassle! Simply peel, stick, and enjoy a long-lasting, premium-quality emblem that stays in place for years.</p>",
+        "installation_label": "PEEL · STICK · DRIVE WITH CONFIDENCE",
+        "color_scheme": "inverse",
+        "padding_top": 32,
+        "padding_bottom": 32
+      }
+    },
+    "dc_special_request": {
+      "type": "dc-special-request",
+      "settings": {
+        "eyebrow": "Made for you",
+        "heading": "Have a Special Request?",
+        "heading_size": "h1",
+        "text": "<p>Looking for a unique design, logo, bulk order, or a size outside our standard options? Tell us what you have in mind and we will help bring it to life.</p>",
+        "button_label": "Request a Custom Emblem",
+        "button_link": "/#custom-emblem-request",
+        "image": "shopify://shop_images/media-transformed.png",
+        "desktop_image_position": "right",
+        "color_scheme": "inverse",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "collapsible_content_EKCrAk": {
+      "type": "dc-product-faq",
+      "blocks": {
+        "collapsible_row_XNL4FD": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How durable are these emblems?",
+            "answer": "<p>Our emblems are crafted by hand from high-quality stainless steal, ensuring durability and resistance against various environmental conditions.</p>"
+          }
+        },
+        "collapsible_row_mQ3Lnx": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I include symbols or dates in my customization?",
+            "answer": "<p>Absolutely! Beyond names, you can include symbols, dates, or mottos to create a more personalized and meaningful emblem.</p>"
+          }
+        },
+        "collapsible_row_aVbDzf": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I easily remove the emblem and attach it somewhere else?",
+            "answer": "<p>Whatever your reason to remove the emblem from your car is, you’ll have to be really cautious. If you’re not, you could damage the paint.</p><p>We recommend that you consult a professional to help with this issue.</p>"
+          }
+        },
+        "collapsible_row_fQeGWY": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can the default sizes be changed if it doesn't fit for me?",
+            "answer": "<p>Yes! We can do any size you’d like. Just contact us beforehand, because bigger emblems can be more expensive and some emblems we can only make emblems so small.</p>"
+          }
+        },
+        "collapsible_row_gbLVtx": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is the installation process complicated?",
+            "answer": "<p>Not at all! We provide clear instructions and may even include an installation kit with your purchase.You just need to use double-sided on back side tape to \"peel and stick\" it on your car.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_row_XNL4FD",
+        "collapsible_row_mQ3Lnx",
+        "collapsible_row_aVbDzf",
+        "collapsible_row_fQeGWY",
+        "collapsible_row_gbLVtx"
+      ],
+      "settings": {
+        "eyebrow": "Custom details. A bolder you.",
+        "heading": "Frequently Asked",
+        "heading_accent": "Questions",
+        "description": "<p>Everything you need to know about our custom emblems.<br>Still have a question? We’re here to help.</p>",
+        "open_first_item": false,
+        "show_brand_mark": true,
+        "padding_top": 40,
+        "padding_bottom": 32
+      }
+    },
+    "1789372633534d3475": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_scrolling_B9NJi9",
+    "dc_brand_experience",
+    "dc_installation_guide",
+    "related-products",
+    "17116942862d54480a",
+    "172042640627ff6334",
+    "image_with_text_tbQfGL",
+    "multicolumn_njiDHU",
+    "image_with_text_pG4P8A",
+    "multicolumn_mjQLwf",
+    "image_with_text_gMLYcA",
+    "image_with_text_77AdNN",
+    "multicolumn_ykVdx7",
+    "multicolumn_mrpKL4",
+    "1705119654de2e3b3c",
+    "featured_collection_43WFLW",
+    "dc_brand_benefits",
+    "dc_special_request",
+    "collapsible_content_EKCrAk",
+    "1789372633534d3475"
+  ]
+}

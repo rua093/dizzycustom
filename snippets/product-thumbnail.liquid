@@ -108,9 +108,20 @@
       {%- if product.handle == 'custom-metal-emblem-for-car-and-motorbike-copy-2' or product.handle == 'custom-metal-emblem' -%}
         {%- assign is_custom_thumb = true -%}
       {%- endif -%}
+      {%- if template.suffix == 'single-layer' or template.suffix == 'two-layer' or template.suffix == 'emblem-builder' -%}
+        {%- assign is_custom_thumb = true -%}
+      {%- endif -%}
+      {%- if product.tags contains 'single-layer' or product.tags contains '1-layer' or product.tags contains 'two-layer' or product.tags contains '2-layer' or product.tags contains 'custom-emblem' -%}
+        {%- assign is_custom_thumb = true -%}
+      {%- endif -%}
+
+      {%- assign customizer_layers = 2 -%}
+      {%- if template.suffix == 'single-layer' or product.tags contains 'single-layer' or product.tags contains '1-layer' -%}
+        {%- assign customizer_layers = 1 -%}
+      {%- endif -%}
 
       {%- if position == 1 and is_custom_thumb -%}
-        <div id="dc-pdp-canvas-wrapper" class="dc-pdp-media-canvas-overlay" style="display: none;">
+        <div id="dc-pdp-canvas-wrapper" class="dc-pdp-media-canvas-overlay" data-layers="{{ customizer_layers }}" style="display: none;">
           <canvas id="dc-pdp-canvas" class="dc-pdp-canvas" width="800" height="800" role="img" aria-label="Live custom emblem preview"></canvas>
           <span class="dc-pdp-live-badge" aria-hidden="true">
             <span class="dc-pdp-live-dot"></span>

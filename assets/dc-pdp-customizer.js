@@ -114,7 +114,14 @@
       this.ensureCanvasOverlay();
 
       const configScript = document.getElementById('dc-pdp-customizer-config');
-      this.config = configScript ? JSON.parse(configScript.textContent) : { maxLength: 16, fonts: [] };
+      this.config = configScript ? JSON.parse(configScript.textContent) : { maxLength: 16, fonts: [], layers: 2 };
+      const explicitLayers = parseInt(this.controlsContainer?.dataset?.layers || this.canvasWrapper?.dataset?.layers, 10);
+      if (explicitLayers === 1 || explicitLayers === 2) {
+        this.config.layers = explicitLayers;
+      }
+      if (!this.config.layers) {
+        this.config.layers = 2;
+      }
 
       this.input = this.controlsContainer.querySelector('[data-pdp-text]');
       this.counter = this.controlsContainer.querySelector('[data-pdp-count]');
@@ -518,12 +525,21 @@
       });
 
       // Color labels & chips
-      for (const layer of ['face', 'back']) {
-        const finish = materials.get(this.state[layer]) || finishes[0];
-        const nameElem = this.controlsContainer.querySelector(`[data-pdp-color-name="${layer}"]`);
-        const chipElem = this.controlsContainer.querySelector(`[data-pdp-chip="${layer}"]`);
+      if (this.config.layers === 1) {
+        this.layer = 'face';
+        const finish = materials.get(this.state.face) || finishes[0];
+        const nameElem = this.controlsContainer.querySelector('[data-pdp-color-name="face"]');
+        const chipElem = this.controlsContainer.querySelector('[data-pdp-chip="face"]');
         if (nameElem) nameElem.textContent = finish.label;
         if (chipElem) chipElem.style.background = this.swatchBackground(finish);
+      } else {
+        for (const layer of ['face', 'back']) {
+          const finish = materials.get(this.state[layer]) || finishes[0];
+          const nameElem = this.controlsContainer.querySelector(`[data-pdp-color-name="${layer}"]`);
+          const chipElem = this.controlsContainer.querySelector(`[data-pdp-chip="${layer}"]`);
+          if (nameElem) nameElem.textContent = finish.label;
+          if (chipElem) chipElem.style.background = this.swatchBackground(finish);
+        }
       }
 
       // Mount radio state
@@ -540,8 +556,9 @@
     }
 
     syncPropertiesToForm() {
+      const isSingleLayer = this.config.layers === 1;
       const faceLabel = materials.get(this.state.face)?.label || this.state.face;
-      const backLabel = materials.get(this.state.back)?.label || this.state.back;
+      const backLabel = isSingleLayer ? '' : (materials.get(this.state.back)?.label || this.state.back);
       const fontLabel = fontLabels[this.state.font] || this.state.font;
       const mountLabel = mountLabels[this.state.mount] || this.state.mount;
       const customText = this.displayText();
@@ -550,9 +567,11 @@
         'properties[Custom Text]': customText,
         'properties[Font]': fontLabel,
         'properties[Text Color]': faceLabel,
-        'properties[Background Color]': backLabel,
         'properties[Mounting]': mountLabel
       };
+      if (!isSingleLayer) {
+        props['properties[Background Color]'] = backLabel;
+      }
 
       const propIdMap = {
         'properties[Custom Text]': 'dc-pdp-prop-text',
@@ -566,9 +585,14 @@
       for (const [propName, inputId] of Object.entries(propIdMap)) {
         const input = document.getElementById(inputId);
         if (input) {
-          input.value = props[propName];
-          input.disabled = false;
-          anyInputFound = true;
+          if (propName === 'properties[Background Color]' && isSingleLayer) {
+            input.value = '';
+            input.disabled = true;
+          } else {
+            input.value = props[propName];
+            input.disabled = false;
+            anyInputFound = true;
+          }
         }
       }
 
@@ -585,6 +609,10 @@
             }
             input.value = val;
             input.disabled = false;
+          }
+          if (isSingleLayer) {
+            const extraBackInput = productForm.querySelector('input[name="properties[Background Color]"]');
+            if (extraBackInput) extraBackInput.remove();
           }
         });
       }
@@ -701,31 +729,58 @@
       context.lineJoin = 'round';
       context.lineWidth = stroke;
 
-      // Realistic deep drop shadow onto the product photo surface
-      context.strokeStyle = 'rgba(0, 0, 0, 0.75)';
-      context.shadowColor = 'rgba(0, 0, 0, 0.85)';
-      context.shadowBlur = Math.max(14, size * 0.18);
-      context.shadowOffsetY = Math.max(6, size * 0.08);
-      context.shadowOffsetX = 1;
-      context.strokeText(text, x + depth, y + depth);
-      context.fillStyle = 'rgba(0, 0, 0, 0.75)';
-      context.fillText(text, x + depth, y + depth);
+      if (this.config.layers === 1) {
+        // === 1-LAYER 3D RENDER (Cut-metal standalone letters on surface) ===
+        // 1. Realistic deep drop shadow of cut letters directly onto the surface
+        context.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        context.shadowBlur = Math.max(12, size * 0.16);
+        context.shadowOffsetY = Math.max(5, size * 0.07);
+        context.shadowOffsetX = 1;
+        context.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        context.fillText(text, x + depth * 0.8, y + depth * 0.8);
 
-      // Backing outline layer
-      context.shadowColor = 'transparent';
-      context.shadowBlur = 0;
-      context.shadowOffsetY = 0;
-      context.shadowOffsetX = 0;
-      context.strokeStyle = context.createPattern(this.texture(this.state.back, width, height), 'no-repeat');
-      context.fillStyle = context.strokeStyle;
-      context.strokeText(text, x, y);
-      context.fillText(text, x, y);
+        // 2. 3D Beveled edge around each letter
+        context.shadowColor = 'transparent';
+        context.shadowBlur = 0;
+        context.shadowOffsetY = 0;
+        context.shadowOffsetX = 0;
+        context.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+        context.lineWidth = Math.max(1.8, size * 0.035);
+        context.strokeText(text, x, y);
 
-      // Front Face letter layer (slightly raised upward for 3D layered relief)
-      context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
-      context.fillText(text, x, y - size * 0.015);
+        // 3. Front Face letter layer
+        context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
+        context.fillText(text, x, y);
 
-      this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font]} font, ${materials.get(this.state.face)?.label} on ${materials.get(this.state.back)?.label}`);
+        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font]} font, ${materials.get(this.state.face)?.label} (Single Layer)`);
+      } else {
+        // === 2-LAYER 3D RENDER (Backing plate + raised front letters) ===
+        // 1. Realistic deep drop shadow onto the product photo surface
+        context.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+        context.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        context.shadowBlur = Math.max(14, size * 0.18);
+        context.shadowOffsetY = Math.max(6, size * 0.08);
+        context.shadowOffsetX = 1;
+        context.strokeText(text, x + depth, y + depth);
+        context.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        context.fillText(text, x + depth, y + depth);
+
+        // 2. Backing outline layer
+        context.shadowColor = 'transparent';
+        context.shadowBlur = 0;
+        context.shadowOffsetY = 0;
+        context.shadowOffsetX = 0;
+        context.strokeStyle = context.createPattern(this.texture(this.state.back, width, height), 'no-repeat');
+        context.fillStyle = context.strokeStyle;
+        context.strokeText(text, x, y);
+        context.fillText(text, x, y);
+
+        // 3. Front Face letter layer (slightly raised upward for 3D layered relief)
+        context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
+        context.fillText(text, x, y - size * 0.015);
+
+        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font]} font, ${materials.get(this.state.face)?.label} on ${materials.get(this.state.back)?.label}`);
+      }
     }
   }
 

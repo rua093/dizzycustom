@@ -134,8 +134,10 @@
     if (!rawText.trim()) return;
 
     const fontKey = getFontKey(overlay.dataset.font);
+    const rawBack = overlay.dataset.back;
+    const isSingleLayer = !rawBack || rawBack.trim() === '' || rawBack.trim().toLowerCase() === 'none';
     const faceMaterial = getMaterial(overlay.dataset.face, 'mirror_red');
-    const backMaterial = getMaterial(overlay.dataset.back, 'gloss_black');
+    const backMaterial = isSingleLayer ? null : getMaterial(rawBack, 'gloss_black');
 
     const width = Math.round(overlay.clientWidth || canvas.clientWidth || 132);
     const height = Math.round(overlay.clientHeight || canvas.clientHeight || 132);
@@ -173,29 +175,54 @@
     ctx.lineJoin = 'round';
     ctx.lineWidth = stroke;
 
-    // 1. Realistic Drop Shadow onto product photo
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    ctx.shadowBlur = Math.max(10, size * 0.18);
-    ctx.shadowOffsetY = Math.max(4, size * 0.08);
-    ctx.shadowOffsetX = 1;
-    ctx.strokeText(text, x + depth, y + depth);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-    ctx.fillText(text, x + depth, y + depth);
+    if (isSingleLayer) {
+      // 1-LAYER 3D RENDER (Cut-metal standalone letters on thumbnail)
+      // 1. Drop Shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+      ctx.shadowBlur = Math.max(8, size * 0.14);
+      ctx.shadowOffsetY = Math.max(3, size * 0.07);
+      ctx.shadowOffsetX = 1;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+      ctx.fillText(text, x + depth * 0.8, y + depth * 0.8);
 
-    // 2. Backing outline layer
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.strokeStyle = ctx.createPattern(getTexture(backMaterial, width, height), 'no-repeat');
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.strokeText(text, x, y);
-    ctx.fillText(text, x, y);
+      // 2. 3D Beveled edge
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.lineWidth = Math.max(1.4, size * 0.035);
+      ctx.strokeText(text, x, y);
 
-    // 3. Front Face letter layer (raised)
-    ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
-    ctx.fillText(text, x, y - size * 0.015);
+      // 3. Front Face letter layer
+      ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
+      ctx.fillText(text, x, y);
+    } else {
+      // 2-LAYER 3D RENDER (Backing plate + raised letters on thumbnail)
+      // 1. Realistic Drop Shadow onto product photo
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+      ctx.shadowBlur = Math.max(10, size * 0.18);
+      ctx.shadowOffsetY = Math.max(4, size * 0.08);
+      ctx.shadowOffsetX = 1;
+      ctx.strokeText(text, x + depth, y + depth);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+      ctx.fillText(text, x + depth, y + depth);
+
+      // 2. Backing outline layer
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.strokeStyle = ctx.createPattern(getTexture(backMaterial, width, height), 'no-repeat');
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.strokeText(text, x, y);
+      ctx.fillText(text, x, y);
+
+      // 3. Front Face letter layer (raised)
+      ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
+      ctx.fillText(text, x, y - size * 0.015);
+    }
   }
 
   const resizeObserver = window.ResizeObserver

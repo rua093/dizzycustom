@@ -19,14 +19,29 @@
   if product.handle == 'custom-metal-emblem-for-car-and-motorbike-copy-2' or product.handle == 'custom-metal-emblem'
     assign is_custom_product = true
   endif
+
+  # Match template suffix or tags
+  if template.suffix == 'single-layer' or template.suffix == 'two-layer' or template.suffix == 'emblem-builder'
+    assign is_custom_product = true
+  endif
+  if product.tags contains 'single-layer' or product.tags contains '1-layer' or product.tags contains 'two-layer' or product.tags contains '2-layer' or product.tags contains 'custom-emblem'
+    assign is_custom_product = true
+  endif
+
+  # Determine layer mode: 1 for single-layer, 2 for two-layer
+  assign customizer_layers = 2
+  if template.suffix == 'single-layer' or product.tags contains 'single-layer' or product.tags contains '1-layer'
+    assign customizer_layers = 1
+  endif
 -%}
 {%- if is_custom_product -%}
 {{ 'dc-pdp-customizer.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'dc-pdp-customizer.js' | asset_url }}" defer="defer"></script>
 
-<div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper" data-custom-product="{{ is_custom_product }}">
+<div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper" data-custom-product="{{ is_custom_product }}" data-layers="{{ customizer_layers }}">
   <script type="application/json" id="dc-pdp-customizer-config">
     {
+      "layers": {{ customizer_layers }},
       "maxLength": 16,
       "fonts": [
         {% for key in font_keys %}
@@ -78,20 +93,36 @@
     <!-- 3. Colors (Face & Backing) -->
     <div class="dc-pdp-field">
       <div class="dc-pdp-field__header">
-        <label class="dc-pdp-field__label">Metal Colors &amp; Finishes</label>
+        <label class="dc-pdp-field__label">
+          {%- if customizer_layers == 1 -%}
+            Metal Color &amp; Finish
+          {%- else -%}
+            Metal Colors &amp; Finishes
+          {%- endif -%}
+        </label>
       </div>
 
-      <!-- Layer Selector Tabs -->
-      <div class="dc-pdp-layer-tabs">
-        <button type="button" class="dc-pdp-layer-tab is-active" data-pdp-layer="face">
-          <span class="dc-pdp-layer-tab__chip" data-pdp-chip="face"></span>
-          <span class="dc-pdp-layer-tab__name">Text: <strong data-pdp-color-name="face">Mirror Red</strong></span>
-        </button>
-        <button type="button" class="dc-pdp-layer-tab" data-pdp-layer="back">
-          <span class="dc-pdp-layer-tab__chip" data-pdp-chip="back"></span>
-          <span class="dc-pdp-layer-tab__name">Backing: <strong data-pdp-color-name="back">Gloss Black</strong></span>
-        </button>
-      </div>
+      {%- if customizer_layers == 1 -%}
+        <!-- Single Layer Color Indicator -->
+        <div class="dc-pdp-layer-tabs dc-pdp-layer-tabs--single">
+          <button type="button" class="dc-pdp-layer-tab is-active" data-pdp-layer="face" style="cursor: default;">
+            <span class="dc-pdp-layer-tab__chip" data-pdp-chip="face"></span>
+            <span class="dc-pdp-layer-tab__name">Color: <strong data-pdp-color-name="face">Mirror Red</strong></span>
+          </button>
+        </div>
+      {%- else -%}
+        <!-- Dual Layer Selector Tabs -->
+        <div class="dc-pdp-layer-tabs">
+          <button type="button" class="dc-pdp-layer-tab is-active" data-pdp-layer="face">
+            <span class="dc-pdp-layer-tab__chip" data-pdp-chip="face"></span>
+            <span class="dc-pdp-layer-tab__name">Text: <strong data-pdp-color-name="face">Mirror Red</strong></span>
+          </button>
+          <button type="button" class="dc-pdp-layer-tab" data-pdp-layer="back">
+            <span class="dc-pdp-layer-tab__chip" data-pdp-chip="back"></span>
+            <span class="dc-pdp-layer-tab__name">Backing: <strong data-pdp-color-name="back">Gloss Black</strong></span>
+          </button>
+        </div>
+      {%- endif -%}
 
       <!-- Finish Category Filter Tabs -->
       <div class="dc-pdp-finish-tabs">
@@ -131,7 +162,7 @@
   <input type="hidden" name="properties[Custom Text]" id="dc-pdp-prop-text" value="DIZZY" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
   <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Lightning" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
   <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="Mirror Red" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-  <input type="hidden" name="properties[Background Color]" id="dc-pdp-prop-back" value="Gloss Black" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+  <input type="hidden" name="properties[Background Color]" id="dc-pdp-prop-back" value="Gloss Black" form="{{ product_form_id }}"{% if customizer_layers == 1 or is_custom_product == false %} disabled{% endif %}>
   <input type="hidden" name="properties[Mounting]" id="dc-pdp-prop-mount" value="VHB Tape (Flat Surface)" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
 </div>
 {%- endif -%}
