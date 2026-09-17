@@ -1,0 +1,45 @@
+.dc-production-process__intro { margin-bottom: 1.4rem; }
+.dc-production-process__intro-title,
+.dc-production-process__intro-text p,
+.dc-production-process__step-title p,
+.dc-production-process__step-description p,
+.dc-production-process__step--reassurance p { margin: 0; }
+
+.dc-production-process__intro-title { color: #172033; font-size: 1.4rem; font-weight: 750; line-height: 1.4; }
+.dc-production-process__intro-text { margin-top: 0.6rem; color: #475467; font-size: 1.4rem; line-height: 1.5; }
+.dc-production-process__steps { display: grid; gap: 1rem; }
+
+.dc-production-process__step {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.4rem;
+  min-height: 6.4rem;
+}
+
+.dc-production-process__icon {
+  display: block;
+  width: 5rem;
+  height: 5rem;
+  overflow: hidden;
+}
+
+.dc-production-process__icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dc-production-process__step-copy { min-width: 0; }
+.dc-production-process__step-title { color: #172033; font-size: 1.4rem; font-weight: 700; line-height: 1.4; }
+.dc-production-process__step-title strong { color: #086bff; }
+.dc-production-process__step-description { margin-top: 0.3rem; color: #667085; font-size: 1.4rem; line-height: 1.45; }
+
+.dc-production-process__step--reassurance { grid-template-columns: 5rem minmax(0, 1fr); }
+.dc-production-process__step--reassurance p { color: #172033; font-size: 1.4rem; font-weight: 700; line-height: 1.4; }
+
+@media screen and (max-width: 749px) {
+  .dc-production-process__step { grid-template-columns: 4.4rem minmax(0, 1fr); gap: 1.1rem; min-height: 0; }
+  .dc-production-process__icon { width: 4.4rem; height: 4.4rem; }
+}

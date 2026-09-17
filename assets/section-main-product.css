@@ -486,7 +486,8 @@ fieldset.product-form__input .form__label {
   color: #fff;
 }
 
-.dc-main-product .price:not(.price--sold-out) .price__badge-sale,
+.dc-main-product .price--on-sale:not(.price--sold-out) .price__badge-sale,
+.dc-main-product .volume-pricing--sale-badge:not(.price--sold-out) .price__badge-sale,
 .dc-main-product .price--sold-out .price__badge-sold-out {
   display: inline-flex;
 }
@@ -685,7 +686,7 @@ fieldset.product-form__input .form__label {
 
 .dc-main-product .product__accordion .accordion__title {
   color: #172033;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 750;
   line-height: 1.3;
   transition: color 160ms ease;

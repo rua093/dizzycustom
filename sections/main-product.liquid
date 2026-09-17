@@ -10,6 +10,8 @@
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
   {{ 'component-dc-breadcrumb.css' | asset_url | stylesheet_tag }}
+  {{ 'component-production-process.css' | asset_url | stylesheet_tag }}
+  {{ 'component-whats-included.css' | asset_url | stylesheet_tag }}
   {%- if product.quantity_price_breaks_configured? -%}
     {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
@@ -227,6 +229,128 @@
                   <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
                     {{ block.settings.content }}
                     {{ block.settings.page.content }}
+                  </div>
+                </details>
+              </div>
+            {%- when 'production_process' -%}
+              <div class="product__accordion accordion dc-production-process quick-add-hidden" {{ block.shopify_attributes }}>
+                <details id="Details-{{ block.id }}-{{ section.id }}">
+                  <summary>
+                    <div class="summary__title">
+                      {% render 'icon-accordion', icon: block.settings.icon %}
+                      <h2 class="h4 accordion__title inline-richtext">{{ block.settings.heading }}</h2>
+                    </div>
+                    {% render 'icon-caret' %}
+                  </summary>
+                  <div class="accordion__content" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
+                    <div class="dc-production-process__intro">
+                      <p class="dc-production-process__intro-title">{{ block.settings.intro_heading | escape }}</p>
+                      <div class="dc-production-process__intro-text rte">{{ block.settings.intro_text }}</div>
+                    </div>
+
+                    <div class="dc-production-process__steps">
+                      <div class="dc-production-process__step">
+                        <span class="dc-production-process__icon" aria-hidden="true">
+                          <img src="{{ 'dc-production-process-time.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
+                        </span>
+                        <div class="dc-production-process__step-copy">
+                          <div class="dc-production-process__step-title rte">{{ block.settings.production_title }}</div>
+                          <div class="dc-production-process__step-description rte">{{ block.settings.production_description }}</div>
+                        </div>
+                      </div>
+
+                      <div class="dc-production-process__step">
+                        <span class="dc-production-process__icon" aria-hidden="true">
+                          <img src="{{ 'dc-production-process-shipping.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
+                        </span>
+                        <div class="dc-production-process__step-copy">
+                          <div class="dc-production-process__step-title rte">{{ block.settings.shipping_title }}</div>
+                          <div class="dc-production-process__step-description rte">{{ block.settings.shipping_description }}</div>
+                        </div>
+                      </div>
+
+                      <div class="dc-production-process__step">
+                        <span class="dc-production-process__icon" aria-hidden="true">
+                          <img src="{{ 'dc-production-process-arrival.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
+                        </span>
+                        <div class="dc-production-process__step-copy">
+                          <div class="dc-production-process__step-title rte">{{ block.settings.arrival_title }}</div>
+                          <div class="dc-production-process__step-description rte">{{ block.settings.arrival_description }}</div>
+                        </div>
+                      </div>
+
+                      <div class="dc-production-process__step dc-production-process__step--reassurance">
+                        <span class="dc-production-process__icon" aria-hidden="true">
+                          <img src="{{ 'dc-production-process-quality.webp' | asset_url }}" width="160" height="160" alt="" loading="lazy">
+                        </span>
+                        <p>{{ block.settings.reassurance | escape }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            {%- when 'whats_included' -%}
+              <div class="product__accordion accordion dc-whats-included quick-add-hidden" {{ block.shopify_attributes }}>
+                <details id="Details-{{ block.id }}-{{ section.id }}">
+                  <summary>
+                    <div class="summary__title">
+                      {% render 'icon-accordion', icon: block.settings.icon %}
+                      <h2 class="h4 accordion__title inline-richtext">{{ block.settings.heading }}</h2>
+                    </div>
+                    {% render 'icon-caret' %}
+                  </summary>
+                  <div class="accordion__content" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
+                    {%- if block.settings.intro != blank -%}
+                      <p class="dc-whats-included__intro">{{ block.settings.intro | escape }}</p>
+                    {%- endif -%}
+
+                    <div class="dc-whats-included__items">
+                      {%- for index in (1..3) -%}
+                        {%- liquid
+                          assign title_key = 'item_' | append: index | append: '_title'
+                          assign description_key = 'item_' | append: index | append: '_description'
+                          case index
+                            when 1
+                              assign icon_asset = 'dc-whats-included-cup.webp'
+                            when 2
+                              assign icon_asset = 'dc-whats-included-thank-you-card.webp'
+                            when 3
+                              assign icon_asset = 'dc-whats-included-gift.webp'
+                          endcase
+                        -%}
+                        <div class="dc-whats-included__item">
+                          <span class="dc-whats-included__icon" aria-hidden="true">
+                            <img src="{{ icon_asset | asset_url }}" width="160" height="160" alt="" loading="lazy">
+                          </span>
+                          <div class="dc-whats-included__copy">
+                            <p class="dc-whats-included__item-title">{{ block.settings[title_key] | escape }}</p>
+                            <p class="dc-whats-included__item-description">{{ block.settings[description_key] | escape }}</p>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    </div>
+
+                    {%- if block.settings.image != blank -%}
+                      {{
+                        block.settings.image
+                        | image_url: width: 1400
+                        | image_tag:
+                          class: 'dc-whats-included__image',
+                          widths: '375, 550, 750, 1100, 1400',
+                          sizes: '(min-width: 990px) 42vw, 100vw',
+                          loading: 'lazy',
+                          alt: block.settings.image.alt | default: block.settings.heading
+                      }}
+                    {%- elsif block.settings.page != blank -%}
+                      <div class="dc-whats-included__page-content rte">{{ block.settings.page.content }}</div>
+                    {%- endif -%}
+
+                    {%- if block.settings.note != blank -%}
+                      <p class="dc-whats-included__note">
+                        <span aria-hidden="true">{% render 'icon-sparkle' %}</span>
+                        {{ block.settings.note | escape }}
+                      </p>
+                    {%- endif -%}
                   </div>
                 </details>
               </div>
@@ -1108,6 +1232,68 @@
           "id": "page",
           "label": "t:sections.main-product.blocks.collapsible_tab.settings.page.label"
         }
+      ]
+    },
+    {
+      "type": "production_process",
+      "name": "Production process",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "default": "Production Process", "label": "Heading" },
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            { "value": "lightning_bolt", "label": "Lightning bolt" },
+            { "value": "none", "label": "None" }
+          ],
+          "default": "lightning_bolt",
+          "label": "Heading icon"
+        },
+        { "type": "text", "id": "intro_heading", "default": "Your Custom Emblems Are Meticulously Crafted.", "label": "Introduction heading" },
+        { "type": "richtext", "id": "intro_text", "default": "<p><strong>Craftsmanship at Its Best</strong> – Every emblem is carefully designed, manufactured, and finished with precision.</p>", "label": "Introduction text" },
+        { "type": "text", "id": "production_icon", "default": "✍️", "label": "Production icon" },
+        { "type": "richtext", "id": "production_title", "default": "<p>Production Time: <strong>1 - 3 days</strong></p>", "label": "Production title" },
+        { "type": "richtext", "id": "production_description", "default": "<p>Includes design, manufacturing, and quality control</p>", "label": "Production description" },
+        { "type": "text", "id": "shipping_icon", "default": "🚚", "label": "Shipping icon" },
+        { "type": "richtext", "id": "shipping_title", "default": "<p>Shipping: <strong>5 - 8 days</strong></p>", "label": "Shipping title" },
+        { "type": "richtext", "id": "shipping_description", "default": "<p>Delivery time depends on your location</p>", "label": "Shipping description" },
+        { "type": "text", "id": "arrival_icon", "default": "📦", "label": "Arrival icon" },
+        { "type": "richtext", "id": "arrival_title", "default": "<p>Estimated Arrival: <strong>Total 7 - 14 days</strong></p>", "label": "Arrival title" },
+        { "type": "richtext", "id": "arrival_description", "default": "<p>from order to delivery</p>", "label": "Arrival description" },
+        { "type": "text", "id": "reassurance_icon", "default": "💯", "label": "Reassurance icon" },
+        { "type": "text", "id": "reassurance", "default": "Quality Worth the Wait – See why our customers love us!", "label": "Reassurance text" }
+      ]
+    },
+    {
+      "type": "whats_included",
+      "name": "What you'll receive",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "default": "What You’ll Receive", "label": "Heading" },
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            { "value": "box", "label": "Box" },
+            { "value": "none", "label": "None" }
+          ],
+          "default": "box",
+          "label": "Heading icon"
+        },
+        { "type": "text", "id": "intro", "default": "Everything you need, thoughtfully packaged.", "label": "Introduction" },
+        { "type": "text", "id": "item_1_icon", "default": "🏆", "label": "First item icon" },
+        { "type": "text", "id": "item_1_title", "default": "Premium Custom Emblem", "label": "First item title" },
+        { "type": "textarea", "id": "item_1_description", "default": "Crafted from high-quality stainless steel for a durable, sleek look.", "label": "First item description" },
+        { "type": "text", "id": "item_2_icon", "default": "💌", "label": "Second item icon" },
+        { "type": "text", "id": "item_2_title", "default": "Personalized Thank You Card", "label": "Second item title" },
+        { "type": "textarea", "id": "item_2_description", "default": "A special note from DizzyCustom to show our appreciation.", "label": "Second item description" },
+        { "type": "text", "id": "item_3_icon", "default": "🎁", "label": "Third item icon" },
+        { "type": "text", "id": "item_3_title", "default": "Luxury Packaging Box", "label": "Third item title" },
+        { "type": "textarea", "id": "item_3_description", "default": "Stylish, protective, and perfect for gifting.", "label": "Third item description" },
+        { "type": "image_picker", "id": "image", "label": "Packaging image" },
+        { "type": "page", "id": "page", "label": "Fallback packaging page" },
+        { "type": "text", "id": "note", "default": "A premium experience from unboxing to the road.", "label": "Closing note" }
       ]
     },
     {

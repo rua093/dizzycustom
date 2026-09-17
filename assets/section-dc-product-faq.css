@@ -1,0 +1,219 @@
+.dc-product-faq {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: transparent;
+}
+
+.dc-product-faq__inner {
+  position: relative;
+  width: min(100%, 106rem);
+  margin-inline: auto;
+}
+
+.dc-product-faq__style-mark {
+  position: absolute;
+  top: 3.2rem;
+  right: max(3rem, calc((100vw - var(--page-width)) / 2));
+  z-index: -1;
+  color: rgba(20, 115, 239, 0.2);
+  font-family: cursive;
+  font-size: clamp(3.2rem, 4vw, 6.2rem);
+  font-style: italic;
+  line-height: 0.72;
+  text-align: center;
+  transform: rotate(-8deg);
+  user-select: none;
+}
+
+.dc-product-faq__header {
+  max-width: 90rem;
+  margin: 0 auto 2.2rem;
+  text-align: center;
+}
+
+.dc-product-faq__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  margin: 0 0 1rem;
+  color: #1473ef;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.dc-product-faq__eyebrow::before,
+.dc-product-faq__eyebrow::after {
+  width: 4rem;
+  height: 0.1rem;
+  background: currentColor;
+  content: '';
+  opacity: 0.65;
+}
+
+.dc-product-faq__heading {
+  margin: 0;
+  color: #06144e;
+  font-size: 4rem;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.dc-product-faq__heading-accent {
+  background: linear-gradient(100deg, #0c5fe8 0%, #1995ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dc-product-faq__description {
+  max-width: 72rem;
+  margin: 1rem auto 0;
+  color: #52658b;
+  font-size: 1.6rem;
+  line-height: 1.45;
+}
+
+.dc-product-faq__description p { margin: 0; }
+
+.dc-product-faq__list {
+  border-top: 0.1rem solid rgba(63, 119, 186, 0.18);
+}
+
+.dc-product-faq__item {
+  border-bottom: 0.1rem solid rgba(63, 119, 186, 0.18);
+}
+
+.dc-product-faq__summary {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: 1.6rem;
+  min-height: 7rem;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.dc-product-faq__summary::-webkit-details-marker { display: none; }
+
+.dc-product-faq__question-icon {
+  display: grid;
+  width: 4.4rem;
+  height: 4.4rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(219, 236, 255, 0.88);
+  color: #0d6ff2;
+}
+
+.dc-product-faq__question-icon svg {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.dc-product-faq__question {
+  color: #07144d;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.dc-product-faq__caret {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-right: 0.3rem solid #315897;
+  border-bottom: 0.3rem solid #315897;
+  transform: rotate(45deg) translate(-0.2rem, 0.2rem);
+  transition: transform 180ms ease;
+}
+
+.dc-product-faq__item[open] .dc-product-faq__caret {
+  transform: rotate(225deg) translate(-0.2rem, 0.2rem);
+}
+
+.dc-product-faq__answer {
+  padding: 0 4rem 1.6rem 7.2rem;
+  color: #52658b;
+  font-size: 1.4rem;
+  line-height: 1.55;
+}
+
+.dc-product-faq__answer > :first-child { margin-top: 0; }
+.dc-product-faq__answer > :last-child { margin-bottom: 0; }
+.dc-product-faq__answer ul { margin: 0; padding-left: 1.8rem; }
+.dc-product-faq__answer li + li { margin-top: 0.6rem; }
+
+.dc-product-faq__brand {
+  margin-top: 2rem;
+  color: rgba(20, 115, 239, 0.38);
+  text-align: center;
+}
+
+.dc-product-faq__brand-logo {
+  display: block;
+  width: 12rem;
+  height: auto;
+  margin: 0 auto;
+  filter: brightness(0) saturate(100%) invert(36%) sepia(97%) saturate(3601%) hue-rotate(204deg) brightness(99%) contrast(92%);
+  opacity: 0.35;
+}
+
+.dc-product-faq__brand-name {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.dc-product-faq__brand-tagline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.8rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.dc-product-faq__brand-tagline::before,
+.dc-product-faq__brand-tagline::after {
+  width: 3rem;
+  height: 0.1rem;
+  background: currentColor;
+  content: '';
+}
+
+@media screen and (max-width: 749px) {
+  .dc-product-faq { background-position: center; }
+  .dc-product-faq__style-mark { display: none; }
+  .dc-product-faq__header { margin-bottom: 1.8rem; }
+  .dc-product-faq__eyebrow { gap: 1rem; font-size: 1rem; letter-spacing: 0.2em; }
+  .dc-product-faq__eyebrow::before,
+  .dc-product-faq__eyebrow::after { width: 2.4rem; }
+  .dc-product-faq__heading { font-size: 2.8rem; }
+  .dc-product-faq__description { margin-top: 0.8rem; font-size: 1.4rem; }
+  .dc-product-faq__summary {
+    grid-template-columns: 4.2rem minmax(0, 1fr) 1.6rem;
+    gap: 1.2rem;
+    min-height: 6.4rem;
+    padding: 0.8rem 0;
+  }
+  .dc-product-faq__question-icon { width: 4.2rem; height: 4.2rem; }
+  .dc-product-faq__question-icon svg { width: 2.7rem; height: 2.7rem; }
+  .dc-product-faq__question { font-size: 1.6rem; }
+  .dc-product-faq__answer { padding: 0 2.4rem 1.6rem 5.4rem; font-size: 1.4rem; }
+  .dc-product-faq__brand { margin-top: 1.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dc-product-faq__caret { transition: none; }
+}

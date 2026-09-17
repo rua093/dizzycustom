@@ -952,6 +952,8 @@ class VariantSelects extends HTMLElement {
   }
 
   onVariantChange() {
+    this.variantRequestController?.abort();
+    this.variantRequestController = null;
     this.updateOptions();
     this.updateMasterId();
     this.toggleAddButton(true, '', false);
@@ -1089,18 +1091,26 @@ class VariantSelects extends HTMLElement {
   renderProductInfo() {
     const requestedVariantId = this.currentVariant.id;
     const sectionId = this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section;
+    const controller = new AbortController();
+    this.variantRequestController = controller;
 
     fetch(
       `${this.dataset.url}?variant=${requestedVariantId}&section_id=${
         this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section
-      }`
+      }`,
+      { signal: controller.signal }
     )
-      .then((response) => response.text())
+      .then((response) => {
+        if (!response.ok) throw new Error(`Variant section request failed: ${response.status}`);
+        return response.text();
+      })
       .then((responseText) => {
         // prevent unnecessary ui changes from abandoned selections
-        if (this.currentVariant.id !== requestedVariantId) return;
+        if (this.currentVariant?.id !== requestedVariantId || this.variantRequestController !== controller) return;
 
         const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
+        if (!addButtonUpdated) throw new Error('Variant section response is missing the product submit button');
         const destination = document.getElementById(`price-${this.dataset.section}`);
         const source = html.getElementById(
           `price-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`
@@ -1151,11 +1161,12 @@ class VariantSelects extends HTMLElement {
 
         if (price) price.classList.remove('hidden');
 
-        if (inventoryDestination) inventoryDestination.classList.toggle('hidden', inventorySource.innerText === '');
+        if (inventorySource && inventoryDestination) {
+          inventoryDestination.classList.toggle('hidden', inventorySource.innerText === '');
+        }
 
-        const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
         this.toggleAddButton(
-          addButtonUpdated ? addButtonUpdated.hasAttribute('disabled') : true,
+          addButtonUpdated.hasAttribute('disabled'),
           window.variantStrings.soldOut
         );
 
@@ -1166,6 +1177,17 @@ class VariantSelects extends HTMLElement {
             variant: this.currentVariant,
           },
         });
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError' || this.variantRequestController !== controller ||
+            this.currentVariant?.id !== requestedVariantId) return;
+        console.error(error);
+        // Fall back to the page's variant data, including its quantity rule, if the section update fails.
+        const variant = this.currentVariant;
+        const quantityRuleSoldOut = variant.inventory_management === 'shopify' &&
+          variant.inventory_policy !== 'continue' &&
+          variant.quantity_rule?.min > variant.inventory_quantity;
+        this.toggleAddButton(!variant.available || quantityRuleSoldOut, window.variantStrings.soldOut);
       });
   }
 
@@ -1236,7 +1258,10 @@ class VariantRadios extends VariantSelects {
   updateOptions() {
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
     this.options = fieldsets.map((fieldset) => {
-      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+      const selectedRadio = Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked);
+      const selectedLabel = fieldset.querySelector('[data-selected-option]');
+      if (selectedLabel) selectedLabel.textContent = ` ${selectedRadio.value}`;
+      return selectedRadio.value;
     });
   }
 }

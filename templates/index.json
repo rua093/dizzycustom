@@ -9,12 +9,6 @@
  */
 {
   "sections": {
-    "1752288780048388a8": {
-      "type": "apps",
-      "settings": {
-        "include_margins": true
-      }
-    },
     "image_banner": {
       "type": "image-banner",
       "blocks": {
@@ -27,7 +21,7 @@
         "heading_1": {
           "type": "heading",
           "settings": {
-            "heading": "MAKE IT YOURS",
+            "heading": "MAKE IT <em>YOURS</em>",
             "heading_size": "h1"
           }
         },
@@ -221,6 +215,16 @@
         "full_width": true,
         "padding_top": 40,
         "padding_bottom": 52
+      }
+    },
+    "dc_custom_request_anchor": {
+      "type": "dc-custom-request-anchor",
+      "settings": {}
+    },
+    "1789409231f10d6dbe": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
       }
     },
     "multicolumn_6CbrDa": {
@@ -427,15 +431,34 @@
         "padding_top": 20,
         "padding_bottom": 0
       }
+    },
+    "1789410370f0d69c93": {
+      "type": "apps",
+      "blocks": {
+        "powerful_form_builder_app_block_zdaiYy": {
+          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
+          "settings": {
+            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc1\"></div>"
+          }
+        }
+      },
+      "block_order": [
+        "powerful_form_builder_app_block_zdaiYy"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
-    "1752288780048388a8",
     "image_banner",
     "dc_emblem_builder",
     "image_scrolling_ACYgDa",
     "featured_collection",
     "rich_text_hjbhAC",
+    "dc_custom_request_anchor",
+    "1789410370f0d69c93",
+    "1789409231f10d6dbe",
     "multicolumn_6CbrDa",
     "craftsmanship_process",
     "multicolumn_m7M4TB",

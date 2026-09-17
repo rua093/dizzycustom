@@ -200,11 +200,4 @@
   {%- endif -%}
 {%- endfor -%}
 
-<script>
-  document.querySelectorAll('input+label[data-{{ option.name | downcase | replace: ' ', '-'  }}]').forEach(el=>{
-    el.addEventListener('click',()=>{
-      document.querySelector('#selected-{{ option.name | downcase | replace: ' ', '-'  }}').textContent = " "+el.getAttribute('data-{{ option.name | downcase | replace: ' ', '-'  }}')
-    })
-  })
-</script>
 <!--Color options made by Amine Ammari-->
