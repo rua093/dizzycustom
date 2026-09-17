@@ -45,13 +45,25 @@
     script: 'script',
     electric: 'electric',
     ice: 'ice',
-    oem: 'oem'
+    oem: 'oem',
+    lexus: 'bold',
+    dodge: 'aggressive',
+    jeep: 'bold',
+    audi: 'oem',
+    cabriolet: 'script',
+    chevrolet: 'aggressive',
+    cadillac: 'script',
+    nissan: 'bold',
+    ferrari: 'oem',
+    ikarus: 'bold',
+    lamborghini: 'aggressive',
+    ford: 'script'
   };
 
   function getFontKey(fontStr) {
     if (!fontStr) return 'lightning';
     const normalized = fontStr.trim().toLowerCase();
-    return fontKeysMap[normalized] || 'lightning';
+    return fontKeysMap[normalized] || 'bold';
   }
 
   const textureCache = new Map();
@@ -176,26 +188,35 @@
     ctx.lineWidth = stroke;
 
     if (isSingleLayer) {
-      // 1-LAYER 3D RENDER (Cut-metal standalone letters on thumbnail)
-      // 1. Drop Shadow
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-      ctx.shadowBlur = Math.max(8, size * 0.14);
-      ctx.shadowOffsetY = Math.max(3, size * 0.07);
-      ctx.shadowOffsetX = 1;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-      ctx.fillText(text, x + depth * 0.8, y + depth * 0.8);
+      // 1-LAYER 3D RENDER (White letters with black hairline border on thumbnail)
+      const isScript = ['cadillac', 'cabriolet', 'ford', 'chevrolet'].includes(fontKey);
+      const strokeWidth = isScript ? Math.max(1.0, Math.min(size * 0.015, 1.6)) : Math.max(1.2, Math.min(size * 0.022, 2.0));
 
-      // 2. 3D Beveled edge
+      // 1. Soft Drop Shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = Math.max(4, size * 0.08);
+      ctx.shadowOffsetY = Math.max(2, size * 0.04);
+      ctx.shadowOffsetX = 1;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillText(text, x, y);
+
+      // 2. Delicate hairline black outline (drawn BEFORE fill)
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
       ctx.shadowOffsetX = 0;
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
-      ctx.lineWidth = Math.max(1.4, size * 0.035);
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = strokeWidth;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.strokeText(text, x, y);
 
-      // 3. Front Face letter layer
-      ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
+      // 3. Front Face letter layer (White or custom texture)
+      if (rawFace.toLowerCase() === 'white' || !rawFace) {
+        ctx.fillStyle = '#ffffff';
+      } else {
+        ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
+      }
       ctx.fillText(text, x, y);
     } else {
       // 2-LAYER 3D RENDER (Backing plate + raised letters on thumbnail)

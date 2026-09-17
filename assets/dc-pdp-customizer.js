@@ -62,6 +62,22 @@
     return fontKeysMap[clean] || null;
   }
 
+  // 12 Authentic Retro Brand Fonts (Direct TTF fonts from DizzyCustom store)
+  const retroFontMap = {
+    lexus: { label: 'LEXUS', family: 'DCRetro-lexus', fallback: '"Arial Black", sans-serif' },
+    dodge: { label: 'DODGE', family: 'DCRetro-dodge', fallback: 'Impact, sans-serif' },
+    jeep: { label: 'Jeep', family: 'DCRetro-jeep', fallback: '"Arial Black", sans-serif' },
+    audi: { label: 'Audi', family: 'DCRetro-audi', fallback: '"Helvetica Neue", sans-serif' },
+    cabriolet: { label: 'Cabriolet', family: 'DCRetro-cabriolet', fallback: 'cursive' },
+    chevrolet: { label: 'Chevrolet', family: 'DCRetro-chevrolet', fallback: 'Impact, sans-serif' },
+    cadillac: { label: 'Cadillac', family: 'DCRetro-cadillac', fallback: 'cursive' },
+    nissan: { label: 'Nissan', family: 'DCRetro-nissan', fallback: '"Arial Black", sans-serif' },
+    ferrari: { label: 'Ferrari', family: 'DCRetro-ferrari', fallback: '"Times New Roman", serif' },
+    ikarus: { label: 'Ikarus', family: 'DCRetro-ikarus', fallback: 'Georgia, serif' },
+    lamborghini: { label: 'Lamborghini', family: 'DCRetro-lamborghini', fallback: '"Arial Black", sans-serif' },
+    ford: { label: 'Ford', family: 'DCRetro-ford', fallback: 'cursive' }
+  };
+
   function resolveMountKey(str) {
     if (!str) return null;
     const clean = str.trim().toLowerCase();
@@ -77,9 +93,10 @@
 
   const loadedFonts = new Map();
   function loadFont(font) {
-    const cacheKey = `${font.key}:${font.url}`;
+    const familyName = font.retro ? `DCRetro-${font.key}` : `DC Badge ${font.key}`;
+    const cacheKey = `${familyName}:${font.url}`;
     if (!loadedFonts.has(cacheKey)) {
-      const face = new FontFace(`DC Badge ${font.key}`, `url(${JSON.stringify(font.url)})`);
+      const face = new FontFace(familyName, `url(${JSON.stringify(font.url)})`);
       loadedFonts.set(cacheKey, face.load().then((loaded) => {
         document.fonts.add(loaded);
         return loaded;
@@ -97,7 +114,6 @@
       if (!this.controlsContainer) return;
 
       const params = new URLSearchParams(window.location.search);
-      const isCustomBadge = params.get('dc_badge') === '1';
       const isCustomProduct = this.controlsContainer.dataset.customProduct === 'true';
 
       // If not the exact product chosen in Theme Editor, remove and skip immediately
@@ -123,24 +139,32 @@
         this.config.layers = 2;
       }
 
+      const isSingleLayer = this.config.layers === 1;
+
       this.input = this.controlsContainer.querySelector('[data-pdp-text]');
       this.counter = this.controlsContainer.querySelector('[data-pdp-count]');
+      this.fontSelect = this.controlsContainer.querySelector('[data-pdp-font-select]');
+      this.specificRequestsInput = this.controlsContainer.querySelector('[data-pdp-specific-requests]');
+
       this.layer = 'face';
       this.group = 'mirror';
       this.textures = new Map();
 
       // Default state
       this.state = {
-        text: 'DIZZY',
-        font: 'lightning',
-        face: 'mirror_red',
+        text: '',
+        font: isSingleLayer ? (this.config.defaultFont || 'Nissan') : 'lightning',
+        face: isSingleLayer ? 'white' : 'mirror_red',
         back: 'gloss_black',
-        mount: 'tape'
+        mount: 'tape',
+        specificRequests: ''
       };
 
       this.initFromUrl(params);
       this.bindEvents();
-      this.buildSwatches();
+      if (!isSingleLayer) {
+        this.buildSwatches();
+      }
       this.updateUI();
       this.initFonts();
       this.initMobileSticky();
@@ -248,72 +272,69 @@
         this.naturalMediaHeight = this.mediaWrapper.offsetHeight || 375;
         const mediaRect = this.mediaWrapper.getBoundingClientRect();
         if (mediaRect.top <= headerOffset) {
-          this.mediaSpacer.style.height = `${this.naturalMediaHeight}px`;
           this.mediaSpacer.style.display = 'block';
+          this.mediaSpacer.style.height = `${this.naturalMediaHeight}px`;
+
           this.mediaWrapper.classList.add('dc-mobile-sticky');
           this.mediaWrapper.style.top = `${headerOffset}px`;
         }
       } else {
         const spacerRect = this.mediaSpacer.getBoundingClientRect();
-
-        // Check if user scrolled back up above the initial position
         if (spacerRect.top > headerOffset) {
           this.mediaWrapper.classList.remove('dc-mobile-sticky');
           this.mediaWrapper.style.top = '';
           this.mediaWrapper.style.transform = '';
           this.mediaSpacer.style.display = 'none';
           this.mediaSpacer.style.height = '0px';
-          return;
-        }
-      }
-
-      if (this.mediaWrapper.classList.contains('dc-mobile-sticky')) {
-        this.mediaWrapper.style.top = `${headerOffset}px`;
-
-        // Keep the preview visible only until it would cover the first customizer control.
-        const controls = this.controlsContainer || document.querySelector('variant-radios, variant-selects');
-        if (controls && document.body.contains(controls)) {
-          const boundaryTop = controls.getBoundingClientRect().top;
-          const stickyHeight = this.naturalMediaHeight || this.mediaWrapper.offsetHeight;
-          const stickyBottom = headerOffset + stickyHeight;
-
-          if (boundaryTop < stickyBottom) {
-            const diff = Math.round(boundaryTop - stickyBottom);
-            this.mediaWrapper.style.transform = `translateY(${diff}px)`;
-          } else {
-            this.mediaWrapper.style.transform = 'translateY(0)';
-          }
         } else {
-          this.mediaWrapper.style.transform = 'translateY(0)';
+          this.mediaWrapper.style.top = `${headerOffset}px`;
+
+          const productInfo = document.querySelector('.product__info-container');
+          if (productInfo) {
+            const infoRect = productInfo.getBoundingClientRect();
+            const stickyHeight = this.mediaWrapper.offsetHeight || 220;
+            const stopPoint = headerOffset + stickyHeight;
+            if (infoRect.bottom <= stopPoint) {
+              const pushUp = infoRect.bottom - stopPoint;
+              this.mediaWrapper.style.transform = `translateY(${pushUp}px)`;
+            } else {
+              this.mediaWrapper.style.transform = 'translateY(0)';
+            }
+          }
         }
       }
     }
 
     ensureCanvasOverlay() {
-      this.canvasWrapper = document.getElementById('dc-pdp-canvas-wrapper');
-      this.canvas = document.getElementById('dc-pdp-canvas');
+      const firstMedia = document.querySelector('.product__media-item:first-child') ||
+                         document.querySelector('.product__media-list li:first-child') ||
+                         document.querySelector('.product__media-wrapper .product__media');
 
-      if (!this.canvasWrapper || !this.canvas) {
-        // Dynamically find the first media element in the gallery
-        const firstMedia = document.querySelector('slider-component[id^="GalleryViewer"] .product__media') ||
-                           document.querySelector('.product__media-list .product__media') ||
-                           document.querySelector('.product__media');
-        if (firstMedia) {
+      if (!firstMedia) return;
+
+      this.canvasWrapper = firstMedia.querySelector('.dc-pdp-media-canvas-overlay');
+      if (!this.canvasWrapper) {
+        const computedPos = window.getComputedStyle(firstMedia).position;
+        if (computedPos === 'static') {
           firstMedia.style.position = 'relative';
-          const wrapper = document.createElement('div');
-          wrapper.id = 'dc-pdp-canvas-wrapper';
-          wrapper.className = 'dc-pdp-media-canvas-overlay';
-          wrapper.innerHTML = `
-            <canvas id="dc-pdp-canvas" class="dc-pdp-canvas" width="800" height="800" role="img" aria-label="Live custom emblem preview"></canvas>
-            <span class="dc-pdp-live-badge" aria-hidden="true">
-              <span class="dc-pdp-live-dot"></span>
-              <span>Live Custom Preview</span>
-            </span>
-          `;
-          firstMedia.appendChild(wrapper);
-          this.canvasWrapper = wrapper;
-          this.canvas = wrapper.querySelector('canvas');
         }
+
+        const layersAttr = this.controlsContainer?.dataset?.layers || '2';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'dc-pdp-media-canvas-overlay';
+        wrapper.dataset.layers = layersAttr;
+        wrapper.innerHTML = `
+          <canvas class="dc-pdp-canvas" role="img" aria-label="Custom Emblem Live Preview"></canvas>
+          <span class="dc-pdp-live-badge">
+            <span class="dc-pdp-live-dot"></span>
+            <span>Live Custom Preview</span>
+          </span>
+        `;
+        firstMedia.appendChild(wrapper);
+        this.canvasWrapper = wrapper;
+        this.canvas = wrapper.querySelector('canvas');
+      } else {
+        this.canvas = this.canvasWrapper.querySelector('canvas');
       }
 
       if (this.canvasWrapper) {
@@ -322,27 +343,49 @@
     }
 
     initFromUrl(params) {
+      const isSingleLayer = this.config.layers === 1;
       let hasCustomParams = false;
+
       if (params.has('text') && params.get('text').trim()) {
         this.state.text = params.get('text').trim().slice(0, this.config.maxLength);
         hasCustomParams = true;
       }
-      const font = resolveFontKey(params.get('font'));
-      if (font) {
-        this.state.font = font;
-        hasCustomParams = true;
-      }
-      for (const layer of ['face', 'back']) {
-        const mat = resolveMaterialId(params.get(layer));
-        if (mat) {
-          this.state[layer] = mat;
-          hasCustomParams = true;
+
+      if (params.has('font')) {
+        const urlFont = params.get('font').trim();
+        if (isSingleLayer) {
+          const matchedRetro = Object.keys(retroFontMap).find(k => k.toLowerCase() === urlFont.toLowerCase());
+          if (matchedRetro) {
+            this.state.font = retroFontMap[matchedRetro].label;
+            hasCustomParams = true;
+          }
+        } else {
+          const font = resolveFontKey(urlFont);
+          if (font) {
+            this.state.font = font;
+            hasCustomParams = true;
+          }
         }
       }
-      const mount = resolveMountKey(params.get('mount'));
-      if (mount) {
-        this.state.mount = mount;
+
+      if (params.has('requests')) {
+        this.state.specificRequests = params.get('requests').trim();
         hasCustomParams = true;
+      }
+
+      if (!isSingleLayer) {
+        for (const layer of ['face', 'back']) {
+          const mat = resolveMaterialId(params.get(layer));
+          if (mat) {
+            this.state[layer] = mat;
+            hasCustomParams = true;
+          }
+        }
+        const mount = resolveMountKey(params.get('mount'));
+        if (mount) {
+          this.state.mount = mount;
+          hasCustomParams = true;
+        }
       }
 
       if (hasCustomParams) {
@@ -356,33 +399,62 @@
 
     saveToStorage() {
       try {
-        localStorage.setItem('dc_custom_emblem_state', JSON.stringify({
-          text: this.state.text,
-          font: this.state.font,
-          face: this.state.face,
-          back: this.state.back,
-          mount: this.state.mount
-        }));
+        const isSingleLayer = this.config.layers === 1;
+        const storageKey = isSingleLayer ? 'dc_single_layer_state' : 'dc_custom_emblem_state';
+        if (isSingleLayer) {
+          localStorage.setItem(storageKey, JSON.stringify({
+            text: this.state.text,
+            font: this.state.font,
+            specificRequests: this.state.specificRequests
+          }));
+        } else {
+          localStorage.setItem(storageKey, JSON.stringify({
+            text: this.state.text,
+            font: this.state.font,
+            face: this.state.face,
+            back: this.state.back,
+            mount: this.state.mount
+          }));
+        }
       } catch (e) {}
     }
 
     restoreFromStorage() {
       try {
-        const raw = localStorage.getItem('dc_custom_emblem_state');
+        const isSingleLayer = this.config.layers === 1;
+        const storageKey = isSingleLayer ? 'dc_single_layer_state' : 'dc_custom_emblem_state';
+        const raw = localStorage.getItem(storageKey);
         if (!raw) return;
         const saved = JSON.parse(raw);
         if (saved && typeof saved === 'object') {
-          if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
-            this.state.text = saved.text.trim().slice(0, this.config.maxLength);
+          if (saved.text && typeof saved.text === 'string') {
+            const trimmed = saved.text.trim();
+            if (trimmed && trimmed.toLowerCase() !== 'hello my friend' && trimmed.toLowerCase() !== 'dizzy') {
+              this.state.text = trimmed.slice(0, this.config.maxLength);
+            } else {
+              this.state.text = '';
+            }
           }
-          const font = resolveFontKey(saved.font);
-          if (font) this.state.font = font;
-          const face = resolveMaterialId(saved.face);
-          if (face) this.state.face = face;
-          const back = resolveMaterialId(saved.back);
-          if (back) this.state.back = back;
-          const mount = resolveMountKey(saved.mount);
-          if (mount) this.state.mount = mount;
+          if (isSingleLayer) {
+            if (saved.font && typeof saved.font === 'string') {
+              const matchedRetro = Object.keys(retroFontMap).find(k => k.toLowerCase() === saved.font.toLowerCase());
+              if (matchedRetro) {
+                this.state.font = retroFontMap[matchedRetro].label;
+              }
+            }
+            if (typeof saved.specificRequests === 'string') {
+              this.state.specificRequests = saved.specificRequests;
+            }
+          } else {
+            const font = resolveFontKey(saved.font);
+            if (font) this.state.font = font;
+            const face = resolveMaterialId(saved.face);
+            if (face) this.state.face = face;
+            const back = resolveMaterialId(saved.back);
+            if (back) this.state.back = back;
+            const mount = resolveMountKey(saved.mount);
+            if (mount) this.state.mount = mount;
+          }
         }
       } catch (e) {}
     }
@@ -397,7 +469,65 @@
         });
       }
 
-      // Font pills
+      // Add-to-cart validation: prevent checkout if custom text is empty
+      document.querySelectorAll('form[action*="/cart/add"]').forEach((form) => {
+        form.addEventListener('submit', (e) => {
+          if (!this.displayText()) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (this.input) {
+              this.input.focus();
+              this.input.classList.add('dc-input-error');
+              setTimeout(() => this.input.classList.remove('dc-input-error'), 2000);
+            }
+            return false;
+          }
+        }, true);
+      });
+
+      // Retro Font select dropdown
+      if (this.fontSelect) {
+        this.fontSelect.addEventListener('change', () => {
+          this.state.font = this.fontSelect.value;
+          this.updateUI();
+          this.scrollToFirstMedia();
+        });
+      }
+
+      // Specific requests input (Single-layer)
+      if (this.specificRequestsInput) {
+        this.specificRequestsInput.addEventListener('input', () => {
+          this.state.specificRequests = this.specificRequestsInput.value;
+          this.syncPropertiesToForm();
+          this.saveToStorage();
+        });
+      }
+
+      // Font modal trigger & close
+      const modal = document.getElementById('DCPdpFontModal');
+      if (modal) {
+        this.controlsContainer.querySelectorAll('[data-pdp-font-modal-trigger]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+          });
+        });
+        modal.querySelectorAll('[data-pdp-font-modal-close]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+          });
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+
+      // Font pills (Two-layer)
       this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
         btn.addEventListener('click', () => {
           this.state.font = btn.dataset.pdpFont;
@@ -406,7 +536,7 @@
         });
       });
 
-      // Layer tabs (Text vs Backing)
+      // Layer tabs (Text vs Backing - Two-layer)
       this.controlsContainer.querySelectorAll('[data-pdp-layer]').forEach((btn) => {
         btn.addEventListener('click', () => {
           this.layer = btn.dataset.pdpLayer;
@@ -416,7 +546,7 @@
         });
       });
 
-      // Finish category tabs (Solid, Mirror, Patterns, Metal Flake)
+      // Finish category tabs (Two-layer)
       this.controlsContainer.querySelectorAll('[data-pdp-finish]').forEach((btn) => {
         btn.addEventListener('click', () => {
           this.group = btn.dataset.pdpFinish;
@@ -425,7 +555,7 @@
         });
       });
 
-      // Mounting radio inputs
+      // Mounting radio inputs (Two-layer)
       this.controlsContainer.querySelectorAll('[data-pdp-mount]').forEach((input) => {
         input.addEventListener('change', () => {
           if (input.checked) {
@@ -448,18 +578,14 @@
       if (!container) return;
       container.replaceChildren();
 
-      finishes.filter((f) => f.group === this.group).forEach((finish) => {
+      const filtered = finishes.filter((f) => f.group === this.group);
+      filtered.forEach((finish) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'dc-pdp-swatch';
+        btn.className = `dc-pdp-swatch${this.state[this.layer] === finish.id ? ' is-active' : ''}`;
         btn.dataset.swatch = finish.id;
-        btn.title = finish.label;
-        btn.setAttribute('aria-label', finish.label);
-
-        const chip = document.createElement('span');
-        chip.className = 'dc-pdp-swatch__chip';
-        chip.style.background = this.swatchBackground(finish);
-        btn.appendChild(chip);
+        btn.setAttribute('aria-label', `${finish.label} metal finish`);
+        btn.style.background = this.swatchBackground(finish);
 
         btn.addEventListener('click', () => {
           this.state[this.layer] = finish.id;
@@ -472,67 +598,78 @@
     }
 
     swatchBackground(finish) {
-      if (finish.effect === 'mirror') return `linear-gradient(135deg, ${finish.color} 10%, #ffffff 42%, ${finish.color} 55%, #202329 100%)`;
-      if (finish.effect === 'brushed') return `repeating-linear-gradient(0deg, #ffffff33 0 1px, transparent 1px 3px), ${finish.color}`;
-      if (finish.effect === 'carbon') return 'repeating-conic-gradient(#17191b 0% 25%, #363a3d 0% 50%) 0 / 8px 8px';
-      if (finish.effect === 'flake') return `radial-gradient(circle, #ffffffa0 0 1px, transparent 1px) 0 / 6px 7px, ${finish.color}`;
+      if (finish.effect === 'mirror') {
+        return `linear-gradient(135deg, ${finish.color} 0%, #ffffff 50%, ${finish.color} 100%)`;
+      }
+      if (finish.effect === 'carbon') {
+        return `repeating-linear-gradient(45deg, #181a1c 0 4px, #36393b 4px 8px)`;
+      }
+      if (finish.effect === 'brushed') {
+        return `linear-gradient(90deg, ${finish.color} 0%, rgba(255,255,255,0.4) 50%, ${finish.color} 100%)`;
+      }
+      if (finish.effect === 'flake') {
+        return `radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), ${finish.color}`;
+      }
       return finish.color;
     }
 
     displayText() {
-      const text = (this.state.text || '').trim();
-      return this.state.font === 'script' ? text : text.toUpperCase();
+      return (this.state.text || '').trim();
     }
 
     updateUI() {
-      // Input value and text-transform
-      if (this.input && this.input.value !== this.state.text) {
+      const isSingleLayer = this.config.layers === 1;
+
+      // Text input value & counter
+      if (this.input && document.activeElement !== this.input) {
         this.input.value = this.state.text;
       }
-      if (this.input) {
-        this.input.style.textTransform = this.state.font === 'script' ? 'none' : 'uppercase';
-      }
       if (this.counter) {
-        this.counter.textContent = `${this.state.text.length}/${this.config.maxLength}`;
+        const text = this.displayText();
+        this.counter.textContent = `${text.length}/${this.config.maxLength}`;
       }
 
-      // Font active state
-      this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
-        const isActive = btn.dataset.pdpFont === this.state.font;
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-      });
+      // Retro font select
+      if (this.fontSelect) {
+        this.fontSelect.value = this.state.font;
+        this.fontSelect.setAttribute('data-font-selected', this.state.font);
+      }
 
-      // Layer active state
-      this.controlsContainer.querySelectorAll('[data-pdp-layer]').forEach((btn) => {
-        const isActive = btn.dataset.pdpLayer === this.layer;
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-      });
+      // Retro specific requests
+      if (this.specificRequestsInput && document.activeElement !== this.specificRequestsInput) {
+        this.specificRequestsInput.value = this.state.specificRequests || '';
+      }
 
-      // Finish tab active state
-      this.controlsContainer.querySelectorAll('[data-pdp-finish]').forEach((btn) => {
-        const isActive = btn.dataset.pdpFinish === this.group;
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-      });
+      if (!isSingleLayer) {
+        // Font pill active state
+        this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
+          const isActive = btn.dataset.pdpFont === this.state.font;
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
 
-      // Swatch active state
-      this.controlsContainer.querySelectorAll('[data-swatch]').forEach((btn) => {
-        const isActive = btn.dataset.swatch === this.state[this.layer];
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-      });
+        // Layer active state
+        this.controlsContainer.querySelectorAll('[data-pdp-layer]').forEach((btn) => {
+          const isActive = btn.dataset.pdpLayer === this.layer;
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
 
-      // Color labels & chips
-      if (this.config.layers === 1) {
-        this.layer = 'face';
-        const finish = materials.get(this.state.face) || finishes[0];
-        const nameElem = this.controlsContainer.querySelector('[data-pdp-color-name="face"]');
-        const chipElem = this.controlsContainer.querySelector('[data-pdp-chip="face"]');
-        if (nameElem) nameElem.textContent = finish.label;
-        if (chipElem) chipElem.style.background = this.swatchBackground(finish);
-      } else {
+        // Finish tab active state
+        this.controlsContainer.querySelectorAll('[data-pdp-finish]').forEach((btn) => {
+          const isActive = btn.dataset.pdpFinish === this.group;
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
+
+        // Swatch active state
+        this.controlsContainer.querySelectorAll('[data-swatch]').forEach((btn) => {
+          const isActive = btn.dataset.swatch === this.state[this.layer];
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
+
+        // Color labels & chips
         for (const layer of ['face', 'back']) {
           const finish = materials.get(this.state[layer]) || finishes[0];
           const nameElem = this.controlsContainer.querySelector(`[data-pdp-color-name="${layer}"]`);
@@ -540,12 +677,12 @@
           if (nameElem) nameElem.textContent = finish.label;
           if (chipElem) chipElem.style.background = this.swatchBackground(finish);
         }
-      }
 
-      // Mount radio state
-      this.controlsContainer.querySelectorAll('[data-pdp-mount]').forEach((input) => {
-        input.checked = input.dataset.pdpMount === this.state.mount;
-      });
+        // Mount radio state
+        this.controlsContainer.querySelectorAll('[data-pdp-mount]').forEach((input) => {
+          input.checked = input.dataset.pdpMount === this.state.mount;
+        });
+      }
 
       // Sync hidden form properties into PDP product form
       this.syncPropertiesToForm();
@@ -557,21 +694,77 @@
 
     syncPropertiesToForm() {
       const isSingleLayer = this.config.layers === 1;
+      const customText = this.displayText();
+
+      if (isSingleLayer) {
+        const fontVal = this.state.font || 'Nissan';
+        const specificReq = this.state.specificRequests || '';
+        const props = {
+          'properties[Custom Text]': customText,
+          'properties[Font]': fontVal,
+          'properties[Specific Requests]': specificReq,
+          'properties[Text Color]': 'White',
+          'properties[Outline Color]': 'Black',
+          'properties[Mounting]': 'VHB Tape (Flat Surface)'
+        };
+
+        const propIdMap = {
+          'properties[Custom Text]': 'dc-pdp-prop-text',
+          'properties[Font]': 'dc-pdp-prop-font',
+          'properties[Specific Requests]': 'dc-pdp-prop-requests',
+          'properties[Text Color]': 'dc-pdp-prop-face',
+          'properties[Outline Color]': 'dc-pdp-prop-outline',
+          'properties[Mounting]': 'dc-pdp-prop-mount'
+        };
+
+        let anyInputFound = false;
+        for (const [propName, inputId] of Object.entries(propIdMap)) {
+          const input = document.getElementById(inputId);
+          if (input) {
+            input.value = props[propName];
+            input.disabled = false;
+            anyInputFound = true;
+          }
+        }
+
+        const backInput = document.getElementById('dc-pdp-prop-back');
+        if (backInput) {
+          backInput.value = '';
+          backInput.disabled = true;
+        }
+
+        // Also sync directly to cart form
+        document.querySelectorAll('form[action*="/cart/add"]').forEach((productForm) => {
+          for (const [name, val] of Object.entries(props)) {
+            let input = productForm.querySelector(`input[name="${name}"]`);
+            if (!input) {
+              input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = name;
+              productForm.appendChild(input);
+            }
+            input.value = val;
+            input.disabled = false;
+          }
+          const extraBack = productForm.querySelector('input[name="properties[Background Color]"]');
+          if (extraBack) extraBack.remove();
+        });
+        return;
+      }
+
+      // Two-layer logic
       const faceLabel = materials.get(this.state.face)?.label || this.state.face;
-      const backLabel = isSingleLayer ? '' : (materials.get(this.state.back)?.label || this.state.back);
+      const backLabel = materials.get(this.state.back)?.label || this.state.back;
       const fontLabel = fontLabels[this.state.font] || this.state.font;
       const mountLabel = mountLabels[this.state.mount] || this.state.mount;
-      const customText = this.displayText();
 
       const props = {
         'properties[Custom Text]': customText,
         'properties[Font]': fontLabel,
         'properties[Text Color]': faceLabel,
+        'properties[Background Color]': backLabel,
         'properties[Mounting]': mountLabel
       };
-      if (!isSingleLayer) {
-        props['properties[Background Color]'] = backLabel;
-      }
 
       const propIdMap = {
         'properties[Custom Text]': 'dc-pdp-prop-text',
@@ -585,14 +778,9 @@
       for (const [propName, inputId] of Object.entries(propIdMap)) {
         const input = document.getElementById(inputId);
         if (input) {
-          if (propName === 'properties[Background Color]' && isSingleLayer) {
-            input.value = '';
-            input.disabled = true;
-          } else {
-            input.value = props[propName];
-            input.disabled = false;
-            anyInputFound = true;
-          }
+          input.value = props[propName];
+          input.disabled = false;
+          anyInputFound = true;
         }
       }
 
@@ -610,23 +798,33 @@
             input.value = val;
             input.disabled = false;
           }
-          if (isSingleLayer) {
-            const extraBackInput = productForm.querySelector('input[name="properties[Background Color]"]');
-            if (extraBackInput) extraBackInput.remove();
-          }
         });
       }
     }
 
     async initFonts() {
-      if (!this.config.fonts || !this.config.fonts.length) return;
-      const results = await Promise.allSettled(this.config.fonts.map(loadFont));
-      this.readyFonts = new Set();
-      results.forEach((res, i) => {
-        if (res.status === 'fulfilled') {
-          this.readyFonts.add(this.config.fonts[i].key);
+      const fontsToLoad = [];
+      if (this.config.baseFonts && this.config.baseFonts.length) {
+        fontsToLoad.push(...this.config.baseFonts);
+      }
+      if (this.config.fonts && this.config.fonts.length) {
+        for (const f of this.config.fonts) {
+          if (f.url && !fontsToLoad.some(b => b.key === f.key)) {
+            fontsToLoad.push(f);
+          }
         }
-      });
+      }
+
+      if (fontsToLoad.length) {
+        const results = await Promise.allSettled(fontsToLoad.map(loadFont));
+        this.readyFonts = new Set();
+        results.forEach((res, i) => {
+          if (res.status === 'fulfilled') {
+            this.readyFonts.add(fontsToLoad[i].key);
+          }
+        });
+      }
+
       if (document.fonts?.ready) {
         document.fonts.ready.then(() => this.scheduleRender());
       }
@@ -701,16 +899,27 @@
 
       context.scale(ratio, ratio);
 
-      // TRANSPARENT BACKGROUND: Clear canvas completely so the real product photo underneath is visible!
+      // TRANSPARENT BACKGROUND: Clear canvas completely so product photo underneath is visible!
       context.clearRect(0, 0, width, height);
 
       const text = this.displayText();
-      if (!text || !this.readyFonts?.has(this.state.font)) {
+      if (!text) {
         return;
       }
 
+      const isSingleLayer = this.config.layers === 1;
       let size = Math.min(height * 0.26, width * 0.22, 120);
-      const setFont = () => { context.font = `${size}px "DC Badge ${this.state.font}"`; };
+
+      const fontKey = (this.state.font || '').toLowerCase();
+      let fontSetting = `${size}px "DC Badge ${this.state.font}", Impact, sans-serif`;
+      if (isSingleLayer) {
+        const retro = retroFontMap[fontKey] || retroFontMap['nissan'];
+        fontSetting = `${size}px "${retro.family}", ${retro.fallback}`;
+      } else {
+        fontSetting = `${size}px "DC Badge ${this.state.font}"`;
+      }
+
+      const setFont = () => { context.font = fontSetting; };
       setFont();
 
       let metrics = context.measureText(text);
@@ -718,6 +927,13 @@
       const measureHeight = () => metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
       const scale = Math.min(1, (width * 0.78) / (measureWidth() + size * 0.12), (height * 0.45) / (measureHeight() + size * 0.12));
       size *= scale;
+
+      if (isSingleLayer) {
+        const retro = retroFontMap[fontKey] || retroFontMap['nissan'];
+        fontSetting = `${size}px "${retro.family}", ${retro.fallback}`;
+      } else {
+        fontSetting = `${size}px "DC Badge ${this.state.font}"`;
+      }
       setFont();
 
       metrics = context.measureText(text);
@@ -729,30 +945,35 @@
       context.lineJoin = 'round';
       context.lineWidth = stroke;
 
-      if (this.config.layers === 1) {
-        // === 1-LAYER 3D RENDER (Cut-metal standalone letters on surface) ===
-        // 1. Realistic deep drop shadow of cut letters directly onto the surface
-        context.shadowColor = 'rgba(0, 0, 0, 0.85)';
-        context.shadowBlur = Math.max(12, size * 0.16);
-        context.shadowOffsetY = Math.max(5, size * 0.07);
-        context.shadowOffsetX = 1;
-        context.fillStyle = 'rgba(0, 0, 0, 0.75)';
-        context.fillText(text, x + depth * 0.8, y + depth * 0.8);
+      if (isSingleLayer) {
+        // === 1-LAYER 3D RETRO RENDER (Delicate hairline border matching DizzyCustom live store) ===
+        const isScript = ['cadillac', 'cabriolet', 'ford', 'chevrolet'].includes(fontKey);
+        const strokeWidth = isScript ? Math.max(1.0, Math.min(size * 0.015, 1.6)) : Math.max(1.4, Math.min(size * 0.022, 2.2));
 
-        // 2. 3D Beveled edge around each letter
+        // 1. Soft realistic drop shadow onto car paint
+        context.shadowColor = 'rgba(0, 0, 0, 0.35)';
+        context.shadowBlur = Math.max(4, size * 0.06);
+        context.shadowOffsetY = Math.max(2, size * 0.025);
+        context.shadowOffsetX = 1;
+        context.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        context.fillText(text, x, y);
+
+        // 2. Delicate hairline black outline (drawn BEFORE fill so inner half is covered by white)
         context.shadowColor = 'transparent';
         context.shadowBlur = 0;
         context.shadowOffsetY = 0;
         context.shadowOffsetX = 0;
-        context.strokeStyle = 'rgba(0, 0, 0, 0.45)';
-        context.lineWidth = Math.max(1.8, size * 0.035);
+        context.strokeStyle = '#000000';
+        context.lineWidth = strokeWidth;
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
         context.strokeText(text, x, y);
 
-        // 3. Front Face letter layer
-        context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
+        // 3. Pure White letter face fill (drawn ON TOP so letters stay 100% crisp and open)
+        context.fillStyle = '#ffffff';
         context.fillText(text, x, y);
 
-        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font]} font, ${materials.get(this.state.face)?.label} (Single Layer)`);
+        this.canvas.setAttribute('aria-label', `${text}, ${this.state.font} font, White with Black Outline (Single Layer)`);
       } else {
         // === 2-LAYER 3D RENDER (Backing plate + raised front letters) ===
         // 1. Realistic deep drop shadow onto the product photo surface
@@ -779,7 +1000,7 @@
         context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
         context.fillText(text, x, y - size * 0.015);
 
-        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font]} font, ${materials.get(this.state.face)?.label} on ${materials.get(this.state.back)?.label}`);
+        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font] || this.state.font} font, ${materials.get(this.state.face)?.label} on ${materials.get(this.state.back)?.label}`);
       }
     }
   }
