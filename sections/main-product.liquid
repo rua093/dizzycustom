@@ -65,13 +65,44 @@
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
   {%- assign custom_emblems_collection = collections['custom-emblems'] -%}
+  {%- assign custom_emblems_url = routes.collections_url -%}
+  {%- if custom_emblems_collection != blank -%}
+    {%- assign custom_emblems_url = custom_emblems_collection.url -%}
+  {%- endif -%}
   <nav class="dc-pdp-breadcrumb page-width" aria-label="Breadcrumb">
     <a href="{{ routes.root_url }}">Home</a>
     <span class="dc-pdp-breadcrumb__separator" aria-hidden="true">›</span>
-    <a href="{% if custom_emblems_collection != blank %}{{ custom_emblems_collection.url }}{% else %}{{ routes.collections_url }}{% endif %}">Custom Emblems</a>
+    <a href="{{ custom_emblems_url }}">Custom Emblems</a>
     <span class="dc-pdp-breadcrumb__separator" aria-hidden="true">›</span>
     <span class="dc-pdp-breadcrumb__current" aria-current="page">{{ product.title | escape }}</span>
   </nav>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": {{ request.origin | append: routes.root_url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Custom Emblems",
+          "item": {{ request.origin | append: custom_emblems_url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ product.title | json }},
+          "item": {{ request.origin | append: product.url | json }}
+        }
+      ]
+    }
+  </script>
 
   <div class="page-width">
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
@@ -718,7 +749,7 @@
           {% render 'icon-close' %}
         </button>
         <div class="product-popup-modal__content-info">
-          <h1 class="h2">{{ block.settings.page.title }}</h1>
+          <h2 class="h2">{{ block.settings.page.title }}</h2>
           {{ block.settings.page.content }}
         </div>
       </div>
@@ -810,10 +841,19 @@
             "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
             "price" : {{ variant.price | divided_by: 100.00 | json }},
             "priceCurrency" : {{ cart.currency.iso_code | json }},
+            "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
+            "itemCondition": "https://schema.org/NewCondition",
             "url" : {{ request.origin | append: variant.url | json }}
           }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]
+      {%- if product.metafields.reviews.rating.value != blank -%}
+        ,"aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": {{ product.metafields.reviews.rating.value.rating | json }},
+          "reviewCount": {{ product.metafields.reviews.rating_count.value | default: product.metafields.reviews.rating_count | default: 1 | json }}
+        }
+      {%- endif -%}
     }
   </script>
   </div>

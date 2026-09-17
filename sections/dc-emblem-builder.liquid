@@ -34,6 +34,8 @@
           "productUrl": {{ badge_product.url | default: '' | json }},
           "defaultText": {{ section.settings.default_text | json }},
           "maxLength": {{ section.settings.max_length | json }},
+          "price": {{ initial_variant.price | money_with_currency | json }},
+          "available": {{ initial_variant.available | default: false | json }},
           "fonts": [
             {% for key in font_keys %}
               {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
@@ -52,7 +54,7 @@
           <div class="dc-builder-col dc-builder-col--text-font">
             <div class="dc-builder-text-group">
               <div class="dc-builder-label-row">
-                <label for="BadgeText-{{ section.id }}">Your text</label>
+                <label for="BadgeText-{{ section.id }}" class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">1</span>Your text</label>
                 <span data-count>0/{{ section.settings.max_length }}</span>
               </div>
               <input class="dc-builder-input" id="BadgeText-{{ section.id }}" data-text name="properties[Custom Text]" type="text" value="{{ section.settings.default_text | escape }}" maxlength="{{ section.settings.max_length }}" placeholder="Type your text…" required autocomplete="off" spellcheck="false" aria-describedby="BadgeHelp-{{ section.id }} BadgeError-{{ section.id }}">
@@ -70,11 +72,11 @@
 
           <div class="dc-builder-col dc-builder-col--colors">
             <fieldset class="dc-builder-group">
-              <legend>Colors</legend>
+              <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">2</span>Colors</span></legend>
               <div class="dc-builder-palette">
                 <div class="dc-builder-layers">
-                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small>Text</small><strong data-color-name="face">Mirror Red</strong></span></button>
-                  <button class="dc-builder-layer" type="button" data-layer="back" aria-pressed="false"><span class="dc-builder-chip" data-chip="back"></span><span><small>Backing</small><strong data-color-name="back">Gloss Black</strong></span></button>
+                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small><span class="dc-builder-layer-prefix">Front </span>Text</small><strong data-color-name="face">Mirror Red</strong></span></button>
+                  <button class="dc-builder-layer" type="button" data-layer="back" aria-pressed="false"><span class="dc-builder-chip" data-chip="back"></span><span><small><span class="dc-builder-layer-prefix">Base </span>Backing</small><strong data-color-name="back">Gloss Black</strong></span></button>
                 </div>
                 <div class="dc-builder-finishes" role="group" aria-label="Material category">
                   <button type="button" data-finish="solid" aria-pressed="false">Solid</button>
@@ -89,34 +91,27 @@
 
           <div class="dc-builder-col dc-builder-col--mount-order">
             <fieldset class="dc-builder-group">
-              <legend>Mounting</legend>
+              <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">3</span>Mounting</span></legend>
               <div class="dc-builder-mounts">
                 <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="VHB Tape (Flat Surface)" data-mount="tape" checked><span><strong>VHB tape</strong><small>For any flat surface</small></span></label>
                 <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="Studs (Grille Mount)" data-mount="studs"><span><strong>Studs</strong><small>For grille mounting</small></span></label>
               </div>
             </fieldset>
 
-            {% if is_product_page and badge_product != blank %}
-              <div class="dc-builder-purchase-options">
-                <div{% if badge_product.has_only_default_variant %} hidden{% endif %}>
-                  <label for="BadgeVariant-{{ section.id }}">{{ badge_product.options | join: ' / ' | escape }}</label>
-                  <select class="dc-builder-input" name="id" id="BadgeVariant-{{ section.id }}" data-variant>
-                    {% for variant in badge_product.variants %}
-                      <option value="{{ variant.id }}" data-available="{{ variant.available }}" data-price="{{ variant.price | money_with_currency | escape }}" data-min="{{ variant.quantity_rule.min }}" data-step="{{ variant.quantity_rule.increment }}" {% if variant.quantity_rule.max != blank %}data-max="{{ variant.quantity_rule.max }}"{% endif %} {% if variant.id == initial_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title | escape }} — {{ variant.price | money_with_currency }}{% unless variant.available %} — Sold out{% endunless %}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div><label for="BadgeQuantity-{{ section.id }}">Quantity</label><input class="dc-builder-input" id="BadgeQuantity-{{ section.id }}" type="number" name="quantity" data-quantity value="{{ initial_variant.quantity_rule.min | default: 1 }}" min="{{ initial_variant.quantity_rule.min | default: 1 }}" step="{{ initial_variant.quantity_rule.increment | default: 1 }}"></div>
-              </div>
-              <p class="dc-builder-price"><span data-price-display>{{ initial_variant.price | money_with_currency }}</span> <small>per item <span data-quantity-summary></span></small></p>
-            {% elsif is_product_page == false and badge_product != blank %}
-              <p class="dc-builder-price"><span data-price-display>From {{ badge_product.price_min | money_with_currency }}</span> <small>· Select size on next step</small></p>
-            {% endif %}
+            <input type="hidden" name="id" value="{{ initial_variant.id }}" data-variant-id>
+            <input type="hidden" name="quantity" value="1" data-quantity>
             <input type="hidden" name="properties[Font]" data-property="font">
             <input type="hidden" name="properties[Text Color]" data-property="face">
             <input type="hidden" name="properties[Background Color]" data-property="back">
             <p class="dc-builder-error" id="BadgeError-{{ section.id }}" data-error role="alert"></p>
-            <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled><span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% elsif is_product_page %}Build my badge{% else %}Select Size &amp; Order{% endif %}</span><span aria-hidden="true">→</span></button>
+            <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled>
+              <span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% else %}Build My Badge{% endif %}</span><span aria-hidden="true">→</span>
+            </button>
+            {% if badge_product != blank %}
+              <p class="dc-builder-order-summary" data-order-summary>
+                Total: <strong data-summary-price>{{ initial_variant.price | money_with_currency }}</strong>
+              </p>
+            {% endif %}
           </div>
         </fieldset>
         <noscript><p>Enable JavaScript to customize and preview your badge before ordering.</p></noscript>

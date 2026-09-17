@@ -24,6 +24,17 @@
   ].map(([id, label, color, group, effect]) => ({ id, label, color, group, effect: effect || group }));
 
   const materials = new Map(finishes.map((f) => [f.id, f]));
+  const materialsById = new Map(finishes.map((f) => [f.id.toLowerCase(), f]));
+  const materialsByLabel = new Map(finishes.map((f) => [f.label.toLowerCase(), f]));
+
+  function resolveMaterialId(str) {
+    if (!str) return null;
+    const clean = str.trim().toLowerCase();
+    if (materialsById.has(clean)) return clean;
+    if (materialsByLabel.has(clean)) return materialsByLabel.get(clean).id;
+    return null;
+  }
+
   const fontLabels = {
     bold: 'Block',
     lightning: 'Lightning',
@@ -33,6 +44,32 @@
     ice: 'Ice',
     oem: 'OEM'
   };
+
+  const fontKeysMap = {
+    bold: 'bold',
+    block: 'bold',
+    lightning: 'lightning',
+    aggressive: 'aggressive',
+    script: 'script',
+    electric: 'electric',
+    ice: 'ice',
+    oem: 'oem'
+  };
+
+  function resolveFontKey(str) {
+    if (!str) return null;
+    const clean = str.trim().toLowerCase();
+    return fontKeysMap[clean] || null;
+  }
+
+  function resolveMountKey(str) {
+    if (!str) return null;
+    const clean = str.trim().toLowerCase();
+    if (clean.includes('stud')) return 'studs';
+    if (clean.includes('tape') || clean.includes('vhb')) return 'tape';
+    return null;
+  }
+
   const mountLabels = {
     tape: 'VHB Tape (Flat Surface)',
     studs: 'Studs (Grille Mount)'
@@ -278,22 +315,69 @@
     }
 
     initFromUrl(params) {
+      let hasCustomParams = false;
       if (params.has('text') && params.get('text').trim()) {
         this.state.text = params.get('text').trim().slice(0, this.config.maxLength);
+        hasCustomParams = true;
       }
-      if (params.has('font') && fontLabels[params.get('font')]) {
-        this.state.font = params.get('font');
+      const font = resolveFontKey(params.get('font'));
+      if (font) {
+        this.state.font = font;
+        hasCustomParams = true;
       }
       for (const layer of ['face', 'back']) {
-        if (materials.has(params.get(layer))) {
-          this.state[layer] = params.get(layer);
+        const mat = resolveMaterialId(params.get(layer));
+        if (mat) {
+          this.state[layer] = mat;
+          hasCustomParams = true;
         }
       }
-      if (['tape', 'studs'].includes(params.get('mount'))) {
-        this.state.mount = params.get('mount');
+      const mount = resolveMountKey(params.get('mount'));
+      if (mount) {
+        this.state.mount = mount;
+        hasCustomParams = true;
+      }
+
+      if (hasCustomParams) {
+        this.saveToStorage();
+      } else {
+        this.restoreFromStorage();
       }
 
       this.group = materials.get(this.state.face)?.group || 'mirror';
+    }
+
+    saveToStorage() {
+      try {
+        localStorage.setItem('dc_custom_emblem_state', JSON.stringify({
+          text: this.state.text,
+          font: this.state.font,
+          face: this.state.face,
+          back: this.state.back,
+          mount: this.state.mount
+        }));
+      } catch (e) {}
+    }
+
+    restoreFromStorage() {
+      try {
+        const raw = localStorage.getItem('dc_custom_emblem_state');
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (saved && typeof saved === 'object') {
+          if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
+            this.state.text = saved.text.trim().slice(0, this.config.maxLength);
+          }
+          const font = resolveFontKey(saved.font);
+          if (font) this.state.font = font;
+          const face = resolveMaterialId(saved.face);
+          if (face) this.state.face = face;
+          const back = resolveMaterialId(saved.back);
+          if (back) this.state.back = back;
+          const mount = resolveMountKey(saved.mount);
+          if (mount) this.state.mount = mount;
+        }
+      } catch (e) {}
     }
 
     bindEvents() {
@@ -449,6 +533,8 @@
 
       // Sync hidden form properties into PDP product form
       this.syncPropertiesToForm();
+
+      this.saveToStorage();
 
       this.scheduleRender();
     }

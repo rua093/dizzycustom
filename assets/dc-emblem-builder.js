@@ -115,14 +115,59 @@
 
     restore() {
       const params = new URLSearchParams(location.search);
-      if (params.get('dc_badge') !== '1') return;
-      this.interacted = true;
-      if (params.has('text')) this.state.text = params.get('text').slice(0, this.config.maxLength);
-      if (this.config.fonts.some((font) => font.key === params.get('font'))) this.state.font = params.get('font');
-      for (const layer of ['face', 'back']) if (materials.has(params.get(layer))) this.state[layer] = params.get(layer);
-      if (['tape', 'studs'].includes(params.get('mount'))) this.state.mount = params.get('mount');
-      if (this.variant && Array.from(this.variant.options).some((option) => option.value === params.get('variant'))) this.variant.value = params.get('variant');
-      this.group = materials.get(this.state.face).group;
+      if (params.get('dc_badge') === '1') {
+        this.interacted = true;
+        if (params.has('text')) this.state.text = params.get('text').slice(0, this.config.maxLength);
+        if (this.config.fonts.some((font) => font.key === params.get('font'))) this.state.font = params.get('font');
+        for (const layer of ['face', 'back']) if (materials.has(params.get(layer))) this.state[layer] = params.get(layer);
+        if (['tape', 'studs'].includes(params.get('mount'))) this.state.mount = params.get('mount');
+        if (this.variant && Array.from(this.variant.options).some((option) => option.value === params.get('variant'))) this.variant.value = params.get('variant');
+        this.group = materials.get(this.state.face).group;
+        this.saveToStorage();
+        return;
+      }
+      this.restoreFromStorage();
+    }
+
+    saveToStorage() {
+      try {
+        localStorage.setItem('dc_custom_emblem_state', JSON.stringify({
+          text: this.state.text,
+          font: this.state.font,
+          face: this.state.face,
+          back: this.state.back,
+          mount: this.state.mount
+        }));
+      } catch (e) {}
+    }
+
+    restoreFromStorage() {
+      try {
+        const raw = localStorage.getItem('dc_custom_emblem_state');
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (saved && typeof saved === 'object') {
+          if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
+            this.state.text = saved.text.trim().slice(0, this.config.maxLength);
+            this.interacted = true;
+          }
+          if (this.config.fonts.some((f) => f.key === saved.font)) {
+            this.state.font = saved.font;
+            this.interacted = true;
+          }
+          for (const layer of ['face', 'back']) {
+            if (materials.has(saved[layer])) {
+              this.state[layer] = saved[layer];
+              this.interacted = true;
+            }
+          }
+          if (['tape', 'studs'].includes(saved.mount)) {
+            this.state.mount = saved.mount;
+            this.interacted = true;
+          }
+          this.group = materials.get(this.state.face)?.group || 'mirror';
+        }
+      } catch (e) {}
     }
 
     onClick(event) {
@@ -217,26 +262,28 @@
       const message = this.validationMessage();
       this.input.setAttribute('aria-invalid', String(Boolean(message && this.readyFonts)));
       this.error.textContent = message;
-      const isProductPage = this.dataset.productPage === 'true';
-      const option = this.variant?.selectedOptions[0];
-      const available = isProductPage ? (option?.dataset.available === 'true') : Boolean(this.config.productUrl);
-      const quantitySummary = this.querySelector('[data-quantity-summary]');
-      if (quantitySummary && this.quantity) quantitySummary.textContent = `· Quantity: ${this.quantity.value}`;
+      const available = Boolean(this.config.available);
       this.submit.disabled = Boolean(this.busy || !available || message);
 
-      let labelText = 'Build my badge';
+      let labelText = 'Build My Badge';
       if (this.busy) {
         labelText = 'Adding…';
       } else if (!this.config.productUrl) {
         labelText = 'Ordering coming soon';
-      } else if (!isProductPage) {
-        labelText = this.displayText() ? `Select Size & Order “${this.displayText()}”` : 'Select Size & Order';
       } else if (!available) {
         labelText = 'Sold out';
-      } else if (this.displayText()) {
-        labelText = `Build “${this.displayText()}”`;
+      } else {
+        labelText = 'Build My Badge';
       }
       this.querySelector('[data-submit-label]').textContent = labelText;
+
+      const summaryPrice = this.querySelector('[data-summary-price]');
+      if (summaryPrice && this.config.price) {
+        summaryPrice.textContent = this.config.price;
+      }
+      if (this.interacted) {
+        this.saveToStorage();
+      }
       this.scheduleRender();
     }
 
@@ -365,50 +412,79 @@
         this.input.focus();
         return;
       }
-      const isProductPage = this.dataset.productPage === 'true';
-      if (!isProductPage) {
-        if (!this.config.productUrl) return;
-        const url = new URL(this.config.productUrl, location.origin);
-        url.searchParams.set('dc_badge', '1');
-        for (const key of ['font', 'face', 'back', 'mount']) url.searchParams.set(key, this.state[key]);
-        url.searchParams.set('text', this.state.text);
-        location.assign(url.pathname + url.search);
+      if (!this.config.available) {
+        this.error.textContent = 'This badge is currently unavailable.';
         return;
       }
-
-      const selected = this.variant?.selectedOptions[0];
-      if (selected?.dataset.available !== 'true') return;
       const root = window.Shopify?.routes?.root || '/';
+      const addUrl = window.routes?.cart_add_url || `${root}cart/add`;
       const drawer = document.querySelector('cart-drawer') || document.querySelector('cart-notification');
       const form = new FormData(this.form);
       form.set('properties[Custom Text]', this.displayText());
-      if (drawer) {
+
+      if (drawer && typeof drawer.getSectionsToRender === 'function') {
         form.set('sections', drawer.getSectionsToRender().map((section) => section.id).join(','));
         form.set('sections_url', location.pathname);
-        drawer.setActiveElement(this.submit);
+        if (typeof drawer.setActiveElement === 'function') {
+          drawer.setActiveElement(this.submit);
+        }
       }
+
       this.busy = true;
       this.update();
       this.querySelector('[data-controls]').disabled = true;
-      let added = false;
+
       try {
-        const response = await fetch(`${root}cart/add.js`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: form });
+        const response = await fetch(addUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/javascript',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: form
+        });
         const data = await response.json();
-        if (!response.ok || data.status) throw new Error(data.description || data.message || 'Could not add your badge. Please try again.');
-        added = true;
-        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') publish(PUB_SUB_EVENTS.cartUpdate, { source: 'dc-emblem-builder', productVariantId: selected.value, cartData: data });
-        if (drawer && data.sections && Object.values(data.sections).every(Boolean)) {
-          drawer.classList.remove('is-empty');
-          drawer.renderContents(data);
-        } else location.assign(`${root}cart`);
+        if (!response.ok || data.status) {
+          throw new Error(data.description || data.message || 'Could not add your badge. Please try again.');
+        }
+
+        const variantId = form.get('id');
+        try {
+          if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+            publish(PUB_SUB_EVENTS.cartUpdate, { source: 'dc-emblem-builder', productVariantId: variantId, cartData: data });
+          }
+        } catch (pubErr) {
+          console.warn('Cart publish error:', pubErr);
+        }
+
+        if (drawer) {
+          if (data.sections && Object.values(data.sections).every(Boolean)) {
+            drawer.classList.remove('is-empty');
+            drawer.renderContents(data);
+          } else {
+            const res = await fetch(`${root}?section_id=cart-drawer`);
+            const html = await res.text();
+            const parsed = new DOMParser().parseFromString(html, 'text/html');
+            const newContent = parsed.querySelector('#CartDrawer');
+            const curContent = drawer.querySelector('#CartDrawer');
+            if (newContent && curContent) curContent.innerHTML = newContent.innerHTML;
+            drawer.classList.remove('is-empty');
+            if (typeof drawer.open === 'function') drawer.open(this.submit);
+          }
+        } else {
+          location.assign(window.routes?.cart_url || `${root}cart`);
+        }
       } catch (error) {
-        if (added) location.assign(`${root}cart`);
-        else this.cartError = error.message || 'Connection lost. Please check your cart before trying again.';
+        console.error('Cart add error:', error);
+        this.cartError = error.message || 'Connection lost. Please check your cart before trying again.';
       } finally {
         this.busy = false;
         this.querySelector('[data-controls]').disabled = false;
         this.update();
-        if (this.cartError) { this.error.textContent = this.cartError; this.cartError = ''; }
+        if (this.cartError) {
+          this.error.textContent = this.cartError;
+          this.cartError = '';
+        }
       }
     }
   }

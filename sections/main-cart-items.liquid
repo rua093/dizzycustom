@@ -79,11 +79,59 @@
 
               <tbody>
                 {%- for item in cart.items -%}
+                  {%- liquid
+                    assign custom_text = ''
+                    assign custom_font = ''
+                    assign custom_face = ''
+                    assign custom_back = ''
+                    assign custom_mount = ''
+                    for property in item.properties
+                      assign prop_first = property.first | strip
+                      if prop_first == 'Custom Text'
+                        assign custom_text = property.last
+                      elsif prop_first == 'Font'
+                        assign custom_font = property.last
+                      elsif prop_first == 'Text Color'
+                        assign custom_face = property.last
+                      elsif prop_first == 'Background Color'
+                        assign custom_back = property.last
+                      elsif prop_first == 'Mounting'
+                        assign custom_mount = property.last
+                      endif
+                    endfor
+
+                    assign item_target_url = item.url
+                    if custom_text != blank
+                      if item_target_url contains '?'
+                        assign item_target_url = item_target_url | append: '&dc_badge=1'
+                      else
+                        assign item_target_url = item_target_url | append: '?dc_badge=1'
+                      endif
+                      assign enc_text = custom_text | url_encode
+                      assign item_target_url = item_target_url | append: '&text=' | append: enc_text
+                      if custom_font != blank
+                        assign enc_font = custom_font | url_encode
+                        assign item_target_url = item_target_url | append: '&font=' | append: enc_font
+                      endif
+                      if custom_face != blank
+                        assign enc_face = custom_face | url_encode
+                        assign item_target_url = item_target_url | append: '&face=' | append: enc_face
+                      endif
+                      if custom_back != blank
+                        assign enc_back = custom_back | url_encode
+                        assign item_target_url = item_target_url | append: '&back=' | append: enc_back
+                      endif
+                      if custom_mount != blank
+                        assign enc_mount = custom_mount | url_encode
+                        assign item_target_url = item_target_url | append: '&mount=' | append: enc_mount
+                      endif
+                    endif
+                  -%}
                   <tr class="cart-item" id="CartItem-{{ item.index | plus: 1 }}">
                     <td class="cart-item__media">
                       {% if item.image %}
                         {% comment %} Leave empty space due to a:empty CSS display: none rule {% endcomment %}
-                        <a href="{{ item.url }}" class="cart-item__link" aria-hidden="true" tabindex="-1"> </a>
+                        <a href="{{ item_target_url }}" class="cart-item__link" aria-hidden="true" tabindex="-1"> </a>
                         <div class="cart-item__image-container gradient global-media-settings">
                           <img
                             src="{{ item.image | image_url: width: 300 }}"
@@ -102,7 +150,7 @@
                         <p class="caption-with-letter-spacing">{{ item.product.vendor }}</p>
                       {%- endif -%}
 
-                      <a href="{{ item.url }}" class="cart-item__name h4 break">{{ item.product.title | escape }}</a>
+                      <a href="{{ item_target_url }}" class="cart-item__name h4 break">{{ item.product.title | escape }}</a>
 
                       {%- if item.original_price != item.final_price -%}
                         <div class="cart-item__discounted-prices">

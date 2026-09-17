@@ -222,12 +222,22 @@
               {{ block.settings.caption | escape }}
             </p>
           {%- when 'heading' -%}
-            <h2
-              class="banner__heading banner__heading--dizzy inline-richtext {{ block.settings.heading_size }}"
-              {{ block.shopify_attributes }}
-            >
-              {{ block.settings.heading }}
-            </h2>
+            {%- if request.page_type == 'index' and banner_heading_rendered != true -%}
+              {%- assign banner_heading_rendered = true -%}
+              <h1
+                class="banner__heading banner__heading--dizzy inline-richtext {{ block.settings.heading_size }}"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.heading }}
+              </h1>
+            {%- else -%}
+              <h2
+                class="banner__heading banner__heading--dizzy inline-richtext {{ block.settings.heading_size }}"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.heading }}
+              </h2>
+            {%- endif -%}
           {%- when 'text' -%}
             <div class="banner__text banner__text--dizzy rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
               <p>{{ block.settings.text }}</p>
