@@ -15,121 +15,279 @@
 {%- endstyle -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <div class="contact page-width page-width--narrow section-{{ section.id }}-padding">
-    {%- if section.settings.heading != blank -%}
-      <h2 class="title title-wrapper--no-top-margin inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-        {{ section.settings.heading }}
-      </h2>
-    {%- else -%}
-      <h2 class="visually-hidden">{{ 'templates.contact.form.title' | t }}</h2>
+  <div class="contact-page page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank or section.settings.badge != blank or section.settings.description != blank -%}
+      <div class="contact-header text-center">
+        {%- if section.settings.badge != blank -%}
+          <div class="contact-header__badge-wrapper">
+            <span class="contact-header__badge">
+              <span class="contact-header__badge-dot"></span>
+              {{ section.settings.badge }}
+            </span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h1 class="contact-header__title {{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h1>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="contact-header__description">
+            {{ section.settings.description }}
+          </div>
+        {%- endif -%}
+      </div>
     {%- endif -%}
-    {%- liquid
-      assign contact_form_class = 'isolate'
-      if settings.animations_reveal_on_scroll
-        assign contact_form_class = 'isolate scroll-trigger animate--slide-in'
-      endif
-    -%}
-    {%- form 'contact', id: 'ContactForm', class: contact_form_class -%}
-      {%- if form.posted_successfully? -%}
-        <h2 class="form-status form-status-list form__message" tabindex="-1" autofocus>
-          {% render 'icon-success' %}
-          {{ 'templates.contact.form.post_success' | t }}
-        </h2>
-      {%- elsif form.errors -%}
-        <div class="form__message">
-          <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
-            {% render 'icon-error' %}
-            {{ 'templates.contact.form.error_heading' | t }}
-          </h2>
-        </div>
-        <ul class="form-status-list caption-large" role="list">
-          <li>
-            <a href="#ContactForm-email" class="link">
-              {{ form.errors.translated_fields.email | capitalize }}
-              {{ form.errors.messages.email }}
-            </a>
-          </li>
-        </ul>
-      {%- endif -%}
-      <div class="contact__fields">
-        <div class="field">
-          <input
-            class="field__input"
-            autocomplete="name"
-            type="text"
-            id="ContactForm-name"
-            name="contact[{{ 'templates.contact.form.name' | t }}]"
-            value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
-            placeholder="{{ 'templates.contact.form.name' | t }}"
-          >
-          <label class="field__label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
-        </div>
-        <div class="field field--with-error">
-          <input
-            autocomplete="email"
-            type="email"
-            id="ContactForm-email"
-            class="field__input"
-            name="contact[email]"
-            spellcheck="false"
-            autocapitalize="off"
-            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
-            aria-required="true"
-            {% if form.errors contains 'email' %}
-              aria-invalid="true"
-              aria-describedby="ContactForm-email-error"
-            {% endif %}
-            placeholder="{{ 'templates.contact.form.email' | t }}"
-          >
-          <label class="field__label" for="ContactForm-email">
-            {{- 'templates.contact.form.email' | t }}
-            <span aria-hidden="true">*</span></label
-          >
-          {%- if form.errors contains 'email' -%}
-            <small class="contact__field-error" id="ContactForm-email-error">
-              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
-              <span class="form__message">
-                {%- render 'icon-error' -%}
-                {{- form.errors.translated_fields.email | capitalize }}
-                {{ form.errors.messages.email -}}
-              </span>
-            </small>
+
+    <div class="contact-layout{% unless section.settings.show_info_card %} contact-layout--full-form{% endunless %}">
+      {%- if section.settings.show_info_card -%}
+        <div class="contact-info-col">
+          <div class="contact-info-card">
+            {%- if section.settings.info_heading != blank -%}
+              <h2 class="contact-info-card__title">{{ section.settings.info_heading }}</h2>
+            {%- endif -%}
+            {%- if section.settings.info_subtext != blank -%}
+              <p class="contact-info-card__desc">{{ section.settings.info_subtext }}</p>
+            {%- endif -%}
+
+            <div class="contact-methods">
+              {%- if section.settings.email != blank -%}
+                <div class="contact-method-item">
+                  <div class="contact-method-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                  </div>
+                  <div class="contact-method-details">
+                    <span class="contact-method-label">{{ section.settings.email_label | default: 'Email Us' }}</span>
+                    <a href="mailto:{{ section.settings.email }}" class="contact-method-value link link--text focus-inset">
+                      {{ section.settings.email }}
+                    </a>
+                    {%- if section.settings.email_subtext != blank -%}
+                      <span class="contact-method-sub">{{ section.settings.email_subtext }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.phone != blank -%}
+                <div class="contact-method-item">
+                  <div class="contact-method-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </div>
+                  <div class="contact-method-details">
+                    <span class="contact-method-label">{{ section.settings.phone_label | default: 'Call Us' }}</span>
+                    <a href="tel:{{ section.settings.phone | replace: ' ', '' }}" class="contact-method-value link link--text focus-inset">
+                      {{ section.settings.phone }}
+                    </a>
+                    {%- if section.settings.phone_subtext != blank -%}
+                      <span class="contact-method-sub">{{ section.settings.phone_subtext }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.address != blank -%}
+                <div class="contact-method-item">
+                  <div class="contact-method-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 15.193 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                  <div class="contact-method-details">
+                    <span class="contact-method-label">{{ section.settings.address_label | default: 'Location' }}</span>
+                    <span class="contact-method-value">{{ section.settings.address }}</span>
+                    {%- if section.settings.address_subtext != blank -%}
+                      <span class="contact-method-sub">{{ section.settings.address_subtext }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.hours != blank -%}
+                <div class="contact-method-item">
+                  <div class="contact-method-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </div>
+                  <div class="contact-method-details">
+                    <span class="contact-method-label">{{ section.settings.hours_label | default: 'Operating Hours' }}</span>
+                    <span class="contact-method-value">{{ section.settings.hours }}</span>
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- if section.settings.sla_text != blank or section.settings.custom_inquiry_text != blank -%}
+            <div class="contact-sla-card">
+              {%- if section.settings.sla_text != blank -%}
+                <div class="contact-sla-item">
+                  <div class="contact-sla-icon contact-sla-icon--sla">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                  </div>
+                  <div class="contact-sla-content">
+                    <strong>{{ section.settings.sla_title | default: 'Fast Response Guarantee' }}</strong>
+                    <p>{{ section.settings.sla_text }}</p>
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- if section.settings.custom_inquiry_text != blank -%}
+                <div class="contact-sla-item contact-sla-item--tip">
+                  <div class="contact-sla-icon contact-sla-icon--tip">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                    </svg>
+                  </div>
+                  <div class="contact-sla-content">
+                    <strong>{{ section.settings.custom_inquiry_title | default: 'Custom Emblem Requests' }}</strong>
+                    <p>{{ section.settings.custom_inquiry_text }}</p>
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
           {%- endif -%}
         </div>
+      {%- endif -%}
+
+      <div class="contact-form-col">
+        <div class="contact-form-card">
+          {%- if section.settings.form_heading != blank -%}
+            <div class="contact-form-card__header">
+              <h2 class="contact-form-card__title">{{ section.settings.form_heading }}</h2>
+              {%- if section.settings.form_subtext != blank -%}
+                <p class="contact-form-card__sub">{{ section.settings.form_subtext }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- assign contact_form_class = 'isolate contact__form-inner' -%}
+          {%- form 'contact', id: 'ContactForm', class: contact_form_class -%}
+            {%- if form.posted_successfully? -%}
+              <div class="contact-alert contact-alert--success" tabindex="-1" autofocus>
+                {% render 'icon-success' %}
+                <div class="contact-alert__content">
+                  <strong class="contact-alert__title">{{ 'templates.contact.form.post_success' | t }}</strong>
+                  <span class="contact-alert__desc">Thank you for reaching out! We have received your inquiry and will reply within 24 hours.</span>
+                </div>
+              </div>
+            {%- elsif form.errors -%}
+              <div class="contact-alert contact-alert--error" role="alert" tabindex="-1" autofocus>
+                {% render 'icon-error' %}
+                <div class="contact-alert__content">
+                  <strong class="contact-alert__title">{{ 'templates.contact.form.error_heading' | t }}</strong>
+                  <ul class="contact-alert__list" role="list">
+                    <li>
+                      <a href="#ContactForm-email" class="link">
+                        {{ form.errors.translated_fields.email | capitalize }}
+                        {{ form.errors.messages.email }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            {%- endif -%}
+
+            <div class="contact__fields">
+              <div class="field">
+                <input
+                  class="field__input"
+                  autocomplete="name"
+                  type="text"
+                  id="ContactForm-name"
+                  name="contact[{{ 'templates.contact.form.name' | t }}]"
+                  value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                  placeholder="{{ 'templates.contact.form.name' | t }}"
+                  required
+                >
+                <label class="field__label" for="ContactForm-name">
+                  {{ 'templates.contact.form.name' | t }} <span aria-hidden="true">*</span>
+                </label>
+              </div>
+
+              <div class="field field--with-error">
+                <input
+                  autocomplete="email"
+                  type="email"
+                  id="ContactForm-email"
+                  class="field__input"
+                  name="contact[email]"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  aria-required="true"
+                  {% if form.errors contains 'email' %}
+                    aria-invalid="true"
+                    aria-describedby="ContactForm-email-error"
+                  {% endif %}
+                  placeholder="{{ 'templates.contact.form.email' | t }}"
+                  required
+                >
+                <label class="field__label" for="ContactForm-email">
+                  {{- 'templates.contact.form.email' | t }}
+                  <span aria-hidden="true">*</span>
+                </label>
+                {%- if form.errors contains 'email' -%}
+                  <small class="contact__field-error" id="ContactForm-email-error">
+                    <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+                    <span class="form__message">
+                      {%- render 'icon-error' -%}
+                      {{- form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email -}}
+                    </span>
+                  </small>
+                {%- endif -%}
+              </div>
+            </div>
+
+            <div class="field">
+              <input
+                type="tel"
+                id="ContactForm-phone"
+                class="field__input"
+                autocomplete="tel"
+                name="contact[{{ 'templates.contact.form.phone' | t }}]"
+                pattern="[0-9\-+() ]*"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.phone' | t }}"
+              >
+              <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+            </div>
+
+            <div class="field">
+              <textarea
+                rows="6"
+                id="ContactForm-body"
+                class="text-area field__input"
+                name="contact[{{ 'templates.contact.form.comment' | t }}]"
+                placeholder="{{ 'templates.contact.form.comment' | t }}"
+                required
+              >
+                {{- form.body -}}
+              </textarea>
+              <label class="form__label field__label" for="ContactForm-body">
+                {{- 'templates.contact.form.comment' | t }} <span aria-hidden="true">*</span>
+              </label>
+            </div>
+
+            <div class="contact__button">
+              <button type="submit" class="button button--primary contact-submit-btn">
+                <span>{{ section.settings.submit_label | default: 'Send Message' }}</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </div>
+          {%- endform -%}
+        </div>
       </div>
-      <div class="field">
-        <input
-          type="tel"
-          id="ContactForm-phone"
-          class="field__input"
-          autocomplete="tel"
-          name="contact[{{ 'templates.contact.form.phone' | t }}]"
-          pattern="[0-9\-]*"
-          value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
-          placeholder="{{ 'templates.contact.form.phone' | t }}"
-        >
-        <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
-      </div>
-      <div class="field">
-        <textarea
-          rows="10"
-          id="ContactForm-body"
-          class="text-area field__input"
-          name="contact[{{ 'templates.contact.form.comment' | t }}]"
-          placeholder="{{ 'templates.contact.form.comment' | t }}"
-        >
-          {{- form.body -}}
-        </textarea>
-        <label class="form__label field__label" for="ContactForm-body">
-          {{- 'templates.contact.form.comment' | t -}}
-        </label>
-      </div>
-      <div class="contact__button">
-        <button type="submit" class="button">
-          {{ 'templates.contact.form.send' | t }}
-        </button>
-      </div>
-    {%- endform -%}
+    </div>
   </div>
 </div>
 
@@ -143,10 +301,20 @@
   },
   "settings": [
     {
+      "type": "header",
+      "content": "Page Header"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge Text",
+      "default": "GET IN TOUCH"
+    },
+    {
       "type": "inline_richtext",
       "id": "heading",
-      "default": "Contact form",
-      "label": "Heading"
+      "label": "Heading",
+      "default": "Contact Us"
     },
     {
       "type": "select",
@@ -169,6 +337,150 @@
       "label": "t:sections.all.heading_size.label"
     },
     {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "We'd love to hear from you. Our team is here to help with orders, custom emblem requests, sizing, shipping, and anything else."
+    },
+    {
+      "type": "header",
+      "content": "Contact Info Column"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_info_card",
+      "label": "Show Contact Info Cards",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "info_heading",
+      "label": "Info Card Title",
+      "default": "Direct Support"
+    },
+    {
+      "type": "text",
+      "id": "info_subtext",
+      "label": "Info Card Subtitle",
+      "default": "Reach out directly through any of our channels below."
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email Label",
+      "default": "Email Us"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email Address",
+      "default": "support@dizzycustom.com"
+    },
+    {
+      "type": "text",
+      "id": "email_subtext",
+      "label": "Email Subtext",
+      "default": "Fastest response for order support"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone Label",
+      "default": "Call Us"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone Number",
+      "default": "+1 714 694 2686"
+    },
+    {
+      "type": "text",
+      "id": "phone_subtext",
+      "label": "Phone Subtext",
+      "default": "Mon – Fri: 9:00 AM – 5:00 PM CST"
+    },
+    {
+      "type": "text",
+      "id": "address_label",
+      "label": "Address Label",
+      "default": "Workshop & Office"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address",
+      "default": "509 Ankeny Blvd, Ankeny, IA 50023, USA"
+    },
+    {
+      "type": "text",
+      "id": "address_subtext",
+      "label": "Address Subtext",
+      "default": "Headquarters & Fulfillment"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours Label",
+      "default": "Operating Hours"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Operating Hours",
+      "default": "Monday - Friday: 9:00 AM - 5:00 PM CST"
+    },
+    {
+      "type": "text",
+      "id": "sla_title",
+      "label": "SLA Title",
+      "default": "24-Hour Response Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "sla_text",
+      "label": "SLA Text",
+      "default": "We reply to all inquiries within maximum 24 business hours."
+    },
+    {
+      "type": "text",
+      "id": "custom_inquiry_title",
+      "label": "Custom Order Tip Title",
+      "default": "Custom Emblem Requests"
+    },
+    {
+      "type": "text",
+      "id": "custom_inquiry_text",
+      "label": "Custom Order Tip Text",
+      "default": "Please mention your vehicle make, model, and year to help us advise on exact fitment."
+    },
+    {
+      "type": "header",
+      "content": "Contact Form Card"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form Card Title",
+      "default": "Send Us a Message"
+    },
+    {
+      "type": "text",
+      "id": "form_subtext",
+      "label": "Form Card Subtext",
+      "default": "Fill out the form below and our team will get back to you promptly."
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit Button Label",
+      "default": "Send Message"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.label"
+    },
+    {
       "type": "color_scheme",
       "id": "color_scheme",
       "label": "t:sections.all.colors.label",
@@ -186,7 +498,7 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_top",
-      "default": 36
+      "default": 48
     },
     {
       "type": "range",
@@ -196,7 +508,7 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
-      "default": 36
+      "default": 64
     }
   ],
   "presets": [
@@ -206,3 +518,4 @@
   ]
 }
 {% endschema %}
+
