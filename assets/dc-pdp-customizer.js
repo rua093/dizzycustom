@@ -135,6 +135,12 @@
       if (explicitLayers === 1 || explicitLayers === 2) {
         this.config.layers = explicitLayers;
       }
+      const urlLayers = parseInt(params.get('layers'), 10);
+      if (urlLayers === 1 || urlLayers === 2) {
+        this.config.layers = urlLayers;
+      } else if (params.has('back') && params.get('back')) {
+        this.config.layers = 2;
+      }
       if (!this.config.layers) {
         this.config.layers = 2;
       }
@@ -482,6 +488,7 @@
             }
             return false;
           }
+          this.syncPropertiesToForm();
         }, true);
       });
 

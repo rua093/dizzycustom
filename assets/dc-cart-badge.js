@@ -37,6 +37,21 @@
     return materialsById.get(normalized) || materialsByLabel.get(normalized) || materialsById.get(fallbackId) || finishes[0];
   }
 
+  const retroFontMap = {
+    lexus: { label: 'LEXUS', family: 'DCRetro-lexus', fallback: '"Arial Black", sans-serif' },
+    dodge: { label: 'DODGE', family: 'DCRetro-dodge', fallback: 'Impact, sans-serif' },
+    jeep: { label: 'Jeep', family: 'DCRetro-jeep', fallback: '"Arial Black", sans-serif' },
+    audi: { label: 'Audi', family: 'DCRetro-audi', fallback: '"Helvetica Neue", sans-serif' },
+    cabriolet: { label: 'Cabriolet', family: 'DCRetro-cabriolet', fallback: 'cursive' },
+    chevrolet: { label: 'Chevrolet', family: 'DCRetro-chevrolet', fallback: 'Impact, sans-serif' },
+    cadillac: { label: 'Cadillac', family: 'DCRetro-cadillac', fallback: 'cursive' },
+    nissan: { label: 'Nissan', family: 'DCRetro-nissan', fallback: '"Arial Black", sans-serif' },
+    ferrari: { label: 'Ferrari', family: 'DCRetro-ferrari', fallback: '"Times New Roman", serif' },
+    ikarus: { label: 'Ikarus', family: 'DCRetro-ikarus', fallback: 'Georgia, serif' },
+    lamborghini: { label: 'Lamborghini', family: 'DCRetro-lamborghini', fallback: '"Arial Black", sans-serif' },
+    ford: { label: 'Ford', family: 'DCRetro-ford', fallback: 'cursive' }
+  };
+
   const fontKeysMap = {
     block: 'bold',
     bold: 'bold',
@@ -45,25 +60,34 @@
     script: 'script',
     electric: 'electric',
     ice: 'ice',
-    oem: 'oem',
-    lexus: 'bold',
-    dodge: 'aggressive',
-    jeep: 'bold',
-    audi: 'oem',
-    cabriolet: 'script',
-    chevrolet: 'aggressive',
-    cadillac: 'script',
-    nissan: 'bold',
-    ferrari: 'oem',
-    ikarus: 'bold',
-    lamborghini: 'aggressive',
-    ford: 'script'
+    oem: 'oem'
   };
 
-  function getFontKey(fontStr) {
-    if (!fontStr) return 'lightning';
-    const normalized = fontStr.trim().toLowerCase();
-    return fontKeysMap[normalized] || 'bold';
+  function resolveFontInfo(overlay) {
+    const rawFont = (overlay.dataset.font || '').trim().toLowerCase();
+    const rawBack = overlay.dataset.back;
+    const isSingleLayer = !rawBack || rawBack.trim() === '' || rawBack.trim().toLowerCase() === 'none';
+
+    if (retroFontMap[rawFont] || isSingleLayer) {
+      const matchedKey = retroFontMap[rawFont] ? rawFont : 'cabriolet';
+      const retro = retroFontMap[matchedKey] || retroFontMap.cabriolet;
+      return {
+        isRetro: true,
+        key: matchedKey,
+        family: retro.family,
+        fallback: retro.fallback,
+        isSingleLayer: true
+      };
+    }
+
+    const badgeKey = fontKeysMap[rawFont] || 'bold';
+    return {
+      isRetro: false,
+      key: badgeKey,
+      family: `DC Badge ${badgeKey}`,
+      fallback: 'Impact, sans-serif',
+      isSingleLayer: false
+    };
   }
 
   const textureCache = new Map();
@@ -118,8 +142,9 @@
   }
 
   const loadedFonts = new Map();
-  function loadCartFont(fontKey) {
-    if (loadedFonts.has(fontKey)) return loadedFonts.get(fontKey);
+  function loadCartFont(fontKey, isRetro) {
+    const cacheKey = isRetro ? `retro:${fontKey}` : `badge:${fontKey}`;
+    if (loadedFonts.has(cacheKey)) return loadedFonts.get(cacheKey);
     const fontsConfigEl = document.getElementById('dc-cart-fonts-config');
     let fontsMap = {};
     if (fontsConfigEl) {
@@ -128,14 +153,15 @@
     const fontUrl = fontsMap[fontKey];
     if (!fontUrl) return Promise.resolve();
 
-    const face = new FontFace(`DC Badge ${fontKey}`, `url(${JSON.stringify(fontUrl)})`);
+    const familyName = isRetro ? `DCRetro-${fontKey}` : `DC Badge ${fontKey}`;
+    const face = new FontFace(familyName, `url(${JSON.stringify(fontUrl)})`);
     const promise = face.load().then((loaded) => {
       document.fonts.add(loaded);
       return loaded;
     }).catch((err) => {
-      console.warn(`Could not load badge font ${fontKey}:`, err);
+      console.warn(`Could not load cart font ${fontKey}:`, err);
     });
-    loadedFonts.set(fontKey, promise);
+    loadedFonts.set(cacheKey, promise);
     return promise;
   }
 
@@ -145,11 +171,10 @@
     const rawText = overlay.dataset.text || '';
     if (!rawText.trim()) return;
 
-    const fontKey = getFontKey(overlay.dataset.font);
-    const rawBack = overlay.dataset.back;
-    const isSingleLayer = !rawBack || rawBack.trim() === '' || rawBack.trim().toLowerCase() === 'none';
+    const info = resolveFontInfo(overlay);
+    const isSingleLayer = info.isSingleLayer;
     const faceMaterial = getMaterial(overlay.dataset.face, 'mirror_red');
-    const backMaterial = isSingleLayer ? null : getMaterial(rawBack, 'gloss_black');
+    const backMaterial = isSingleLayer ? null : getMaterial(overlay.dataset.back, 'gloss_black');
 
     const width = Math.round(overlay.clientWidth || canvas.clientWidth || 132);
     const height = Math.round(overlay.clientHeight || canvas.clientHeight || 132);
@@ -164,10 +189,10 @@
     ctx.scale(ratio, ratio);
     ctx.clearRect(0, 0, width, height);
 
-    const text = fontKey === 'script' ? rawText.trim() : rawText.trim().toUpperCase();
+    const text = (isSingleLayer || info.isRetro || info.key === 'script') ? rawText.trim() : rawText.trim().toUpperCase();
 
     let size = Math.min(height * 0.26, width * 0.22);
-    const setFont = () => { ctx.font = `${size}px "DC Badge ${fontKey}"`; };
+    const setFont = () => { ctx.font = `${size}px "${info.family}", ${info.fallback}`; };
     setFont();
 
     let metrics = ctx.measureText(text);
@@ -188,19 +213,19 @@
     ctx.lineWidth = stroke;
 
     if (isSingleLayer) {
-      // 1-LAYER 3D RENDER (White letters with black hairline border on thumbnail)
-      const isScript = ['cadillac', 'cabriolet', 'ford', 'chevrolet'].includes(fontKey);
-      const strokeWidth = isScript ? Math.max(1.0, Math.min(size * 0.015, 1.6)) : Math.max(1.2, Math.min(size * 0.022, 2.0));
+      // 1-LAYER 3D RETRO RENDER (Delicate hairline border matching PDP exactly)
+      const isScript = ['cadillac', 'cabriolet', 'ford', 'chevrolet'].includes(info.key);
+      const strokeWidth = isScript ? Math.max(0.9, Math.min(size * 0.015, 1.5)) : Math.max(1.2, Math.min(size * 0.022, 2.0));
 
-      // 1. Soft Drop Shadow
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-      ctx.shadowBlur = Math.max(4, size * 0.08);
-      ctx.shadowOffsetY = Math.max(2, size * 0.04);
+      // 1. Soft realistic drop shadow onto car paint
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+      ctx.shadowBlur = Math.max(4, size * 0.06);
+      ctx.shadowOffsetY = Math.max(2, size * 0.025);
       ctx.shadowOffsetX = 1;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
       ctx.fillText(text, x, y);
 
-      // 2. Delicate hairline black outline (drawn BEFORE fill)
+      // 2. Delicate hairline black outline (drawn BEFORE fill so inner half is covered by white)
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
@@ -211,12 +236,8 @@
       ctx.lineJoin = 'round';
       ctx.strokeText(text, x, y);
 
-      // 3. Front Face letter layer (White or custom texture)
-      if (rawFace.toLowerCase() === 'white' || !rawFace) {
-        ctx.fillStyle = '#ffffff';
-      } else {
-        ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
-      }
+      // 3. Pure White letter face fill (drawn ON TOP so letters stay 100% crisp and open)
+      ctx.fillStyle = '#ffffff';
       ctx.fillText(text, x, y);
     } else {
       // 2-LAYER 3D RENDER (Backing plate + raised letters on thumbnail)
@@ -265,8 +286,8 @@
       if (resizeObserver) {
         resizeObserver.observe(overlay);
       }
-      const fontKey = getFontKey(overlay.dataset.font);
-      loadCartFont(fontKey).then(() => {
+      const info = resolveFontInfo(overlay);
+      loadCartFont(info.key, info.isRetro).then(() => {
         renderOverlay(overlay);
       });
     });

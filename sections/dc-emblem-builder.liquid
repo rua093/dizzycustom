@@ -2,7 +2,10 @@
 <script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
 
 {%- liquid
-  assign badge_product = settings.custom_emblem_product | default: section.settings.product
+  assign badge_product = section.settings.product
+  if badge_product == blank
+    assign badge_product = settings.custom_emblem_product
+  endif
   assign is_product_page = false
   if request.page_type == 'product'
     assign badge_product = product

@@ -30,6 +30,29 @@ cart-items .title-wrapper-with-link {
 .cart-item__image-container {
   display: inline-flex;
   align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.dc-cart-item-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.dc-cart-item-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 
 .cart-item__image-container:after {

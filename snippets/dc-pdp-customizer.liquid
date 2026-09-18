@@ -31,8 +31,14 @@
 
   # Determine layer mode: 1 for single-layer, 2 for two-layer
   assign customizer_layers = 2
-  if template.suffix == 'single-layer' or product.tags contains 'single-layer' or product.tags contains '1-layer'
+  if template.suffix == 'two-layer'
+    assign customizer_layers = 2
+  elsif template.suffix == 'single-layer'
     assign customizer_layers = 1
+  elsif product.tags contains 'single-layer' or product.tags contains '1-layer'
+    assign customizer_layers = 1
+  elsif product.tags contains 'two-layer' or product.tags contains '2-layer'
+    assign customizer_layers = 2
   endif
 -%}
 {%- if is_custom_product -%}

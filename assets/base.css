@@ -3660,6 +3660,67 @@ font-family: "RollRoyce";
 src: url("https://cdn.shopify.com/s/files/1/0590/0569/8090/files/RollRoyce.otf") format("opentype");
 }
 
+@font-face {
+  font-family: 'DCRetro-lexus';
+  src: url('dc-retro-lexus.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-dodge';
+  src: url('dc-retro-dodge.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-jeep';
+  src: url('dc-retro-jeep.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-audi';
+  src: url('dc-retro-audi.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-cabriolet';
+  src: url('dc-retro-cabriolet.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-chevrolet';
+  src: url('dc-retro-chevrolet.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-cadillac';
+  src: url('dc-retro-cadillac.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-nissan';
+  src: url('dc-retro-nissan.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-ferrari';
+  src: url('dc-retro-ferrari.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-ikarus';
+  src: url('dc-retro-ikarus.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-lamborghini';
+  src: url('dc-retro-lamborghini.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DCRetro-ford';
+  src: url('dc-retro-ford.ttf') format('truetype');
+  font-display: swap;
+}
+
 /* PDP-01 — Add to cart thành nút đặc, là CTA chính */
 .product-form__submit{
   background:#1E4E86 !important; color:#fff !important; border-color:#1E4E86 !important;

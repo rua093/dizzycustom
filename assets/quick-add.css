@@ -183,6 +183,18 @@ quick-add-modal .dc-main-product .product__column-sticky {
   display: none;
 }
 
+.product-card-wrapper--dizzy a.quick-add__submit,
+.product-card-wrapper--dizzy a.quick-add__submit:visited,
+.product-card-wrapper--dizzy a.quick-add__submit:hover,
+.product-card-wrapper--dizzy a.quick-add__submit:focus {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.product-card-wrapper--dizzy.underline-links-hover:hover a.quick-add__submit {
+  text-decoration: none;
+}
+
 .product-card-wrapper--dizzy .quick-add__submit:hover {
   background: #092c4a;
   color: #ffffff;

@@ -26,12 +26,15 @@ if (!customElements.get('product-form')) {
         this.submitButton.classList.add('loading');
         this.querySelector('.loading__spinner').classList.remove('hidden');
 
+        // Dynamically re-query cart component at submit time to prevent stale null references
+        this.cart = this.cart || document.querySelector('cart-drawer') || document.querySelector('cart-notification');
+
         const config = fetchConfig('javascript');
         config.headers['X-Requested-With'] = 'XMLHttpRequest';
         delete config.headers['Content-Type'];
 
         const formData = new FormData(this.form);
-        if (this.cart) {
+        if (this.cart && typeof this.cart.getSectionsToRender === 'function') {
           formData.append(
             'sections',
             this.cart.getSectionsToRender().map((section) => section.id)
@@ -60,10 +63,10 @@ if (!customElements.get('product-form')) {
               soldOutMessage.classList.remove('hidden');
               this.error = true;
               return;
-            } else if (!this.cart) {
-              window.location = window.routes.cart_url;
-              return;
             }
+
+            // Ensure cart drawer reference is available
+            this.cart = this.cart || document.querySelector('cart-drawer') || document.querySelector('cart-notification');
 
             if (!this.error)
               publish(PUB_SUB_EVENTS.cartUpdate, {
@@ -78,14 +81,20 @@ if (!customElements.get('product-form')) {
                 'modalClosed',
                 () => {
                   setTimeout(() => {
-                    this.cart.renderContents(response);
+                    if (this.cart && typeof this.cart.renderContents === 'function') {
+                      this.cart.renderContents(response);
+                    }
                   });
                 },
                 { once: true }
               );
               quickAddModal.hide(true);
-            } else {
+            } else if (this.cart && typeof this.cart.renderContents === 'function') {
               this.cart.renderContents(response);
+            } else if (this.cart && typeof this.cart.open === 'function') {
+              this.cart.open();
+            } else {
+              window.location = window.routes.cart_url;
             }
           })
           .catch((e) => {

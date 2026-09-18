@@ -14,10 +14,15 @@
 <script src="{{ 'dc-cart-badge.js' | asset_url }}" defer="defer"></script>
 
 {%- assign cart_font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ',' -%}
+{%- assign cart_retro_keys = 'lexus,dodge,jeep,audi,cabriolet,chevrolet,cadillac,nissan,ferrari,ikarus,lamborghini,ford' | split: ',' -%}
 <script type="application/json" id="dc-cart-fonts-config">
   {
     {% for key in cart_font_keys %}
       {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
+      {{ key | json }}: {{ font_file | asset_url | json }},
+    {% endfor %}
+    {% for key in cart_retro_keys %}
+      {% assign font_file = 'dc-retro-' | append: key | append: '.ttf' %}
       {{ key | json }}: {{ font_file | asset_url | json }}{% unless forloop.last %},{% endunless %}
     {% endfor %}
   }
@@ -143,6 +148,11 @@
                             assign item_target_url = item_target_url | append: '&dc_badge=1'
                           else
                             assign item_target_url = item_target_url | append: '?dc_badge=1'
+                          endif
+                          if custom_back != blank
+                            assign item_target_url = item_target_url | append: '&view=two-layer&layers=2'
+                          else
+                            assign item_target_url = item_target_url | append: '&view=single-layer&layers=1'
                           endif
                           assign enc_text = custom_text | url_encode
                           assign item_target_url = item_target_url | append: '&text=' | append: enc_text
