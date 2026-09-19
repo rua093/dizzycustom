@@ -514,7 +514,7 @@
   max-width: 66rem;
   margin: 0 auto;
   padding: 2.4rem 1.5rem;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.28) 55%, transparent 75%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.45) 55%, transparent 82%);
   border-radius: 2rem;
 }
 
@@ -668,7 +668,7 @@
   .banner__box--dizzy {
     padding: 1.2rem 1rem 1.4rem 1rem;
     max-width: 100%;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.22) 60%, transparent 80%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 85%);
   }
 
   .banner__caption--dizzy {
@@ -744,7 +744,7 @@
   }
 
   .banner--dizzy-mobile-hero .banner__media::after {
-    background: linear-gradient(180deg, transparent 28%, rgba(0, 7, 16, 0.35) 55%, rgba(0, 7, 16, 0.7) 100%);
+    background: linear-gradient(180deg, transparent 20%, rgba(0, 7, 16, 0.48) 50%, rgba(0, 7, 16, 0.82) 100%);
     opacity: 1;
   }
 
