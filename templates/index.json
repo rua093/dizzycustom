@@ -66,7 +66,7 @@
     "dc_emblem_builder": {
       "type": "dc-emblem-builder",
       "settings": {
-        "product": "custom-metal-emblem-for-car-and-motorbike-copy-2",
+        "product": "custom-metal-emblem-for-car-and-motorbike-copy-4",
         "eyebrow": "YOUR WORDS. YOUR STYLE.",
         "heading": "Make it unmistakably yours.",
         "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
@@ -220,6 +220,23 @@
     "dc_custom_request_anchor": {
       "type": "dc-custom-request-anchor",
       "settings": {}
+    },
+    "1789410370f0d69c93": {
+      "type": "apps",
+      "blocks": {
+        "powerful_form_builder_app_block_zdaiYy": {
+          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
+          "settings": {
+            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc1\"></div>"
+          }
+        }
+      },
+      "block_order": [
+        "powerful_form_builder_app_block_zdaiYy"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     },
     "1789409231f10d6dbe": {
       "type": "apps",
@@ -430,23 +447,6 @@
         "show_view_all": false,
         "padding_top": 20,
         "padding_bottom": 0
-      }
-    },
-    "1789410370f0d69c93": {
-      "type": "apps",
-      "blocks": {
-        "powerful_form_builder_app_block_zdaiYy": {
-          "type": "shopify://apps/powerful-form-builder/blocks/app-block/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
-          "settings": {
-            "shortcode": "<div class=\"globo-formbuilder\" data-id=\"MTY0Mjc1\"></div>"
-          }
-        }
-      },
-      "block_order": [
-        "powerful_form_builder_app_block_zdaiYy"
-      ],
-      "settings": {
-        "include_margins": true
       }
     }
   },
