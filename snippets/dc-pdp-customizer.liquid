@@ -1,7 +1,8 @@
 {%- liquid
   assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
-  assign font_labels = 'Block,Lightning,Aggressive,Script,Electric,Ice,OEM' | split: ','
+  assign font_labels = 'Bold,Slant,Edge,Flow,Strike,Frost,Classic' | split: ','
   assign retro_fonts = 'LEXUS,DODGE,Jeep,Audi,Cabriolet,Chevrolet,Cadillac,Nissan,Ferrari,Ikarus,Lamborghini,Ford' | split: ','
+  assign retro_font_labels = 'Aurora,Torque,Trail,Vector,Cruise,Heritage,Velvet,Nova,Sprint,Skyline,Apex,Harbor' | split: ','
 
   # Determine target product from Theme Editor setting (Section setting or Theme setting)
   assign configured_product = section.settings.custom_emblem_product
@@ -51,7 +52,7 @@
       "layers": {{ customizer_layers }},
       "maxLength": {% if customizer_layers == 1 %}24{% else %}16{% endif %},
       "defaultText": "",
-      "defaultFont": {% if customizer_layers == 1 %}"Nissan"{% else %}"lightning"{% endif %},
+      "defaultFont": {% if customizer_layers == 1 %}"nissan"{% else %}"lightning"{% endif %},
       "baseFonts": [
         {% for key in font_keys %}
           {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
@@ -63,7 +64,7 @@
           {% for rfont in retro_fonts %}
             {% assign rfont_lower = rfont | downcase %}
             {% assign font_file = 'dc-retro-' | append: rfont_lower | append: '.ttf' %}
-            {"key": {{ rfont_lower | json }}, "label": {{ rfont | json }}, "url": {{ font_file | asset_url | json }}, "retro": true}{% unless forloop.last %},{% endunless %}
+            {"key": {{ rfont_lower | json }}, "label": {{ retro_font_labels[forloop.index0] | json }}, "url": {{ font_file | asset_url | json }}, "retro": true}{% unless forloop.last %},{% endunless %}
           {% endfor %}
         {%- else -%}
           {% for key in font_keys %}
@@ -103,7 +104,8 @@
         <div class="dc-pdp-select-wrapper">
           <select id="dc-pdp-font-select" class="dc-pdp-select" data-pdp-font-select aria-label="Choose font">
             {% for rfont in retro_fonts %}
-              <option value="{{ rfont }}"{% if rfont == 'Nissan' %} selected{% endif %}>{{ rfont }}</option>
+              {% assign rfont_lower = rfont | downcase %}
+              <option value="{{ rfont_lower }}"{% if rfont_lower == 'nissan' %} selected{% endif %}>{{ retro_font_labels[forloop.index0] }}</option>
             {% endfor %}
           </select>
           <span class="dc-pdp-select-arrow" aria-hidden="true">
@@ -137,7 +139,7 @@
 
     <!-- Hidden form properties attached directly to PDP Product Form for Single Layer -->
     <input type="hidden" name="properties[Custom Text]" id="dc-pdp-prop-text" value="" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Nissan" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Nova" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Specific Requests]" id="dc-pdp-prop-requests" value="" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="White" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Outline Color]" id="dc-pdp-prop-outline" value="Black" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
@@ -249,7 +251,7 @@
 
     <!-- Hidden form properties attached directly to PDP Product Form for Two Layer -->
     <input type="hidden" name="properties[Custom Text]" id="dc-pdp-prop-text" value="DIZZY" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Lightning" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Slant" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="Mirror Red" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Background Color]" id="dc-pdp-prop-back" value="Gloss Black" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Mounting]" id="dc-pdp-prop-mount" value="VHB Tape (Flat Surface)" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>

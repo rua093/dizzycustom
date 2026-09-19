@@ -36,13 +36,13 @@
   }
 
   const fontLabels = {
-    bold: 'Block',
-    lightning: 'Lightning',
-    aggressive: 'Aggressive',
-    script: 'Script',
-    electric: 'Electric',
-    ice: 'Ice',
-    oem: 'OEM'
+    bold: 'Bold',
+    lightning: 'Slant',
+    aggressive: 'Edge',
+    script: 'Flow',
+    electric: 'Strike',
+    ice: 'Frost',
+    oem: 'Classic'
   };
 
   const fontKeysMap = {
@@ -62,21 +62,30 @@
     return fontKeysMap[clean] || null;
   }
 
-  // 12 Authentic Retro Brand Fonts (Direct TTF fonts from DizzyCustom store)
+  // Display names are neutral; font keys remain stable so existing assets keep loading.
   const retroFontMap = {
-    lexus: { label: 'LEXUS', family: 'DCRetro-lexus', fallback: '"Arial Black", sans-serif' },
-    dodge: { label: 'DODGE', family: 'DCRetro-dodge', fallback: 'Impact, sans-serif' },
-    jeep: { label: 'Jeep', family: 'DCRetro-jeep', fallback: '"Arial Black", sans-serif' },
-    audi: { label: 'Audi', family: 'DCRetro-audi', fallback: '"Helvetica Neue", sans-serif' },
-    cabriolet: { label: 'Cabriolet', family: 'DCRetro-cabriolet', fallback: 'cursive' },
-    chevrolet: { label: 'Chevrolet', family: 'DCRetro-chevrolet', fallback: 'Impact, sans-serif' },
-    cadillac: { label: 'Cadillac', family: 'DCRetro-cadillac', fallback: 'cursive' },
-    nissan: { label: 'Nissan', family: 'DCRetro-nissan', fallback: '"Arial Black", sans-serif' },
-    ferrari: { label: 'Ferrari', family: 'DCRetro-ferrari', fallback: '"Times New Roman", serif' },
-    ikarus: { label: 'Ikarus', family: 'DCRetro-ikarus', fallback: 'Georgia, serif' },
-    lamborghini: { label: 'Lamborghini', family: 'DCRetro-lamborghini', fallback: '"Arial Black", sans-serif' },
-    ford: { label: 'Ford', family: 'DCRetro-ford', fallback: 'cursive' }
+    lexus: { label: 'Aurora', legacyLabel: 'LEXUS', family: 'DCRetro-lexus', fallback: '"Arial Black", sans-serif' },
+    dodge: { label: 'Torque', legacyLabel: 'DODGE', family: 'DCRetro-dodge', fallback: 'Impact, sans-serif' },
+    jeep: { label: 'Trail', legacyLabel: 'Jeep', family: 'DCRetro-jeep', fallback: '"Arial Black", sans-serif' },
+    audi: { label: 'Vector', legacyLabel: 'Audi', family: 'DCRetro-audi', fallback: '"Helvetica Neue", sans-serif' },
+    cabriolet: { label: 'Cruise', legacyLabel: 'Cabriolet', family: 'DCRetro-cabriolet', fallback: 'cursive' },
+    chevrolet: { label: 'Heritage', legacyLabel: 'Chevrolet', family: 'DCRetro-chevrolet', fallback: 'Impact, sans-serif' },
+    cadillac: { label: 'Velvet', legacyLabel: 'Cadillac', family: 'DCRetro-cadillac', fallback: 'cursive' },
+    nissan: { label: 'Nova', legacyLabel: 'Nissan', family: 'DCRetro-nissan', fallback: '"Arial Black", sans-serif' },
+    ferrari: { label: 'Sprint', legacyLabel: 'Ferrari', family: 'DCRetro-ferrari', fallback: '"Times New Roman", serif' },
+    ikarus: { label: 'Skyline', legacyLabel: 'Ikarus', family: 'DCRetro-ikarus', fallback: 'Georgia, serif' },
+    lamborghini: { label: 'Apex', legacyLabel: 'Lamborghini', family: 'DCRetro-lamborghini', fallback: '"Arial Black", sans-serif' },
+    ford: { label: 'Harbor', legacyLabel: 'Ford', family: 'DCRetro-ford', fallback: 'cursive' }
   };
+
+  function resolveRetroFontKey(value) {
+    if (!value) return null;
+    const normalized = value.trim().toLowerCase();
+    return Object.keys(retroFontMap).find((key) => {
+      const font = retroFontMap[key];
+      return key === normalized || font.label.toLowerCase() === normalized || font.legacyLabel.toLowerCase() === normalized;
+    }) || null;
+  }
 
   function resolveMountKey(str) {
     if (!str) return null;
@@ -159,7 +168,7 @@
       // Default state
       this.state = {
         text: '',
-        font: isSingleLayer ? (this.config.defaultFont || 'Nissan') : 'lightning',
+        font: isSingleLayer ? (this.config.defaultFont || 'nissan') : 'lightning',
         face: isSingleLayer ? 'white' : 'mirror_red',
         back: 'gloss_black',
         mount: 'tape',
@@ -360,9 +369,9 @@
       if (params.has('font')) {
         const urlFont = params.get('font').trim();
         if (isSingleLayer) {
-          const matchedRetro = Object.keys(retroFontMap).find(k => k.toLowerCase() === urlFont.toLowerCase());
+          const matchedRetro = resolveRetroFontKey(urlFont);
           if (matchedRetro) {
-            this.state.font = retroFontMap[matchedRetro].label;
+            this.state.font = matchedRetro;
             hasCustomParams = true;
           }
         } else {
@@ -443,9 +452,9 @@
           }
           if (isSingleLayer) {
             if (saved.font && typeof saved.font === 'string') {
-              const matchedRetro = Object.keys(retroFontMap).find(k => k.toLowerCase() === saved.font.toLowerCase());
+              const matchedRetro = resolveRetroFontKey(saved.font);
               if (matchedRetro) {
-                this.state.font = retroFontMap[matchedRetro].label;
+                this.state.font = matchedRetro;
               }
             }
             if (typeof saved.specificRequests === 'string') {
@@ -704,7 +713,7 @@
       const customText = this.displayText();
 
       if (isSingleLayer) {
-        const fontVal = this.state.font || 'Nissan';
+        const fontVal = retroFontMap[this.state.font]?.label || 'Nova';
         const specificReq = this.state.specificRequests || '';
         const props = {
           'properties[Custom Text]': customText,
@@ -980,7 +989,7 @@
         context.fillStyle = '#ffffff';
         context.fillText(text, x, y);
 
-        this.canvas.setAttribute('aria-label', `${text}, ${this.state.font} font, White with Black Outline (Single Layer)`);
+        this.canvas.setAttribute('aria-label', `${text}, ${retroFontMap[this.state.font]?.label || 'Nova'} font, White with Black Outline (Single Layer)`);
       } else {
         // === 2-LAYER 3D RENDER (Backing plate + raised front letters) ===
         // 1. Realistic deep drop shadow onto the product photo surface

@@ -12,8 +12,9 @@
     assign is_product_page = true
   endif
   assign initial_variant = badge_product.selected_or_first_available_variant
+  assign default_variant = initial_variant
   assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
-  assign font_labels = 'Block,Lightning,Aggressive,Script,Electric,Ice,OEM' | split: ','
+  assign font_labels = 'Bold,Slant,Edge,Flow,Strike,Frost,Classic' | split: ','
 -%}
 
 <section class="dc-builder-section color-{{ section.settings.color_scheme }} gradient" style="--dc-builder-space: {{ section.settings.padding }}px">
@@ -37,8 +38,11 @@
           "productUrl": {{ badge_product.url | default: '' | json }},
           "defaultText": {{ section.settings.default_text | json }},
           "maxLength": {{ section.settings.max_length | json }},
-          "price": {{ initial_variant.price | money_with_currency | json }},
-          "available": {{ initial_variant.available | default: false | json }},
+          "price": {{ default_variant.price | money_with_currency | json }},
+          "available": {{ default_variant.available | default: false | json }},
+          "defaultVariantId": {{ default_variant.id | json }},
+          "defaultSizeTitle": {{ default_variant.title | json }},
+          "defaultSizeMax": {%- if default_variant.title contains '8 Letters' -%}8{%- elsif default_variant.title contains '12 Letters' -%}12{%- else -%}16{%- endif -%},
           "fonts": [
             {% for key in font_keys %}
               {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
@@ -77,14 +81,17 @@
             <fieldset class="dc-builder-group">
               <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">2</span>Colors</span></legend>
               <div class="dc-builder-palette">
+                <div class="dc-builder-layer-count" role="group" aria-label="Number of emblem layers">
+                  <button type="button" data-layer-count="1" aria-pressed="false">1 Layer</button>
+                  <button type="button" data-layer-count="2" aria-pressed="true">2 Layers</button>
+                </div>
                 <div class="dc-builder-layers">
-                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small><span class="dc-builder-layer-prefix">Front </span>Text</small><strong data-color-name="face">Mirror Red</strong></span></button>
+                  <button class="dc-builder-layer" type="button" data-layer="face" aria-pressed="true"><span class="dc-builder-chip" data-chip="face"></span><span><small><span class="dc-builder-layer-prefix">Front </span>Text</small><strong data-color-name="face">Mirror White</strong></span></button>
                   <button class="dc-builder-layer" type="button" data-layer="back" aria-pressed="false"><span class="dc-builder-chip" data-chip="back"></span><span><small><span class="dc-builder-layer-prefix">Base </span>Backing</small><strong data-color-name="back">Gloss Black</strong></span></button>
                 </div>
                 <div class="dc-builder-finishes" role="group" aria-label="Material category">
                   <button type="button" data-finish="solid" aria-pressed="false">Solid</button>
                   <button type="button" data-finish="mirror" aria-pressed="true">Mirror</button>
-                  <button type="button" data-finish="patterns" aria-pressed="false">Patterns</button>
                   <button type="button" data-finish="flake" aria-pressed="false">Metal flake</button>
                 </div>
                 <div class="dc-builder-swatches" data-swatches role="group" aria-label="Text color"></div>
@@ -92,16 +99,109 @@
             </fieldset>
           </div>
 
-          <div class="dc-builder-col dc-builder-col--mount-order">
+          <div class="dc-builder-col dc-builder-col--mount-order dc-builder-col--size-order">
             <fieldset class="dc-builder-group">
-              <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">3</span>Mounting</span></legend>
-              <div class="dc-builder-mounts">
-                <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="VHB Tape (Flat Surface)" data-mount="tape" checked><span><strong>VHB tape</strong><small>For any flat surface</small></span></label>
-                <label class="dc-builder-mount"><input type="radio" name="properties[Mounting]" value="Studs (Grille Mount)" data-mount="studs"><span><strong>Studs</strong><small>For grille mounting</small></span></label>
+              <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">3</span>Size</span></legend>
+              <div class="dc-builder-sizes" role="radiogroup" aria-label="Select size">
+                {%- liquid
+                  assign preferred_keys = '1x6,1x8,1x4,2x8' | split: ','
+                  assign rendered_variant_ids = ''
+                -%}
+
+                {%- comment -%} Render in preferred order (1x6, 1x8, 1x4, 2x8) {%- endcomment -%}
+                {%- for pref_key in preferred_keys -%}
+                  {%- for variant in badge_product.variants -%}
+                    {%- if variant.title contains pref_key -%}
+                      {%- liquid
+                        assign max_chars = 16
+                        if variant.title contains '8 Letters'
+                          assign max_chars = 8
+                        elsif variant.title contains '12 Letters'
+                          assign max_chars = 12
+                        elsif variant.title contains '16 Letters'
+                          assign max_chars = 16
+                        endif
+                        assign is_checked = false
+                        if variant.id == default_variant.id
+                          assign is_checked = true
+                        endif
+                        assign rendered_variant_ids = rendered_variant_ids | append: variant.id | append: ','
+                      -%}
+                      <label class="dc-builder-size-label">
+                        <input
+                          type="radio"
+                          name="size_variant"
+                          value="{{ variant.id }}"
+                          data-size-id="{{ variant.id }}"
+                          data-size-title="{{ variant.title | escape }}"
+                          data-size-price="{{ variant.price | money_with_currency }}"
+                          data-size-max="{{ max_chars }}"
+                          data-size-available="{{ variant.available }}"
+                          {% if is_checked %}checked{% endif %}
+                        >
+                        <span class="dc-builder-size-card">
+                          {%- liquid
+                            assign title_parts = variant.title | split: ' ('
+                            assign size_dim = title_parts[0]
+                            assign size_meta = title_parts[1]
+                          -%}
+                          <span class="dc-builder-size-dim">{{ size_dim | escape }}</span>
+                          {%- if size_meta != blank -%}
+                            <span class="dc-builder-size-meta">({{ size_meta | escape }}</span>
+                          {%- endif -%}
+                        </span>
+                      </label>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endfor -%}
+
+                {%- comment -%} Fallback for any other variants {%- endcomment -%}
+                {%- for variant in badge_product.variants -%}
+                  {%- unless rendered_variant_ids contains variant.id -%}
+                    {%- liquid
+                      assign max_chars = 16
+                      if variant.title contains '8 Letters'
+                        assign max_chars = 8
+                      elsif variant.title contains '12 Letters'
+                        assign max_chars = 12
+                      elsif variant.title contains '16 Letters'
+                        assign max_chars = 16
+                      endif
+                      assign is_checked = false
+                      if variant.id == default_variant.id and rendered_variant_ids == blank
+                        assign is_checked = true
+                      endif
+                    -%}
+                    <label class="dc-builder-size-label">
+                      <input
+                        type="radio"
+                        name="size_variant"
+                        value="{{ variant.id }}"
+                        data-size-id="{{ variant.id }}"
+                        data-size-title="{{ variant.title | escape }}"
+                        data-size-price="{{ variant.price | money_with_currency }}"
+                        data-size-max="{{ max_chars }}"
+                        data-size-available="{{ variant.available }}"
+                        {% if is_checked %}checked{% endif %}
+                      >
+                      <span class="dc-builder-size-card">
+                        {%- liquid
+                          assign fallback_parts = variant.title | split: ' ('
+                          assign fallback_dim = fallback_parts[0]
+                          assign fallback_meta = fallback_parts[1]
+                        -%}
+                        <span class="dc-builder-size-dim">{{ fallback_dim | escape }}</span>
+                        {%- if fallback_meta != blank -%}
+                          <span class="dc-builder-size-meta">({{ fallback_meta | escape }}</span>
+                        {%- endif -%}
+                      </span>
+                    </label>
+                  {%- endunless -%}
+                {%- endfor -%}
               </div>
             </fieldset>
 
-            <input type="hidden" name="id" value="{{ initial_variant.id }}" data-variant-id>
+            <input type="hidden" name="id" value="{{ default_variant.id }}" data-variant-id>
             <input type="hidden" name="quantity" value="1" data-quantity>
             <input type="hidden" name="properties[Font]" data-property="font">
             <input type="hidden" name="properties[Text Color]" data-property="face">
@@ -112,7 +212,7 @@
             </button>
             {% if badge_product != blank %}
               <p class="dc-builder-order-summary" data-order-summary>
-                Total: <strong data-summary-price>{{ initial_variant.price | money_with_currency }}</strong>
+                Total: <strong data-summary-price>{{ default_variant.price | money_with_currency }}</strong>
               </p>
             {% endif %}
           </div>
@@ -121,7 +221,7 @@
       </form>
     </dc-emblem-builder>
     {% if request.design_mode and badge_product == blank %}
-      <p>Select a dedicated two-layer badge product in this section's settings to enable ordering. All fonts, finishes and mounting options must be included in its variant prices.</p>
+      <p>Select a dedicated two-layer badge product in this section's settings to enable ordering. All fonts, finishes and size options must be included in its variant prices.</p>
     {% endif %}
     {% if is_product_page %}
       <div class="dc-builder-description rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"{% if settings.animations_reveal_on_scroll %} data-cascade{% endif %}>{{ product.description }}</div>

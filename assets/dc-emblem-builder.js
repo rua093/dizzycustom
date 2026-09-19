@@ -10,7 +10,7 @@
     ['lime_green', 'Lime Green', '#8cdc0a', 'solid'], ['green', 'Green', '#0aaa28', 'solid'],
     ['blue', 'Blue', '#143cc8', 'solid'], ['purple', 'Purple', '#780fbe', 'solid'],
     ['pink', 'Pink', '#f06eaa', 'solid'], ['brown', 'Brown', '#4b2314', 'solid'],
-    ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
+    ['mirror_white', 'Mirror White', '#f7f7f7', 'mirror'], ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
     ['mirror_gold', 'Mirror Gold', '#bea028', 'mirror'], ['mirror_rosegold', 'Mirror Rosegold', '#c89b8c', 'mirror'],
     ['mirror_orange', 'Mirror Orange', '#e6780a', 'mirror'], ['mirror_green', 'Mirror Green', '#0a822d', 'mirror'],
     ['mirror_blue', 'Mirror Blue', '#0f32be', 'mirror'], ['mirror_purple', 'Mirror Purple', '#6e14b4', 'mirror'],
@@ -24,6 +24,10 @@
     ['mf_purple', 'Flake Purple', '#6e14aa', 'flake'], ['mf_pink', 'Flake Pink', '#dc5096', 'flake']
   ].map(([id, label, color, group, effect]) => ({ id, label, color, group, effect: effect || group }));
   const materials = new Map(finishes.map((finish) => [finish.id, finish]));
+  // Keep pattern materials for existing orders; add 'patterns' here when they are sold again.
+  const purchasableFinishGroups = new Set(['solid', 'mirror', 'flake']);
+  const backingFinishGroups = new Set(['solid', 'flake']);
+  const mirrorWhiteId = 'mirror_white';
   const loadedFonts = new Map();
 
   function loadFont(font) {
@@ -50,7 +54,16 @@
       this.variant = this.querySelector('[data-variant]');
       this.quantity = this.querySelector('[data-quantity]');
       this.error = this.querySelector('[data-error]');
-      this.state = { text: this.config.defaultText.slice(0, this.config.maxLength), font: 'lightning', face: 'mirror_red', back: 'gloss_black', mount: 'tape' };
+      this.currentMaxLength = this.config.defaultSizeMax || this.config.maxLength || 16;
+      this.state = {
+        text: this.config.defaultText.slice(0, this.currentMaxLength),
+        font: 'lightning',
+        face: mirrorWhiteId,
+        back: 'gloss_black',
+        layers: 2,
+        variantId: this.config.defaultVariantId,
+        sizeTitle: this.config.defaultSizeTitle
+      };
       this.layer = 'face';
       this.group = 'mirror';
       this.textures = new Map();
@@ -69,7 +82,10 @@
         this.update();
       }, { signal });
       this.addEventListener('change', (event) => {
-        if (event.target.matches('[data-mount]')) this.state.mount = event.target.dataset.mount;
+        const sizeInput = event.target.closest('[data-size-id]');
+        if (sizeInput) {
+          this.setSize(sizeInput, true);
+        }
         if (event.target === this.variant) this.syncVariant();
         this.update();
       }, { signal });
@@ -85,6 +101,10 @@
       this.syncVariant();
       this.buildSwatches();
       this.querySelector('[data-controls]').disabled = false;
+      const initialSizeInput = (this.state.variantId && this.querySelector(`[data-size-id="${this.state.variantId}"]`)) || this.querySelector('[data-size-id]:checked') || this.querySelector('[data-size-id]');
+      if (initialSizeInput) {
+        this.setSize(initialSizeInput, false);
+      }
       this.update();
       this.initializeFonts(signal);
     }
@@ -113,15 +133,55 @@
       this.interacted = true;
     }
 
+    setSize(sizeInput, userAction = true) {
+      if (userAction) this.stopDemo();
+      this.state.variantId = sizeInput.dataset.sizeId;
+      this.state.sizeTitle = sizeInput.dataset.sizeTitle;
+      this.state.sizePrice = sizeInput.dataset.sizePrice;
+      this.config.available = sizeInput.dataset.sizeAvailable === 'true';
+      this.currentMaxLength = parseInt(sizeInput.dataset.sizeMax, 10) || this.config.maxLength || 16;
+
+      const idInput = this.querySelector('[data-variant-id]');
+      if (idInput) idInput.value = this.state.variantId;
+
+      this.config.price = this.state.sizePrice;
+      const summaryPrice = this.querySelector('[data-summary-price]');
+      if (summaryPrice) summaryPrice.textContent = this.state.sizePrice;
+
+      if (this.input) {
+        this.input.maxLength = this.currentMaxLength;
+        if (this.state.text.length > this.currentMaxLength) {
+          this.state.text = this.state.text.slice(0, this.currentMaxLength);
+          this.input.value = this.state.text;
+        }
+      }
+      const stageGuide = this.querySelector('.dc-builder-stage-guide');
+      if (stageGuide) {
+        stageGuide.textContent = `Letters, numbers, spaces and punctuation. Up to ${this.currentMaxLength} characters.`;
+      }
+      const counter = this.querySelector('[data-count]');
+      if (counter) {
+        counter.textContent = `${this.state.text.length}/${this.currentMaxLength}`;
+      }
+    }
+
     restore() {
       const params = new URLSearchParams(location.search);
       if (params.get('dc_badge') === '1') {
         this.interacted = true;
-        if (params.has('text')) this.state.text = params.get('text').slice(0, this.config.maxLength);
+        if (params.has('text')) this.state.text = params.get('text').slice(0, this.currentMaxLength || this.config.maxLength);
         if (this.config.fonts.some((font) => font.key === params.get('font'))) this.state.font = params.get('font');
         for (const layer of ['face', 'back']) if (materials.has(params.get(layer))) this.state[layer] = params.get(layer);
-        if (['tape', 'studs'].includes(params.get('mount'))) this.state.mount = params.get('mount');
+        if (['1', '2'].includes(params.get('layers'))) this.state.layers = Number(params.get('layers'));
+        if (params.has('variant')) {
+          this.state.variantId = params.get('variant');
+          const matchingInput = this.querySelector(`[data-size-id="${this.state.variantId}"]`);
+          if (matchingInput) this.setSize(matchingInput, false);
+        }
         if (this.variant && Array.from(this.variant.options).some((option) => option.value === params.get('variant'))) this.variant.value = params.get('variant');
+        this.normalizeFaceFinish();
+        this.normalizeBackingFinish();
+        this.normalizeLayerCount();
         this.group = materials.get(this.state.face).group;
         this.saveToStorage();
         return;
@@ -136,7 +196,8 @@
           font: this.state.font,
           face: this.state.face,
           back: this.state.back,
-          mount: this.state.mount
+          layers: this.state.layers,
+          variantId: this.state.variantId
         }));
       } catch (e) {}
     }
@@ -147,8 +208,14 @@
         if (!raw) return;
         const saved = JSON.parse(raw);
         if (saved && typeof saved === 'object') {
+          if ([1, 2].includes(saved.layers)) this.state.layers = saved.layers;
+          if (saved.variantId) {
+            this.state.variantId = saved.variantId;
+            const matchingInput = this.querySelector(`[data-size-id="${saved.variantId}"]`);
+            if (matchingInput) this.setSize(matchingInput, false);
+          }
           if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
-            this.state.text = saved.text.trim().slice(0, this.config.maxLength);
+            this.state.text = saved.text.trim().slice(0, this.currentMaxLength || this.config.maxLength);
             this.interacted = true;
           }
           if (this.config.fonts.some((f) => f.key === saved.font)) {
@@ -161,10 +228,9 @@
               this.interacted = true;
             }
           }
-          if (['tape', 'studs'].includes(saved.mount)) {
-            this.state.mount = saved.mount;
-            this.interacted = true;
-          }
+          this.normalizeFaceFinish();
+          this.normalizeBackingFinish();
+          this.normalizeLayerCount();
           this.group = materials.get(this.state.face)?.group || 'mirror';
         }
       } catch (e) {}
@@ -174,14 +240,49 @@
       const button = event.target.closest('button');
       if (!button || button.disabled) return;
       if (button.dataset.font) this.state.font = button.dataset.font;
+      if (button.dataset.layerCount) {
+        this.state.layers = Number(button.dataset.layerCount);
+        this.normalizeLayerCount();
+      }
       if (button.dataset.layer) {
         this.layer = button.dataset.layer;
-        this.group = materials.get(this.state[this.layer]).group;
+        this.normalizeBackingFinish();
+        const finish = materials.get(this.state[this.layer]);
+        this.group = this.getFinishGroups().has(finish?.group) ? finish.group : 'solid';
       }
-      if (button.dataset.finish) this.group = button.dataset.finish;
-      if (button.dataset.swatch) this.state[this.layer] = button.dataset.swatch;
-      if (button.dataset.layer || button.dataset.finish) this.buildSwatches();
+      if (button.dataset.finish && this.getFinishGroups().has(button.dataset.finish)) this.group = button.dataset.finish;
+      const selectedFinish = materials.get(button.dataset.swatch);
+      if (button.dataset.swatch && this.isFinishAvailable(selectedFinish)) this.state[this.layer] = button.dataset.swatch;
+      if (button.dataset.layer || button.dataset.finish || button.dataset.layerCount) this.buildSwatches();
       this.update();
+    }
+
+    getFinishGroups(layer = this.layer) {
+      if (this.state.layers === 1) return new Set(['solid']);
+      return layer === 'back' ? backingFinishGroups : purchasableFinishGroups;
+    }
+
+    normalizeLayerCount() {
+      if (this.state.layers !== 1) return;
+      this.layer = 'face';
+      this.group = 'solid';
+      this.state.face = 'gloss_black';
+    }
+
+    normalizeBackingFinish() {
+      const backing = materials.get(this.state.back);
+      if (!backingFinishGroups.has(backing?.group)) this.state.back = 'gloss_black';
+    }
+
+    normalizeFaceFinish() {
+      const face = materials.get(this.state.face);
+      if (face?.group === 'mirror' && face.id !== mirrorWhiteId) this.state.face = mirrorWhiteId;
+    }
+
+    isFinishAvailable(finish) {
+      if (!finish || !this.getFinishGroups().has(finish.group)) return false;
+      if (finish.group === 'mirror') return finish.id === mirrorWhiteId;
+      return true;
     }
 
     swatchBackground(finish) {
@@ -196,7 +297,7 @@
       const container = this.querySelector('[data-swatches]');
       container.replaceChildren();
       container.setAttribute('aria-label', `${this.layer === 'face' ? 'Text' : 'Backing'} color`);
-      finishes.filter((finish) => finish.group === this.group).forEach((finish) => {
+      finishes.filter((finish) => finish.group === this.group && this.isFinishAvailable(finish)).forEach((finish) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'dc-builder-swatch';
@@ -218,10 +319,11 @@
 
     validationMessage() {
       if (!this.displayText()) return 'Type your text first.';
-      if (this.state.text.length > this.config.maxLength) return `Use up to ${this.config.maxLength} characters.`;
+      const max = this.currentMaxLength || this.config.maxLength || 16;
+      if (this.state.text.length > max) return `Use up to ${max} characters.`;
       if (!/^[\x20-\x7E]+$/.test(this.state.text)) return 'Please use English letters, numbers and standard punctuation for these fonts.';
-      if (this.state.font === 'ice' && !/^[A-Za-z0-9 !,.:;?]+$/.test(this.state.text)) return 'Ice supports letters, numbers, spaces and ! , . : ; ? punctuation. Choose another font for other symbols.';
-      if (this.state.font === 'lightning' && this.state.text.includes('~')) return 'Lightning does not support ~. Please remove it or choose another font.';
+      if (this.state.font === 'ice' && !/^[A-Za-z0-9 !,.:;?]+$/.test(this.state.text)) return 'Frost supports letters, numbers, spaces and ! , . : ; ? punctuation. Choose another font for other symbols.';
+      if (this.state.font === 'lightning' && this.state.text.includes('~')) return 'Slant does not support ~. Please remove it or choose another font.';
       if (!this.readyFonts?.has(this.state.font)) return this.readyFonts ? 'This font could not load. Please choose another font or reload the page.' : 'Loading badge fonts…';
       return '';
     }
@@ -242,10 +344,23 @@
     update() {
       if (this.input.value !== this.state.text) this.input.value = this.state.text;
       this.input.style.textTransform = this.state.font === 'script' ? 'none' : 'uppercase';
-      this.querySelector('[data-count]').textContent = `${this.state.text.length}/${this.config.maxLength}`;
+      const max = this.currentMaxLength || this.config.maxLength || 16;
+      this.input.maxLength = max;
+      this.querySelector('[data-count]').textContent = `${this.state.text.length}/${max}`;
       this.querySelectorAll('[data-font]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.font === this.state.font)));
-      this.querySelectorAll('[data-layer]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.layer === this.layer)));
-      this.querySelectorAll('[data-finish]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.finish === this.group)));
+      this.querySelectorAll('[data-layer-count]').forEach((button) => button.setAttribute('aria-pressed', String(Number(button.dataset.layerCount) === this.state.layers)));
+      this.querySelectorAll('[data-layer]').forEach((button) => {
+        const isBacking = button.dataset.layer === 'back';
+        button.hidden = this.state.layers === 1 && isBacking;
+        button.disabled = this.state.layers === 1 && isBacking;
+        button.setAttribute('aria-pressed', String(button.dataset.layer === this.layer));
+      });
+      const availableFinishGroups = this.getFinishGroups();
+      this.querySelectorAll('[data-finish]').forEach((button) => {
+        button.hidden = !availableFinishGroups.has(button.dataset.finish);
+        button.disabled = !availableFinishGroups.has(button.dataset.finish);
+        button.setAttribute('aria-pressed', String(button.dataset.finish === this.group));
+      });
       this.querySelectorAll('[data-swatch]').forEach((button) => {
         const active = button.dataset.swatch === this.state[this.layer];
         button.setAttribute('aria-pressed', String(active));
@@ -257,8 +372,12 @@
         this.querySelector(`[data-color-name="${layer}"]`).textContent = finish.label;
         this.querySelector(`[data-property="${layer}"]`).value = finish.label;
       }
+      const backProperty = this.querySelector('[data-property="back"]');
+      backProperty.disabled = this.state.layers === 1;
       this.querySelector('[data-property="font"]').value = this.config.fonts.find((font) => font.key === this.state.font).label;
-      this.querySelectorAll('[data-mount]').forEach((input) => { input.checked = input.dataset.mount === this.state.mount; });
+      this.querySelectorAll('[data-size-id]').forEach((input) => {
+        input.checked = input.dataset.sizeId === String(this.state.variantId);
+      });
       const message = this.validationMessage();
       this.input.setAttribute('aria-invalid', String(Boolean(message && this.readyFonts)));
       this.error.textContent = message;
@@ -379,9 +498,15 @@
       metrics = context.measureText(text);
       const x = (width - metrics.actualBoundingBoxRight + metrics.actualBoundingBoxLeft) / 2;
       const y = (height + metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
+      context.lineJoin = 'round';
+      if (this.state.layers === 1) {
+        context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
+        context.fillText(text, x, y);
+        this.canvas.setAttribute('aria-label', `${text}, ${this.state.font} font, ${materials.get(this.state.face).label} single-layer text`);
+        return;
+      }
       const stroke = Math.max(3, size * .11);
       const depth = Math.max(2, size * .04);
-      context.lineJoin = 'round';
       context.lineWidth = stroke;
       context.strokeStyle = '#090b0d';
       context.shadowColor = '#000000a0';

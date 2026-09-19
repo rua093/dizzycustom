@@ -739,30 +739,29 @@
 }
 
 /* Styled select box font display */
-.dc-pdp-select[data-font-selected="LEXUS"] { font-family: 'DCRetro-lexus', "Arial Black", sans-serif; letter-spacing: 0.08em; }
-.dc-pdp-select[data-font-selected="DODGE"] { font-family: 'DCRetro-dodge', Impact, sans-serif; }
-.dc-pdp-select[data-font-selected="Jeep"] { font-family: 'DCRetro-jeep', "Arial Black", sans-serif; }
-.dc-pdp-select[data-font-selected="Audi"] { font-family: 'DCRetro-audi', "Helvetica Neue", sans-serif; }
-.dc-pdp-select[data-font-selected="Cabriolet"] { font-family: 'DCRetro-cabriolet', cursive; font-size: 2.1rem; }
-.dc-pdp-select[data-font-selected="Chevrolet"] { font-family: 'DCRetro-chevrolet', Impact, sans-serif; }
-.dc-pdp-select[data-font-selected="Cadillac"] { font-family: 'DCRetro-cadillac', cursive; font-size: 2rem; }
-.dc-pdp-select[data-font-selected="Nissan"] { font-family: 'DCRetro-nissan', "Arial Black", sans-serif; }
-.dc-pdp-select[data-font-selected="Ferrari"] { font-family: 'DCRetro-ferrari', serif; }
-.dc-pdp-select[data-font-selected="Ikarus"] { font-family: 'DCRetro-ikarus', serif; }
-.dc-pdp-select[data-font-selected="Lamborghini"] { font-family: 'DCRetro-lamborghini', sans-serif; }
-.dc-pdp-select[data-font-selected="Ford"] { font-family: 'DCRetro-ford', cursive; font-size: 2rem; }
+.dc-pdp-select[data-font-selected="lexus"] { font-family: 'DCRetro-lexus', "Arial Black", sans-serif; letter-spacing: 0.08em; }
+.dc-pdp-select[data-font-selected="dodge"] { font-family: 'DCRetro-dodge', Impact, sans-serif; }
+.dc-pdp-select[data-font-selected="jeep"] { font-family: 'DCRetro-jeep', "Arial Black", sans-serif; }
+.dc-pdp-select[data-font-selected="audi"] { font-family: 'DCRetro-audi', "Helvetica Neue", sans-serif; }
+.dc-pdp-select[data-font-selected="cabriolet"] { font-family: 'DCRetro-cabriolet', cursive; font-size: 2.1rem; }
+.dc-pdp-select[data-font-selected="chevrolet"] { font-family: 'DCRetro-chevrolet', Impact, sans-serif; }
+.dc-pdp-select[data-font-selected="cadillac"] { font-family: 'DCRetro-cadillac', cursive; font-size: 2rem; }
+.dc-pdp-select[data-font-selected="nissan"] { font-family: 'DCRetro-nissan', "Arial Black", sans-serif; }
+.dc-pdp-select[data-font-selected="ferrari"] { font-family: 'DCRetro-ferrari', serif; }
+.dc-pdp-select[data-font-selected="ikarus"] { font-family: 'DCRetro-ikarus', serif; }
+.dc-pdp-select[data-font-selected="lamborghini"] { font-family: 'DCRetro-lamborghini', sans-serif; }
+.dc-pdp-select[data-font-selected="ford"] { font-family: 'DCRetro-ford', cursive; font-size: 2rem; }
 
-.dc-pdp-select option[value="LEXUS"] { font-family: 'DCRetro-lexus', sans-serif; }
-.dc-pdp-select option[value="DODGE"] { font-family: 'DCRetro-dodge', sans-serif; }
-.dc-pdp-select option[value="Jeep"] { font-family: 'DCRetro-jeep', sans-serif; }
-.dc-pdp-select option[value="Audi"] { font-family: 'DCRetro-audi', sans-serif; }
-.dc-pdp-select option[value="Cabriolet"] { font-family: 'DCRetro-cabriolet', cursive; font-size: 1.8rem; }
-.dc-pdp-select option[value="Chevrolet"] { font-family: 'DCRetro-chevrolet', sans-serif; }
-.dc-pdp-select option[value="Cadillac"] { font-family: 'DCRetro-cadillac', cursive; font-size: 1.8rem; }
-.dc-pdp-select option[value="Nissan"] { font-family: 'DCRetro-nissan', sans-serif; }
-.dc-pdp-select option[value="Ferrari"] { font-family: 'DCRetro-ferrari', serif; }
-.dc-pdp-select option[value="Ikarus"] { font-family: 'DCRetro-ikarus', serif; }
-.dc-pdp-select option[value="Lamborghini"] { font-family: 'DCRetro-lamborghini', sans-serif; }
-.dc-pdp-select option[value="Ford"] { font-family: 'DCRetro-ford', cursive; font-size: 1.8rem; }
-
+.dc-pdp-select option[value="lexus"] { font-family: 'DCRetro-lexus', sans-serif; }
+.dc-pdp-select option[value="dodge"] { font-family: 'DCRetro-dodge', sans-serif; }
+.dc-pdp-select option[value="jeep"] { font-family: 'DCRetro-jeep', sans-serif; }
+.dc-pdp-select option[value="audi"] { font-family: 'DCRetro-audi', sans-serif; }
+.dc-pdp-select option[value="cabriolet"] { font-family: 'DCRetro-cabriolet', cursive; font-size: 1.8rem; }
+.dc-pdp-select option[value="chevrolet"] { font-family: 'DCRetro-chevrolet', sans-serif; }
+.dc-pdp-select option[value="cadillac"] { font-family: 'DCRetro-cadillac', cursive; font-size: 1.8rem; }
+.dc-pdp-select option[value="nissan"] { font-family: 'DCRetro-nissan', sans-serif; }
+.dc-pdp-select option[value="ferrari"] { font-family: 'DCRetro-ferrari', serif; }
+.dc-pdp-select option[value="ikarus"] { font-family: 'DCRetro-ikarus', serif; }
+.dc-pdp-select option[value="lamborghini"] { font-family: 'DCRetro-lamborghini', sans-serif; }
+.dc-pdp-select option[value="ford"] { font-family: 'DCRetro-ford', cursive; font-size: 1.8rem; }
 

@@ -14,7 +14,7 @@
     ['lime_green', 'Lime Green', '#8cdc0a', 'solid'], ['green', 'Green', '#0aaa28', 'solid'],
     ['blue', 'Blue', '#143cc8', 'solid'], ['purple', 'Purple', '#780fbe', 'solid'],
     ['pink', 'Pink', '#f06eaa', 'solid'], ['brown', 'Brown', '#4b2314', 'solid'],
-    ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
+    ['mirror_white', 'Mirror White', '#f7f7f7', 'mirror'], ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
     ['mirror_gold', 'Mirror Gold', '#bea028', 'mirror'], ['mirror_rosegold', 'Mirror Rosegold', '#c89b8c', 'mirror'],
     ['mirror_orange', 'Mirror Orange', '#e6780a', 'mirror'], ['mirror_green', 'Mirror Green', '#0a822d', 'mirror'],
     ['mirror_blue', 'Mirror Blue', '#0f32be', 'mirror'], ['mirror_purple', 'Mirror Purple', '#6e14b4', 'mirror'],
@@ -52,15 +52,27 @@
     ford: { label: 'Ford', family: 'DCRetro-ford', fallback: 'cursive' }
   };
 
+  const retroFontAliases = {
+    aurora: 'lexus', torque: 'dodge', trail: 'jeep', vector: 'audi',
+    cruise: 'cabriolet', heritage: 'chevrolet', velvet: 'cadillac', nova: 'nissan',
+    sprint: 'ferrari', skyline: 'ikarus', apex: 'lamborghini', harbor: 'ford'
+  };
+
   const fontKeysMap = {
     block: 'bold',
     bold: 'bold',
     lightning: 'lightning',
+    slant: 'lightning',
     aggressive: 'aggressive',
+    edge: 'aggressive',
     script: 'script',
+    flow: 'script',
     electric: 'electric',
+    strike: 'electric',
     ice: 'ice',
-    oem: 'oem'
+    frost: 'ice',
+    oem: 'oem',
+    classic: 'oem'
   };
 
   function resolveFontInfo(overlay) {
@@ -68,8 +80,9 @@
     const rawBack = overlay.dataset.back;
     const isSingleLayer = !rawBack || rawBack.trim() === '' || rawBack.trim().toLowerCase() === 'none';
 
-    if (retroFontMap[rawFont] || isSingleLayer) {
-      const matchedKey = retroFontMap[rawFont] ? rawFont : 'cabriolet';
+    const retroKey = retroFontAliases[rawFont] || rawFont;
+    if (retroFontMap[retroKey] || (isSingleLayer && !fontKeysMap[rawFont])) {
+      const matchedKey = retroFontMap[retroKey] ? retroKey : 'cabriolet';
       const retro = retroFontMap[matchedKey] || retroFontMap.cabriolet;
       return {
         isRetro: true,
@@ -86,7 +99,7 @@
       key: badgeKey,
       family: `DC Badge ${badgeKey}`,
       fallback: 'Impact, sans-serif',
-      isSingleLayer: false
+      isSingleLayer
     };
   }
 
@@ -212,7 +225,10 @@
     ctx.lineJoin = 'round';
     ctx.lineWidth = stroke;
 
-    if (isSingleLayer) {
+    if (isSingleLayer && !info.isRetro) {
+      ctx.fillStyle = ctx.createPattern(getTexture(faceMaterial, width, height), 'no-repeat');
+      ctx.fillText(text, x, y);
+    } else if (isSingleLayer) {
       // 1-LAYER 3D RETRO RENDER (Delicate hairline border matching PDP exactly)
       const isScript = ['cadillac', 'cabriolet', 'ford', 'chevrolet'].includes(info.key);
       const strokeWidth = isScript ? Math.max(0.9, Math.min(size * 0.015, 1.5)) : Math.max(1.2, Math.min(size * 0.022, 2.0));
