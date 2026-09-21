@@ -186,7 +186,8 @@
 
     const info = resolveFontInfo(overlay);
     const isSingleLayer = info.isSingleLayer;
-    const faceMaterial = getMaterial(overlay.dataset.face, 'mirror_red');
+    const defaultFace = isSingleLayer ? 'white' : 'mirror_white';
+    const faceMaterial = getMaterial(overlay.dataset.face, defaultFace);
     const backMaterial = isSingleLayer ? null : getMaterial(overlay.dataset.back, 'gloss_black');
 
     const width = Math.round(overlay.clientWidth || canvas.clientWidth || 132);
@@ -201,6 +202,25 @@
 
     ctx.scale(ratio, ratio);
     ctx.clearRect(0, 0, width, height);
+
+    if (!info.isRetro && window.DCEmblemCore) {
+      window.DCEmblemCore.renderModernCanvas({
+        context: ctx,
+        width,
+        height,
+        text: rawText,
+        fontKey: info.key,
+        faceId: faceMaterial.id,
+        backId: backMaterial?.id,
+        layers: isSingleLayer ? 1 : 2,
+        texture: (id, textureWidth, textureHeight) => getTexture(getMaterial(id, 'gloss_black'), textureWidth, textureHeight),
+        maxFontSize: Math.min(height * 0.26, width * 0.22),
+        widthRatio: 0.78,
+        heightRatio: 0.45,
+        faceOffset: 0.015
+      });
+      return;
+    }
 
     const text = (isSingleLayer || info.isRetro || info.key === 'script') ? rawText.trim() : rawText.trim().toUpperCase();
 

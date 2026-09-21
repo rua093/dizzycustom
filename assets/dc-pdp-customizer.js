@@ -9,7 +9,7 @@
     ['lime_green', 'Lime Green', '#8cdc0a', 'solid'], ['green', 'Green', '#0aaa28', 'solid'],
     ['blue', 'Blue', '#143cc8', 'solid'], ['purple', 'Purple', '#780fbe', 'solid'],
     ['pink', 'Pink', '#f06eaa', 'solid'], ['brown', 'Brown', '#4b2314', 'solid'],
-    ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
+    ['mirror_white', 'Mirror White', '#f7f7f7', 'mirror'], ['mirror_red', 'Mirror Red', '#b40f0f', 'mirror'], ['mirror_silver', 'Mirror Silver', '#bec3c8', 'mirror'],
     ['mirror_gold', 'Mirror Gold', '#bea028', 'mirror'], ['mirror_rosegold', 'Mirror Rosegold', '#c89b8c', 'mirror'],
     ['mirror_orange', 'Mirror Orange', '#e6780a', 'mirror'], ['mirror_green', 'Mirror Green', '#0a822d', 'mirror'],
     ['mirror_blue', 'Mirror Blue', '#0f32be', 'mirror'], ['mirror_purple', 'Mirror Purple', '#6e14b4', 'mirror'],
@@ -49,15 +49,25 @@
     bold: 'bold',
     block: 'bold',
     lightning: 'lightning',
+    slant: 'lightning',
     aggressive: 'aggressive',
+    edge: 'aggressive',
     script: 'script',
+    flow: 'script',
     electric: 'electric',
+    strike: 'electric',
     ice: 'ice',
-    oem: 'oem'
+    frost: 'ice',
+    oem: 'oem',
+    classic: 'oem'
   };
 
   function resolveFontKey(str) {
     if (!str) return null;
+    if (window.DCEmblemCore && typeof window.DCEmblemCore.resolveBaseFontKey === 'function') {
+      const resolved = window.DCEmblemCore.resolveBaseFontKey(str);
+      if (resolved) return resolved;
+    }
     const clean = str.trim().toLowerCase();
     return fontKeysMap[clean] || null;
   }
@@ -131,6 +141,9 @@
         return;
       }
 
+      this.controller = new AbortController();
+      this.signal = this.controller.signal;
+
       // Enable inputs for custom product
       this.controlsContainer.querySelectorAll('input[name^="properties["]').forEach((el) => {
         el.disabled = false;
@@ -140,21 +153,18 @@
 
       const configScript = document.getElementById('dc-pdp-customizer-config');
       this.config = configScript ? JSON.parse(configScript.textContent) : { maxLength: 16, fonts: [], layers: 2 };
+      this.core = window.DCEmblemCore;
+      this.mode = this.config.mode || this.controlsContainer?.dataset?.mode || (this.config.layers === 1 ? 'retro' : 'modern');
+      this.isRetro = this.mode === 'retro';
       const explicitLayers = parseInt(this.controlsContainer?.dataset?.layers || this.canvasWrapper?.dataset?.layers, 10);
+      const initialModernLayers = parseInt(this.controlsContainer?.dataset?.initialModernLayers || this.config.initialLayers, 10);
       if (explicitLayers === 1 || explicitLayers === 2) {
         this.config.layers = explicitLayers;
       }
       const urlLayers = parseInt(params.get('layers'), 10);
-      if (urlLayers === 1 || urlLayers === 2) {
-        this.config.layers = urlLayers;
-      } else if (params.has('back') && params.get('back')) {
-        this.config.layers = 2;
-      }
       if (!this.config.layers) {
         this.config.layers = 2;
       }
-
-      const isSingleLayer = this.config.layers === 1;
 
       this.input = this.controlsContainer.querySelector('[data-pdp-text]');
       this.counter = this.controlsContainer.querySelector('[data-pdp-count]');
@@ -167,17 +177,22 @@
 
       // Default state
       this.state = {
-        text: '',
-        font: isSingleLayer ? (this.config.defaultFont || 'nissan') : 'lightning',
-        face: isSingleLayer ? 'white' : 'mirror_red',
+        text: this.isRetro ? '' : (this.config.defaultText || 'DIZZY'),
+        font: this.isRetro ? (this.config.defaultFont || 'nissan') : 'lightning',
+        face: this.isRetro ? 'white' : 'mirror_white',
         back: 'gloss_black',
+        layers: this.isRetro ? 1 : ([1, 2].includes(initialModernLayers) ? initialModernLayers : ([1, 2].includes(urlLayers) ? urlLayers : 2)),
         mount: 'tape',
         specificRequests: ''
       };
 
       this.initFromUrl(params);
+      if (!this.isRetro && this.core) this.state = this.core.normalizeModernState(this.state);
+      this.state.maxLength = this.config.maxLength;
+      this.state.available = true;
       this.bindEvents();
-      if (!isSingleLayer) {
+      if (!this.isRetro) this.bindModernVariant();
+      if (!this.isRetro) {
         this.buildSwatches();
       }
       this.updateUI();
@@ -191,6 +206,7 @@
     }
 
     destroy() {
+      this.controller?.abort();
       if (this.onScrollOrResizeHandler) {
         window.removeEventListener('scroll', this.onScrollOrResizeHandler);
         window.removeEventListener('resize', this.onScrollOrResizeHandler);
@@ -233,8 +249,8 @@
         }
       };
 
-      window.addEventListener('scroll', this.onScrollOrResizeHandler, { passive: true });
-      window.addEventListener('resize', this.onScrollOrResizeHandler, { passive: true });
+      window.addEventListener('scroll', this.onScrollOrResizeHandler, { passive: true, signal: this.signal });
+      window.addEventListener('resize', this.onScrollOrResizeHandler, { passive: true, signal: this.signal });
 
       // Initial check
       update();
@@ -358,7 +374,7 @@
     }
 
     initFromUrl(params) {
-      const isSingleLayer = this.config.layers === 1;
+      const isSingleLayer = this.isRetro;
       let hasCustomParams = false;
 
       if (params.has('text') && params.get('text').trim()) {
@@ -389,6 +405,10 @@
       }
 
       if (!isSingleLayer) {
+        if (['1', '2'].includes(params.get('layers'))) {
+          this.state.layers = Number(params.get('layers'));
+          hasCustomParams = true;
+        }
         for (const layer of ['face', 'back']) {
           const mat = resolveMaterialId(params.get(layer));
           if (mat) {
@@ -414,43 +434,42 @@
 
     saveToStorage() {
       try {
-        const isSingleLayer = this.config.layers === 1;
-        const storageKey = isSingleLayer ? 'dc_single_layer_state' : 'dc_custom_emblem_state';
-        if (isSingleLayer) {
-          localStorage.setItem(storageKey, JSON.stringify({
+        if (this.isRetro) {
+          localStorage.setItem('dc_single_layer_state', JSON.stringify({
             text: this.state.text,
             font: this.state.font,
             specificRequests: this.state.specificRequests
           }));
-        } else {
-          localStorage.setItem(storageKey, JSON.stringify({
+          return;
+        }
+        if (this.core && typeof this.core.saveModernState === 'function') {
+          this.core.saveModernState({
             text: this.state.text,
             font: this.state.font,
             face: this.state.face,
             back: this.state.back,
-            mount: this.state.mount
-          }));
+            layers: this.state.layers,
+            variantId: this.state.variantId
+          });
         }
       } catch (e) {}
     }
 
     restoreFromStorage() {
       try {
-        const isSingleLayer = this.config.layers === 1;
-        const storageKey = isSingleLayer ? 'dc_single_layer_state' : 'dc_custom_emblem_state';
-        const raw = localStorage.getItem(storageKey);
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (saved && typeof saved === 'object') {
-          if (saved.text && typeof saved.text === 'string') {
-            const trimmed = saved.text.trim();
-            if (trimmed && trimmed.toLowerCase() !== 'hello my friend' && trimmed.toLowerCase() !== 'dizzy') {
-              this.state.text = trimmed.slice(0, this.config.maxLength);
-            } else {
-              this.state.text = '';
+        if (this.isRetro) {
+          const raw = localStorage.getItem('dc_single_layer_state');
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (saved && typeof saved === 'object') {
+            if (saved.text && typeof saved.text === 'string') {
+              const trimmed = saved.text.trim();
+              if (trimmed && trimmed.toLowerCase() !== 'hello my friend' && trimmed.toLowerCase() !== 'dizzy') {
+                this.state.text = trimmed.slice(0, this.config.maxLength);
+              } else {
+                this.state.text = '';
+              }
             }
-          }
-          if (isSingleLayer) {
             if (saved.font && typeof saved.font === 'string') {
               const matchedRetro = resolveRetroFontKey(saved.font);
               if (matchedRetro) {
@@ -460,15 +479,34 @@
             if (typeof saved.specificRequests === 'string') {
               this.state.specificRequests = saved.specificRequests;
             }
-          } else {
-            const font = resolveFontKey(saved.font);
-            if (font) this.state.font = font;
-            const face = resolveMaterialId(saved.face);
-            if (face) this.state.face = face;
-            const back = resolveMaterialId(saved.back);
-            if (back) this.state.back = back;
-            const mount = resolveMountKey(saved.mount);
-            if (mount) this.state.mount = mount;
+          }
+          return;
+        }
+
+        if (this.core && typeof this.core.restoreModernState === 'function') {
+          const saved = this.core.restoreModernState();
+          if (saved && typeof saved === 'object') {
+            if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
+              this.state.text = saved.text.trim().slice(0, this.config.maxLength);
+            }
+            if (saved.font) {
+              const font = resolveFontKey(saved.font);
+              if (font) this.state.font = font;
+            }
+            if (saved.face) {
+              const face = resolveMaterialId(saved.face);
+              if (face) this.state.face = face;
+            }
+            if (saved.back) {
+              const back = resolveMaterialId(saved.back);
+              if (back) this.state.back = back;
+            }
+            if ([1, 2].includes(saved.layers)) {
+              this.state.layers = saved.layers;
+            }
+            if (saved.variantId) {
+              this.state.variantId = String(saved.variantId);
+            }
           }
         }
       } catch (e) {}
@@ -480,8 +518,7 @@
         this.input.addEventListener('input', () => {
           this.state.text = this.input.value;
           this.updateUI();
-          this.scrollToFirstMedia();
-        });
+        }, { signal: this.signal });
       }
 
       // Add-to-cart validation: prevent checkout if custom text is empty
@@ -498,7 +535,7 @@
             return false;
           }
           this.syncPropertiesToForm();
-        }, true);
+        }, { capture: true, signal: this.signal });
       });
 
       // Retro Font select dropdown
@@ -507,7 +544,7 @@
           this.state.font = this.fontSelect.value;
           this.updateUI();
           this.scrollToFirstMedia();
-        });
+        }, { signal: this.signal });
       }
 
       // Specific requests input (Single-layer)
@@ -516,7 +553,7 @@
           this.state.specificRequests = this.specificRequestsInput.value;
           this.syncPropertiesToForm();
           this.saveToStorage();
-        });
+        }, { signal: this.signal });
       }
 
       // Font modal trigger & close
@@ -527,20 +564,20 @@
             e.preventDefault();
             modal.classList.add('is-open');
             modal.setAttribute('aria-hidden', 'false');
-          });
+          }, { signal: this.signal });
         });
         modal.querySelectorAll('[data-pdp-font-modal-close]').forEach((btn) => {
           btn.addEventListener('click', () => {
             modal.classList.remove('is-open');
             modal.setAttribute('aria-hidden', 'true');
-          });
+          }, { signal: this.signal });
         });
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && modal.classList.contains('is-open')) {
             modal.classList.remove('is-open');
             modal.setAttribute('aria-hidden', 'true');
           }
-        });
+        }, { signal: this.signal });
       }
 
       // Font pills (Two-layer)
@@ -549,7 +586,18 @@
           this.state.font = btn.dataset.pdpFont;
           this.updateUI();
           this.scrollToFirstMedia();
-        });
+        }, { signal: this.signal });
+      });
+
+      this.controlsContainer.querySelectorAll('[data-pdp-layer-count]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          this.state.layers = Number(btn.dataset.pdpLayerCount);
+          this.state = this.core.normalizeModernState(this.state);
+          this.layer = 'face';
+          this.group = this.state.layers === 1 ? 'solid' : (materials.get(this.state.face)?.group || 'solid');
+          this.buildSwatches();
+          this.updateUI();
+        }, { signal: this.signal });
       });
 
       // Layer tabs (Text vs Backing - Two-layer)
@@ -559,7 +607,7 @@
           this.group = materials.get(this.state[this.layer])?.group || 'solid';
           this.buildSwatches();
           this.updateUI();
-        });
+        }, { signal: this.signal });
       });
 
       // Finish category tabs (Two-layer)
@@ -568,7 +616,7 @@
           this.group = btn.dataset.pdpFinish;
           this.buildSwatches();
           this.updateUI();
-        });
+        }, { signal: this.signal });
       });
 
       // Mounting radio inputs (Two-layer)
@@ -578,8 +626,29 @@
             this.state.mount = input.dataset.pdpMount;
             this.updateUI();
           }
-        });
+        }, { signal: this.signal });
       });
+    }
+
+    bindModernVariant() {
+      const form = document.getElementById(this.config.productFormId);
+      const idInput = form?.querySelector('input[name="id"]');
+      if (!form || !idInput) return;
+      const sync = () => queueMicrotask(() => {
+        const variant = (this.config.variants || []).find((item) => String(item.id) === idInput.value);
+        if (!variant) return;
+        const newMax = this.core.getVariantMaxLength(variant.title, this.config.maxLength || 16);
+        const changed = (this.state.variantId !== String(variant.id)) || (this.state.maxLength !== newMax) || (this.state.available !== Boolean(variant.available));
+        this.state.variantId = String(variant.id);
+        this.state.available = Boolean(variant.available);
+        this.state.maxLength = newMax;
+        this.config.maxLength = this.state.maxLength;
+        if (changed) {
+          this.updateUI();
+        }
+      });
+      form.addEventListener('change', sync, { signal: this.signal });
+      sync();
     }
 
     scrollToFirstMedia() {
@@ -592,22 +661,49 @@
     buildSwatches() {
       const container = this.controlsContainer.querySelector('[data-pdp-swatches]');
       if (!container) return;
-      container.replaceChildren();
 
-      const filtered = finishes.filter((f) => f.group === this.group);
+      const filtered = finishes.filter((f) => f.group === this.group && (!this.core || this.core.isFinishAvailable(f.id, this.state.layers || 2, this.layer)));
+      const existingButtons = Array.from(container.querySelectorAll('.dc-pdp-swatch'));
+      const canReuse = existingButtons.length === filtered.length && existingButtons.every((btn, idx) => btn.dataset.swatch === filtered[idx].id);
+
+      if (canReuse) {
+        filtered.forEach((finish, idx) => {
+          const btn = existingButtons[idx];
+          const isActive = this.state[this.layer] === finish.id;
+          btn.className = `dc-pdp-swatch${isActive ? ' is-active' : ''}`;
+          btn.setAttribute('aria-pressed', String(isActive));
+          const check = btn.querySelector('.dc-pdp-swatch-check');
+          if (check) check.textContent = isActive ? '✓' : '';
+          btn.onclick = () => {
+            this.state[this.layer] = finish.id;
+            this.updateUI();
+            this.scrollToFirstMedia();
+          };
+        });
+        return;
+      }
+
+      container.replaceChildren();
       filtered.forEach((finish) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `dc-pdp-swatch${this.state[this.layer] === finish.id ? ' is-active' : ''}`;
+        const isActive = this.state[this.layer] === finish.id;
+        btn.className = `dc-pdp-swatch${isActive ? ' is-active' : ''}`;
         btn.dataset.swatch = finish.id;
         btn.setAttribute('aria-label', `${finish.label} metal finish`);
+        btn.setAttribute('aria-pressed', String(isActive));
         btn.style.background = this.swatchBackground(finish);
+
+        const check = document.createElement('span');
+        check.className = 'dc-pdp-swatch-check';
+        check.textContent = isActive ? '✓' : '';
+        btn.appendChild(check);
 
         btn.addEventListener('click', () => {
           this.state[this.layer] = finish.id;
           this.updateUI();
           this.scrollToFirstMedia();
-        });
+        }, { signal: this.signal });
 
         container.appendChild(btn);
       });
@@ -630,15 +726,23 @@
     }
 
     displayText() {
-      return (this.state.text || '').trim();
+      if (this.isRetro) return (this.state.text || '').trim();
+      return this.core.normalizeModernText(this.state.text, this.config.maxLength).trim();
     }
 
     updateUI() {
-      const isSingleLayer = this.config.layers === 1;
+      const isSingleLayer = this.isRetro;
 
       // Text input value & counter
-      if (this.input && document.activeElement !== this.input) {
-        this.input.value = this.state.text;
+      if (!isSingleLayer) {
+        this.state.text = this.core.normalizeModernText(this.state.text, this.config.maxLength);
+      }
+      if (this.input) {
+        this.input.maxLength = this.config.maxLength;
+        this.input.style.textTransform = isSingleLayer ? '' : 'uppercase';
+        if (!isSingleLayer || document.activeElement !== this.input) {
+          this.input.value = this.state.text;
+        }
       }
       if (this.counter) {
         const text = this.displayText();
@@ -657,6 +761,7 @@
       }
 
       if (!isSingleLayer) {
+        this.controlsContainer.querySelectorAll('[data-pdp-layer-count]').forEach((btn) => btn.setAttribute('aria-pressed', String(Number(btn.dataset.pdpLayerCount) === this.state.layers)));
         // Font pill active state
         this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
           const isActive = btn.dataset.pdpFont === this.state.font;
@@ -666,6 +771,9 @@
 
         // Layer active state
         this.controlsContainer.querySelectorAll('[data-pdp-layer]').forEach((btn) => {
+          const isBacking = btn.dataset.pdpLayer === 'back';
+          btn.hidden = this.state.layers === 1 && isBacking;
+          btn.disabled = this.state.layers === 1 && isBacking;
           const isActive = btn.dataset.pdpLayer === this.layer;
           btn.classList.toggle('is-active', isActive);
           btn.setAttribute('aria-pressed', String(isActive));
@@ -673,6 +781,9 @@
 
         // Finish tab active state
         this.controlsContainer.querySelectorAll('[data-pdp-finish]').forEach((btn) => {
+          const available = this.core.getFinishGroups(this.state.layers, this.layer).has(btn.dataset.pdpFinish);
+          btn.hidden = !available;
+          btn.disabled = !available;
           const isActive = btn.dataset.pdpFinish === this.group;
           btn.classList.toggle('is-active', isActive);
           btn.setAttribute('aria-pressed', String(isActive));
@@ -683,6 +794,8 @@
           const isActive = btn.dataset.swatch === this.state[this.layer];
           btn.classList.toggle('is-active', isActive);
           btn.setAttribute('aria-pressed', String(isActive));
+          const check = btn.querySelector('.dc-pdp-swatch-check');
+          if (check) check.textContent = isActive ? '✓' : '';
         });
 
         // Color labels & chips
@@ -709,10 +822,9 @@
     }
 
     syncPropertiesToForm() {
-      const isSingleLayer = this.config.layers === 1;
       const customText = this.displayText();
 
-      if (isSingleLayer) {
+      if (this.isRetro) {
         const fontVal = retroFontMap[this.state.font]?.label || 'Nova';
         const specificReq = this.state.specificRequests || '';
         const props = {
@@ -769,25 +881,14 @@
       }
 
       // Two-layer logic
-      const faceLabel = materials.get(this.state.face)?.label || this.state.face;
-      const backLabel = materials.get(this.state.back)?.label || this.state.back;
-      const fontLabel = fontLabels[this.state.font] || this.state.font;
-      const mountLabel = mountLabels[this.state.mount] || this.state.mount;
-
-      const props = {
-        'properties[Custom Text]': customText,
-        'properties[Font]': fontLabel,
-        'properties[Text Color]': faceLabel,
-        'properties[Background Color]': backLabel,
-        'properties[Mounting]': mountLabel
-      };
+      const props = this.core.serializeModernProperties({ ...this.state, text: customText }, this.config.fonts);
 
       const propIdMap = {
-        'properties[Custom Text]': 'dc-pdp-prop-text',
-        'properties[Font]': 'dc-pdp-prop-font',
-        'properties[Text Color]': 'dc-pdp-prop-face',
-        'properties[Background Color]': 'dc-pdp-prop-back',
-        'properties[Mounting]': 'dc-pdp-prop-mount'
+        'Custom Text': 'dc-pdp-prop-text',
+        Font: 'dc-pdp-prop-font',
+        'Text Color': 'dc-pdp-prop-face',
+        'Background Color': 'dc-pdp-prop-back',
+        _dc_emblem_mode: 'dc-pdp-prop-mode',
       };
 
       let anyInputFound = false;
@@ -799,16 +900,19 @@
           anyInputFound = true;
         }
       }
+      const backInput = document.getElementById('dc-pdp-prop-back');
+      if (backInput) backInput.disabled = !props['Background Color'];
 
       // Fallback: If snippet inputs are absent, attach directly to the product form
       if (!anyInputFound) {
         document.querySelectorAll('form[action*="/cart/add"]').forEach((productForm) => {
           for (const [name, val] of Object.entries(props)) {
-            let input = productForm.querySelector(`input[name="${name}"]`);
+            const propertyName = `properties[${name}]`;
+            let input = productForm.querySelector(`input[name="${propertyName}"]`);
             if (!input) {
               input = document.createElement('input');
               input.type = 'hidden';
-              input.name = name;
+              input.name = propertyName;
               productForm.appendChild(input);
             }
             input.value = val;
@@ -923,17 +1027,35 @@
         return;
       }
 
-      const isSingleLayer = this.config.layers === 1;
+      const isSingleLayer = this.isRetro;
+      if (!isSingleLayer) {
+        const fontSpec = `16px "DC Badge ${this.state.font}"`;
+        if (document.fonts && typeof document.fonts.check === 'function' && !document.fonts.check(fontSpec)) {
+          if (typeof document.fonts.load === 'function') {
+            document.fonts.load(fontSpec).then(() => {
+              this.scheduleRender();
+            });
+          }
+          return;
+        }
+        this.core.renderModernCanvas({ context, width, height, text, fontKey: this.state.font, faceId: this.state.face, backId: this.state.back, layers: this.state.layers, texture: this.texture.bind(this), maxFontSize: 120, widthRatio: 0.78, heightRatio: 0.45, faceOffset: 0.015 });
+        this.canvas.setAttribute('aria-label', `${text}, ${fontLabels[this.state.font] || this.state.font} font, ${materials.get(this.state.face)?.label} on ${this.state.layers === 1 ? 'no backing' : materials.get(this.state.back)?.label}`);
+        return;
+      }
       let size = Math.min(height * 0.26, width * 0.22, 120);
 
       const fontKey = (this.state.font || '').toLowerCase();
-      let fontSetting = `${size}px "DC Badge ${this.state.font}", Impact, sans-serif`;
-      if (isSingleLayer) {
-        const retro = retroFontMap[fontKey] || retroFontMap['nissan'];
-        fontSetting = `${size}px "${retro.family}", ${retro.fallback}`;
-      } else {
-        fontSetting = `${size}px "DC Badge ${this.state.font}"`;
+      const retro = retroFontMap[fontKey] || retroFontMap['nissan'];
+      const retroFontSpec = `16px "${retro.family}"`;
+      if (document.fonts && typeof document.fonts.check === 'function' && !document.fonts.check(retroFontSpec)) {
+        if (typeof document.fonts.load === 'function') {
+          document.fonts.load(retroFontSpec).then(() => {
+            this.scheduleRender();
+          });
+        }
+        return;
       }
+      let fontSetting = `${size}px "${retro.family}", ${retro.fallback}`;
 
       const setFont = () => { context.font = fontSetting; };
       setFont();

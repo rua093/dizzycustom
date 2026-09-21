@@ -75,3 +75,27 @@ test('the builder defaults to Shopify selected or first available variant and re
   assert.doesNotMatch(source, /for variant in badge_product\.variants\s*\n\s*if variant\.title contains '1x6'/);
   assert.match(source, /fonts, finishes and size options must be included/);
 });
+
+test('section loads the shared core before its adapter', () => {
+  const liquid = fs.readFileSync('sections/dc-emblem-builder.liquid', 'utf8');
+  const adapter = fs.readFileSync('assets/dc-emblem-builder.js', 'utf8');
+
+  assert.match(liquid, /dc-emblem-core\.js' \| asset_url/);
+  assert.match(adapter, /this\.core = window\.DCEmblemCore/);
+  assert.match(adapter, /this\.core\.normalizeModernState/);
+  assert.match(adapter, /this\.core\.serializeModernProperties/);
+  assert.match(adapter, /this\.core\.renderModernCanvas/);
+});
+
+test('modern cart items carry a mode marker and link back to the modern PDP flow', () => {
+  const builder = fs.readFileSync('sections/dc-emblem-builder.liquid', 'utf8');
+  const drawer = fs.readFileSync('snippets/cart-drawer.liquid', 'utf8');
+  const cart = fs.readFileSync('sections/main-cart-items.liquid', 'utf8');
+
+  assert.match(builder, /name="properties\[_dc_emblem_mode\]"/);
+  for (const source of [drawer, cart]) {
+    assert.match(source, /prop_first == '_dc_emblem_mode'/);
+    assert.match(source, /custom_mode == 'modern'/);
+    assert.match(source, /&view=two-layer&layers=/);
+  }
+});

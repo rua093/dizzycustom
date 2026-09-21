@@ -47,6 +47,7 @@
       if (this.controller) return;
       this.controller = new AbortController();
       this.config = JSON.parse(this.querySelector('[data-builder-config]').textContent);
+      this.core = window.DCEmblemCore;
       this.form = this.querySelector('form');
       this.input = this.querySelector('[data-text]');
       this.canvas = this.querySelector('[data-preview]');
@@ -139,7 +140,7 @@
       this.state.sizeTitle = sizeInput.dataset.sizeTitle;
       this.state.sizePrice = sizeInput.dataset.sizePrice;
       this.config.available = sizeInput.dataset.sizeAvailable === 'true';
-      this.currentMaxLength = parseInt(sizeInput.dataset.sizeMax, 10) || this.config.maxLength || 16;
+      this.currentMaxLength = this.core.getVariantMaxLength(sizeInput.dataset.sizeTitle, parseInt(sizeInput.dataset.sizeMax, 10) || this.config.maxLength || 16);
 
       const idInput = this.querySelector('[data-variant-id]');
       if (idInput) idInput.value = this.state.variantId;
@@ -191,6 +192,17 @@
 
     saveToStorage() {
       try {
+        if (this.core && typeof this.core.saveModernState === 'function') {
+          this.core.saveModernState({
+            text: this.state.text,
+            font: this.state.font,
+            face: this.state.face,
+            back: this.state.back,
+            layers: this.state.layers,
+            variantId: this.state.variantId
+          });
+          return;
+        }
         localStorage.setItem('dc_custom_emblem_state', JSON.stringify({
           text: this.state.text,
           font: this.state.font,
@@ -204,35 +216,34 @@
 
     restoreFromStorage() {
       try {
-        const raw = localStorage.getItem('dc_custom_emblem_state');
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (saved && typeof saved === 'object') {
-          if ([1, 2].includes(saved.layers)) this.state.layers = saved.layers;
-          if (saved.variantId) {
-            this.state.variantId = saved.variantId;
-            const matchingInput = this.querySelector(`[data-size-id="${saved.variantId}"]`);
-            if (matchingInput) this.setSize(matchingInput, false);
-          }
-          if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
-            this.state.text = saved.text.trim().slice(0, this.currentMaxLength || this.config.maxLength);
-            this.interacted = true;
-          }
-          if (this.config.fonts.some((f) => f.key === saved.font)) {
-            this.state.font = saved.font;
-            this.interacted = true;
-          }
-          for (const layer of ['face', 'back']) {
-            if (materials.has(saved[layer])) {
-              this.state[layer] = saved[layer];
-              this.interacted = true;
-            }
-          }
-          this.normalizeFaceFinish();
-          this.normalizeBackingFinish();
-          this.normalizeLayerCount();
-          this.group = materials.get(this.state.face)?.group || 'mirror';
+        const saved = (this.core && typeof this.core.restoreModernState === 'function')
+          ? this.core.restoreModernState()
+          : JSON.parse(localStorage.getItem('dc_custom_emblem_state') || 'null');
+        if (!saved || typeof saved !== 'object') return;
+        if ([1, 2].includes(saved.layers)) this.state.layers = saved.layers;
+        if (saved.variantId) {
+          this.state.variantId = saved.variantId;
+          const matchingInput = this.querySelector(`[data-size-id="${saved.variantId}"]`);
+          if (matchingInput) this.setSize(matchingInput, false);
         }
+        if (saved.text && typeof saved.text === 'string' && saved.text.trim()) {
+          this.state.text = saved.text.trim().slice(0, this.currentMaxLength || this.config.maxLength);
+          this.interacted = true;
+        }
+        if (this.config.fonts.some((f) => f.key === saved.font)) {
+          this.state.font = saved.font;
+          this.interacted = true;
+        }
+        for (const layer of ['face', 'back']) {
+          if (materials.has(saved[layer])) {
+            this.state[layer] = saved[layer];
+            this.interacted = true;
+          }
+        }
+        this.normalizeFaceFinish();
+        this.normalizeBackingFinish();
+        this.normalizeLayerCount();
+        this.group = materials.get(this.state.face)?.group || 'mirror';
       } catch (e) {}
     }
 
@@ -258,31 +269,27 @@
     }
 
     getFinishGroups(layer = this.layer) {
-      if (this.state.layers === 1) return new Set(['solid']);
-      return layer === 'back' ? backingFinishGroups : purchasableFinishGroups;
+      return this.core.getFinishGroups(this.state.layers, layer);
     }
 
     normalizeLayerCount() {
-      if (this.state.layers !== 1) return;
-      this.layer = 'face';
-      this.group = 'solid';
-      this.state.face = 'gloss_black';
+      this.state = this.core.normalizeModernState(this.state);
+      if (this.state.layers === 1) {
+        this.layer = 'face';
+        this.group = 'solid';
+      }
     }
 
     normalizeBackingFinish() {
-      const backing = materials.get(this.state.back);
-      if (!backingFinishGroups.has(backing?.group)) this.state.back = 'gloss_black';
+      this.state = this.core.normalizeModernState(this.state);
     }
 
     normalizeFaceFinish() {
-      const face = materials.get(this.state.face);
-      if (face?.group === 'mirror' && face.id !== mirrorWhiteId) this.state.face = mirrorWhiteId;
+      this.state = this.core.normalizeModernState(this.state);
     }
 
     isFinishAvailable(finish) {
-      if (!finish || !this.getFinishGroups().has(finish.group)) return false;
-      if (finish.group === 'mirror') return finish.id === mirrorWhiteId;
-      return true;
+      return Boolean(finish && this.core.isFinishAvailable(finish.id, this.state.layers, this.layer));
     }
 
     swatchBackground(finish) {
@@ -295,9 +302,16 @@
 
     buildSwatches() {
       const container = this.querySelector('[data-swatches]');
+      const targetFinishes = finishes.filter((finish) => finish.group === this.group && this.isFinishAvailable(finish));
+      const existingButtons = Array.from(container.querySelectorAll('[data-swatch]'));
+      const canReuse = existingButtons.length === targetFinishes.length &&
+        existingButtons.every((btn, idx) => btn.dataset.swatch === targetFinishes[idx].id);
+
+      if (canReuse) return;
+
       container.replaceChildren();
       container.setAttribute('aria-label', `${this.layer === 'face' ? 'Text' : 'Backing'} color`);
-      finishes.filter((finish) => finish.group === this.group && this.isFinishAvailable(finish)).forEach((finish) => {
+      targetFinishes.forEach((finish) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'dc-builder-swatch';
@@ -313,8 +327,7 @@
     }
 
     displayText() {
-      const text = this.state.text.trim();
-      return this.state.font === 'script' ? text : text.toUpperCase();
+      return this.core.normalizeModernText(this.state.text, this.currentMaxLength || this.config.maxLength || 16).trim();
     }
 
     validationMessage() {
@@ -342,9 +355,10 @@
     }
 
     update() {
-      if (this.input.value !== this.state.text) this.input.value = this.state.text;
-      this.input.style.textTransform = this.state.font === 'script' ? 'none' : 'uppercase';
       const max = this.currentMaxLength || this.config.maxLength || 16;
+      this.state.text = this.core.normalizeModernText(this.state.text, max);
+      if (this.input.value !== this.state.text) this.input.value = this.state.text;
+      this.input.style.textTransform = 'uppercase';
       this.input.maxLength = max;
       this.querySelector('[data-count]').textContent = `${this.state.text.length}/${max}`;
       this.querySelectorAll('[data-font]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.font === this.state.font)));
@@ -370,11 +384,14 @@
         const finish = materials.get(this.state[layer]);
         this.querySelector(`[data-chip="${layer}"]`).style.background = this.swatchBackground(finish);
         this.querySelector(`[data-color-name="${layer}"]`).textContent = finish.label;
-        this.querySelector(`[data-property="${layer}"]`).value = finish.label;
       }
+      const properties = this.core.serializeModernProperties({ ...this.state, text: this.displayText() }, this.config.fonts);
+      this.querySelector('[data-property="font"]').value = properties.Font;
+      this.querySelector('[data-property="face"]').value = properties['Text Color'];
+      this.querySelector('[data-property="mode"]').value = properties._dc_emblem_mode;
       const backProperty = this.querySelector('[data-property="back"]');
-      backProperty.disabled = this.state.layers === 1;
-      this.querySelector('[data-property="font"]').value = this.config.fonts.find((font) => font.key === this.state.font).label;
+      backProperty.disabled = !properties['Background Color'];
+      backProperty.value = properties['Background Color'] || '';
       this.querySelectorAll('[data-size-id]').forEach((input) => {
         input.checked = input.dataset.sizeId === String(this.state.variantId);
       });
@@ -486,45 +503,10 @@
         context.fillText(text ? 'Loading your preview…' : 'Your words go here', width / 2, height / 2);
         return;
       }
-      let size = Math.min(height * .55, 180);
-      const setFont = () => { context.font = `${size}px "DC Badge ${this.state.font}"`; };
-      setFont();
-      let metrics = context.measureText(text);
-      const measureWidth = () => Math.max(metrics.width, metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight);
-      const measureHeight = () => metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-      const scale = Math.min(1, width * .88 / (measureWidth() + size * .12), height * .68 / (measureHeight() + size * .12));
-      size *= scale;
-      setFont();
-      metrics = context.measureText(text);
-      const x = (width - metrics.actualBoundingBoxRight + metrics.actualBoundingBoxLeft) / 2;
-      const y = (height + metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
-      context.lineJoin = 'round';
-      if (this.state.layers === 1) {
-        context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
-        context.fillText(text, x, y);
-        this.canvas.setAttribute('aria-label', `${text}, ${this.state.font} font, ${materials.get(this.state.face).label} single-layer text`);
-        return;
-      }
-      const stroke = Math.max(3, size * .11);
-      const depth = Math.max(2, size * .04);
-      context.lineWidth = stroke;
-      context.strokeStyle = '#090b0d';
-      context.shadowColor = '#000000a0';
-      context.shadowBlur = 12;
-      context.shadowOffsetY = 8;
-      context.strokeText(text, x + depth, y + depth);
-      context.fillStyle = '#090b0d';
-      context.fillText(text, x + depth, y + depth);
-      context.shadowColor = 'transparent';
-      context.shadowBlur = 0;
-      context.shadowOffsetY = 0;
-      context.strokeStyle = context.createPattern(this.texture(this.state.back, width, height), 'no-repeat');
-      context.fillStyle = context.strokeStyle;
-      context.strokeText(text, x, y);
-      context.fillText(text, x, y);
-      context.fillStyle = context.createPattern(this.texture(this.state.face, width, height), 'no-repeat');
-      context.fillText(text, x, y - size * .012);
-      this.canvas.setAttribute('aria-label', `${text}, ${this.state.font} font, ${materials.get(this.state.face).label} text on ${materials.get(this.state.back).label} backing`);
+      this.core.renderModernCanvas({ context, width, height, text, fontKey: this.state.font, faceId: this.state.face, backId: this.state.back, layers: this.state.layers, texture: this.texture.bind(this) });
+      const face = materials.get(this.state.face).label;
+      const back = materials.get(this.state.back).label;
+      this.canvas.setAttribute('aria-label', this.state.layers === 1 ? `${text}, ${this.state.font} font, ${face} single-layer text` : `${text}, ${this.state.font} font, ${face} text on ${back} backing`);
     }
 
     async addToCart(event) {

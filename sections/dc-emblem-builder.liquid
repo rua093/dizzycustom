@@ -1,7 +1,6 @@
-{{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
-
 {%- liquid
+  assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
+  assign font_labels = 'Bold,Slant,Edge,Flow,Strike,Frost,Classic' | split: ','
   assign badge_product = section.settings.product
   if badge_product == blank
     assign badge_product = settings.custom_emblem_product
@@ -13,9 +12,14 @@
   endif
   assign initial_variant = badge_product.selected_or_first_available_variant
   assign default_variant = initial_variant
-  assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
-  assign font_labels = 'Bold,Slant,Edge,Flow,Strike,Frost,Classic' | split: ','
 -%}
+{{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
+{%- for key in font_keys -%}
+  {%- assign font_file = 'dc-badge-' | append: key | append: '.woff2' -%}
+  <link rel="preload" href="{{ font_file | asset_url }}" as="font" type="font/woff2" crossorigin>
+{%- endfor -%}
+<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
 
 <section class="dc-builder-section color-{{ section.settings.color_scheme }} gradient" style="--dc-builder-space: {{ section.settings.padding }}px">
   <div class="page-width">
@@ -62,7 +66,7 @@
             <div class="dc-builder-text-group">
               <div class="dc-builder-label-row">
                 <label for="BadgeText-{{ section.id }}" class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">1</span>Your text</label>
-                <span data-count>0/{{ section.settings.max_length }}</span>
+                <span data-count>{{ section.settings.default_text.size | default: 0 }}/{{ section.settings.max_length }}</span>
               </div>
               <input class="dc-builder-input" id="BadgeText-{{ section.id }}" data-text name="properties[Custom Text]" type="text" value="{{ section.settings.default_text | escape }}" maxlength="{{ section.settings.max_length }}" placeholder="Type your text…" required autocomplete="off" spellcheck="false" aria-describedby="BadgeHelp-{{ section.id }} BadgeError-{{ section.id }}">
             </div>
@@ -94,7 +98,11 @@
                   <button type="button" data-finish="mirror" aria-pressed="true">Mirror</button>
                   <button type="button" data-finish="flake" aria-pressed="false">Metal flake</button>
                 </div>
-                <div class="dc-builder-swatches" data-swatches role="group" aria-label="Text color"></div>
+                <div class="dc-builder-swatches" data-swatches role="group" aria-label="Text color">
+                  <button type="button" class="dc-builder-swatch" data-swatch="mirror_white" aria-label="Mirror White" title="Mirror White" aria-pressed="true">
+                    <span style="background: linear-gradient(135deg, #f7f7f7 0%, #ffffff 50%, #f7f7f7 100%);" aria-hidden="true">✓</span>
+                  </button>
+                </div>
               </div>
             </fieldset>
           </div>
@@ -203,9 +211,10 @@
 
             <input type="hidden" name="id" value="{{ default_variant.id }}" data-variant-id>
             <input type="hidden" name="quantity" value="1" data-quantity>
-            <input type="hidden" name="properties[Font]" data-property="font">
-            <input type="hidden" name="properties[Text Color]" data-property="face">
-            <input type="hidden" name="properties[Background Color]" data-property="back">
+                <input type="hidden" name="properties[Font]" data-property="font">
+                <input type="hidden" name="properties[Text Color]" data-property="face">
+                <input type="hidden" name="properties[Background Color]" data-property="back">
+                <input type="hidden" name="properties[_dc_emblem_mode]" data-property="mode" value="modern">
             <p class="dc-builder-error" id="BadgeError-{{ section.id }}" data-error role="alert"></p>
             <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled>
               <span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% else %}Build My Badge{% endif %}</span><span aria-hidden="true">→</span>

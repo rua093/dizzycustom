@@ -11,6 +11,7 @@
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-cart-badge.js' | asset_url }}" defer="defer"></script>
 
 {%- assign cart_font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ',' -%}
@@ -127,6 +128,7 @@
                         assign custom_face = ''
                         assign custom_back = ''
                         assign custom_mount = ''
+                        assign custom_mode = ''
                         for property in item.properties
                           assign prop_first = property.first | strip
                           if prop_first == 'Custom Text'
@@ -139,8 +141,16 @@
                             assign custom_back = property.last
                           elsif prop_first == 'Mounting'
                             assign custom_mount = property.last
+                          elsif prop_first == '_dc_emblem_mode'
+                            assign custom_mode = property.last
                           endif
                         endfor
+
+                        assign is_legacy_modern_item = false
+                        assign modern_font_labels = 'Bold,Block,Slant,Lightning,Edge,Aggressive,Flow,Script,Strike,Electric,Frost,Ice,Classic,OEM' | split: ','
+                        if custom_mode == 'modern' or modern_font_labels contains custom_font
+                          assign is_legacy_modern_item = true
+                        endif
 
                         assign item_target_url = item.url
                         if custom_text != blank
@@ -149,7 +159,13 @@
                           else
                             assign item_target_url = item_target_url | append: '?dc_badge=1'
                           endif
-                          if custom_back != blank
+                          if is_legacy_modern_item
+                            if custom_back != blank
+                              assign item_target_url = item_target_url | append: '&view=two-layer&layers=2'
+                            else
+                              assign item_target_url = item_target_url | append: '&view=two-layer&layers=1'
+                            endif
+                          elsif custom_back != blank
                             assign item_target_url = item_target_url | append: '&view=two-layer&layers=2'
                           else
                             assign item_target_url = item_target_url | append: '&view=single-layer&layers=1'

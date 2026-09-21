@@ -30,29 +30,73 @@
     assign is_custom_product = true
   endif
 
-  # Determine layer mode: 1 for single-layer, 2 for two-layer
+  # Determine customizer type/mode and base layers
+  assign customizer_mode = 'modern'
   assign customizer_layers = 2
-  if template.suffix == 'two-layer'
-    assign customizer_layers = 2
-  elsif template.suffix == 'single-layer'
+  if template.suffix == 'single-layer' or product.tags contains 'single-layer' or product.tags contains '1-layer' or product.tags contains 'retro'
+    assign customizer_mode = 'retro'
     assign customizer_layers = 1
-  elsif product.tags contains 'single-layer' or product.tags contains '1-layer'
-    assign customizer_layers = 1
-  elsif product.tags contains 'two-layer' or product.tags contains '2-layer'
+  elsif template.suffix == 'two-layer' or product.tags contains 'two-layer' or product.tags contains '2-layer'
+    assign customizer_mode = 'modern'
     assign customizer_layers = 2
+  endif
+
+  assign initial_modern_layers = 2
+  if customizer_layers == 2 and request.params.layers == '1'
+    assign initial_modern_layers = 1
+  endif
+
+  assign initial_modern_font = 'lightning'
+  if request.params.font != blank
+    assign param_font_lower = request.params.font | downcase
+    case param_font_lower
+      when 'bold', 'block'
+        assign initial_modern_font = 'bold'
+      when 'slant', 'lightning'
+        assign initial_modern_font = 'lightning'
+      when 'edge', 'aggressive'
+        assign initial_modern_font = 'aggressive'
+      when 'flow', 'script'
+        assign initial_modern_font = 'script'
+      when 'strike', 'electric'
+        assign initial_modern_font = 'electric'
+      when 'frost', 'ice'
+        assign initial_modern_font = 'ice'
+      when 'classic', 'oem'
+        assign initial_modern_font = 'oem'
+    endcase
+  endif
+
+  assign default_variant = product.selected_or_first_available_variant
+  assign initial_max_length = 16
+  if default_variant.title contains '8 Letters'
+    assign initial_max_length = 8
+  elsif default_variant.title contains '12 Letters'
+    assign initial_max_length = 12
   endif
 -%}
 {%- if is_custom_product -%}
+{%- unless customizer_mode == 'retro' -%}
+  {%- for key in font_keys -%}
+    {%- assign font_file = 'dc-badge-' | append: key | append: '.woff2' -%}
+    <link rel="preload" href="{{ font_file | asset_url }}" as="font" type="font/woff2" crossorigin>
+  {%- endfor -%}
+{%- endunless -%}
 {{ 'dc-pdp-customizer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-pdp-customizer.js' | asset_url }}" defer="defer"></script>
 
-<div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper dc-pdp-controls-wrapper--layers-{{ customizer_layers }}" data-custom-product="{{ is_custom_product }}" data-layers="{{ customizer_layers }}">
+<div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper dc-pdp-controls-wrapper--layers-{{ customizer_layers }} dc-pdp-controls-wrapper--mode-{{ customizer_mode }}" data-custom-product="{{ is_custom_product }}" data-layers="{{ customizer_layers }}" data-mode="{{ customizer_mode }}" data-initial-modern-layers="{{ initial_modern_layers }}">
   <script type="application/json" id="dc-pdp-customizer-config">
     {
+      "mode": {{ customizer_mode | json }},
       "layers": {{ customizer_layers }},
-      "maxLength": {% if customizer_layers == 1 %}24{% else %}16{% endif %},
-      "defaultText": "",
-      "defaultFont": {% if customizer_layers == 1 %}"nissan"{% else %}"lightning"{% endif %},
+      "initialLayers": {{ initial_modern_layers }},
+      "defaultText": {% if customizer_mode == 'retro' %}""{% else %}"DIZZY"{% endif %},
+      "maxLength": {% if customizer_mode == 'retro' %}24{% else %}16{% endif %},
+      "productFormId": {{ product_form_id | json }},
+      "variants": {{ product.variants | json }},
+      "defaultFont": {% if customizer_mode == 'retro' %}"nissan"{% else %}{{ initial_modern_font | json }}{% endif %},
       "baseFonts": [
         {% for key in font_keys %}
           {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
@@ -60,7 +104,7 @@
         {% endfor %}
       ],
       "fonts": [
-        {%- if customizer_layers == 1 -%}
+        {%- if customizer_mode == 'retro' -%}
           {% for rfont in retro_fonts %}
             {% assign rfont_lower = rfont | downcase %}
             {% assign font_file = 'dc-retro-' | append: rfont_lower | append: '.ttf' %}
@@ -76,7 +120,7 @@
     }
   </script>
 
-  {%- if customizer_layers == 1 -%}
+  {%- if customizer_mode == 'retro' -%}
     <!-- ================= SINGLE LAYER RETRO CUSTOMIZER ================= -->
     <div class="dc-pdp-controls-card dc-pdp-controls-card--single-layer">
       <!-- 1. Text Input Field -->
@@ -164,7 +208,7 @@
       <div class="dc-pdp-field">
         <div class="dc-pdp-field__header">
           <label class="dc-pdp-field__label" for="dc-pdp-text-input">Your Custom Text</label>
-          <span class="dc-pdp-char-count" data-pdp-count>0/16</span>
+          <span class="dc-pdp-char-count" data-pdp-count>5/{{ initial_max_length }}</span>
         </div>
         <div class="dc-pdp-input-wrapper">
           <input
@@ -172,8 +216,8 @@
             type="text"
             class="dc-pdp-input"
             data-pdp-text
-            value=""
-            maxlength="16"
+            value="DIZZY"
+            maxlength="{{ initial_max_length }}"
             placeholder="Type your text here…"
             autocomplete="off"
             spellcheck="false"
@@ -188,7 +232,7 @@
           {% for key in font_keys %}
             <button
               type="button"
-              class="dc-pdp-font-btn{% if key == 'lightning' %} is-active{% endif %}"
+              class="dc-pdp-font-btn{% if key == initial_modern_font %} is-active{% endif %}"
               data-pdp-font="{{ key }}"
             >
               {{ font_labels[forloop.index0] }}
@@ -203,13 +247,18 @@
           <label class="dc-pdp-field__label">Metal Colors &amp; Finishes</label>
         </div>
 
+        <div class="dc-pdp-layer-count" role="group" aria-label="Number of emblem layers">
+          <button type="button" data-pdp-layer-count="1" aria-pressed="{% if initial_modern_layers == 1 %}true{% else %}false{% endif %}">1 Layer</button>
+          <button type="button" data-pdp-layer-count="2" aria-pressed="{% if initial_modern_layers == 1 %}false{% else %}true{% endif %}">2 Layers</button>
+        </div>
+
         <!-- Dual Layer Selector Tabs -->
         <div class="dc-pdp-layer-tabs">
           <button type="button" class="dc-pdp-layer-tab is-active" data-pdp-layer="face">
             <span class="dc-pdp-layer-tab__chip" data-pdp-chip="face"></span>
-            <span class="dc-pdp-layer-tab__name">Text: <strong data-pdp-color-name="face">Mirror Red</strong></span>
+            <span class="dc-pdp-layer-tab__name">Text: <strong data-pdp-color-name="face">Mirror White</strong></span>
           </button>
-          <button type="button" class="dc-pdp-layer-tab" data-pdp-layer="back">
+          <button type="button" class="dc-pdp-layer-tab" data-pdp-layer="back"{% if initial_modern_layers == 1 %} hidden disabled{% endif %}>
             <span class="dc-pdp-layer-tab__chip" data-pdp-chip="back"></span>
             <span class="dc-pdp-layer-tab__name">Backing: <strong data-pdp-color-name="back">Gloss Black</strong></span>
           </button>
@@ -217,44 +266,189 @@
 
         <!-- Finish Category Filter Tabs -->
         <div class="dc-pdp-finish-tabs">
-          <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="solid">Solid</button>
-          <button type="button" class="dc-pdp-finish-tab is-active" data-pdp-finish="mirror">Mirror</button>
-          <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="patterns">Patterns</button>
-          <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="flake">Metal Flake</button>
+          <button type="button" class="dc-pdp-finish-tab{% if initial_modern_layers == 1 %} is-active{% endif %}" data-pdp-finish="solid">Solid</button>
+          <button type="button" class="dc-pdp-finish-tab{% unless initial_modern_layers == 1 %} is-active{% endunless %}" data-pdp-finish="mirror"{% if initial_modern_layers == 1 %} hidden disabled{% endif %}>Mirror</button>
+          <button type="button" class="dc-pdp-finish-tab" data-pdp-finish="flake"{% if initial_modern_layers == 1 %} hidden disabled{% endif %}>Metal Flake</button>
         </div>
 
         <!-- Swatch Grid -->
-        <div class="dc-pdp-swatches" data-pdp-swatches role="group" aria-label="Color options"></div>
-      </div>
-
-      <!-- 4. Mounting Options -->
-      <div class="dc-pdp-field">
-        <label class="dc-pdp-field__label">Mounting Type</label>
-        <div class="dc-pdp-mounts-grid">
-          <label class="dc-pdp-mount-pill">
-            <input type="radio" name="pdp_mounting_choice" value="tape" data-pdp-mount="tape" checked>
-            <span class="dc-pdp-mount-pill__content">
-              <strong>VHB Tape</strong>
-              <small>Flat surface / body paint</small>
-            </span>
-          </label>
-          <label class="dc-pdp-mount-pill">
-            <input type="radio" name="pdp_mounting_choice" value="studs" data-pdp-mount="studs">
-            <span class="dc-pdp-mount-pill__content">
-              <strong>Studs Screws</strong>
-              <small>Grille mount</small>
-            </span>
-          </label>
+        <div class="dc-pdp-swatches" data-pdp-swatches role="group" aria-label="Color options">
+          {%- if initial_modern_layers == 1 -%}
+            <button type="button" class="dc-pdp-swatch is-active" data-swatch="gloss_black" aria-label="Gloss Black metal finish" aria-pressed="true" style="background: #0a0a0c;">
+              <span class="dc-pdp-swatch-check">✓</span>
+            </button>
+          {%- else -%}
+            <button type="button" class="dc-pdp-swatch is-active" data-swatch="mirror_white" aria-label="Mirror White metal finish" aria-pressed="true" style="background: linear-gradient(135deg, #f7f7f7 0%, #ffffff 50%, #f7f7f7 100%);">
+              <span class="dc-pdp-swatch-check">✓</span>
+            </button>
+          {%- endif -%}
         </div>
       </div>
+
     </div>
 
     <!-- Hidden form properties attached directly to PDP Product Form for Two Layer -->
     <input type="hidden" name="properties[Custom Text]" id="dc-pdp-prop-text" value="DIZZY" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="Slant" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-    <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="Mirror Red" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+    {%- assign initial_font_label = 'Slant' -%}
+    {%- for key in font_keys -%}
+      {%- if key == initial_modern_font -%}
+        {%- assign initial_font_label = font_labels[forloop.index0] -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <input type="hidden" name="properties[Font]" id="dc-pdp-prop-font" value="{{ initial_font_label }}" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+    <input type="hidden" name="properties[Text Color]" id="dc-pdp-prop-face" value="Mirror White" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
     <input type="hidden" name="properties[Background Color]" id="dc-pdp-prop-back" value="Gloss Black" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
-    <input type="hidden" name="properties[Mounting]" id="dc-pdp-prop-mount" value="VHB Tape (Flat Surface)" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+    <input type="hidden" name="properties[_dc_emblem_mode]" id="dc-pdp-prop-mode" value="modern" form="{{ product_form_id }}"{% unless is_custom_product %} disabled{% endunless %}>
+
+    <script>
+      (function() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var raw = localStorage.getItem('dc_modern_emblem_builder_state_v2') || localStorage.getItem('dc_custom_emblem_state');
+          var saved = raw ? JSON.parse(raw) : {};
+          var container = document.getElementById('DCPdpControlsContainer');
+          if (!container || container.dataset.mode === 'retro') return;
+
+          var urlFont = params.get('font');
+          var urlText = params.get('text');
+          var urlLayers = params.get('layers');
+          var urlFace = params.get('face');
+          var urlBack = params.get('back');
+
+          var fontVal = urlFont || saved.font;
+          var textVal = urlText || saved.text;
+          var layersVal = urlLayers ? Number(urlLayers) : saved.layers;
+          var faceVal = urlFace || saved.face;
+          var backVal = urlBack || saved.back;
+
+          var currentMax = parseInt(container.querySelector('[data-pdp-text]')?.maxLength || '{{ initial_max_length }}', 10) || 16;
+          if (typeof textVal === 'string' && textVal.trim()) {
+            var input = container.querySelector('[data-pdp-text]');
+            var counter = container.querySelector('[data-pdp-count]');
+            var propText = document.getElementById('dc-pdp-prop-text');
+            var cleanText = textVal.trim().toUpperCase().slice(0, currentMax);
+            if (input) input.value = cleanText;
+            if (counter) counter.textContent = cleanText.length + '/' + currentMax;
+            if (propText) propText.value = cleanText;
+          } else {
+            var counter = container.querySelector('[data-pdp-count]');
+            if (counter) counter.textContent = '5/' + currentMax;
+          }
+
+          if (fontVal) {
+            var fontMap = { bold: 'bold', block: 'bold', slant: 'lightning', lightning: 'lightning', edge: 'aggressive', aggressive: 'aggressive', flow: 'script', script: 'script', strike: 'electric', electric: 'electric', frost: 'ice', ice: 'ice', classic: 'oem', oem: 'oem' };
+            var targetFont = fontMap[String(fontVal).toLowerCase()] || String(fontVal).toLowerCase();
+            var fontBtns = container.querySelectorAll('[data-pdp-font]');
+            var fontLabels = { bold: 'Bold', lightning: 'Slant', aggressive: 'Edge', script: 'Flow', electric: 'Strike', ice: 'Frost', oem: 'Classic' };
+            fontBtns.forEach(function(btn) {
+              var isMatch = btn.dataset.pdpFont === targetFont;
+              btn.classList.toggle('is-active', isMatch);
+              btn.setAttribute('aria-pressed', String(isMatch));
+            });
+            var propFont = document.getElementById('dc-pdp-prop-font');
+            if (propFont && fontLabels[targetFont]) propFont.value = fontLabels[targetFont];
+          }
+
+          if (layersVal === 1 || layersVal === 2) {
+            var layerBtns = container.querySelectorAll('[data-pdp-layer-count]');
+            layerBtns.forEach(function(btn) {
+              btn.setAttribute('aria-pressed', String(Number(btn.dataset.pdpLayerCount) === layersVal));
+            });
+            var backTab = container.querySelector('[data-pdp-layer="back"]');
+            if (backTab) {
+              backTab.hidden = (layersVal === 1);
+              backTab.disabled = (layersVal === 1);
+            }
+            if (layersVal === 1) {
+              var mirrorTab = container.querySelector('[data-pdp-finish="mirror"]');
+              var flakeTab = container.querySelector('[data-pdp-finish="flake"]');
+              var solidTab = container.querySelector('[data-pdp-finish="solid"]');
+              if (mirrorTab) { mirrorTab.hidden = true; mirrorTab.disabled = true; mirrorTab.classList.remove('is-active'); }
+              if (flakeTab) { flakeTab.hidden = true; flakeTab.disabled = true; flakeTab.classList.remove('is-active'); }
+              if (solidTab) solidTab.classList.add('is-active');
+            }
+          }
+
+          var MATERIALS = {
+            red: ['Red', '#dc0f0f', 'solid'],
+            white: ['White', '#f5f5f8', 'solid'],
+            gloss_black: ['Gloss Black', '#0a0a0c', 'solid'],
+            matte_black: ['Matte Black', '#1e1e22', 'solid'],
+            gray: ['Gray', '#8c8c94', 'solid'],
+            maroon: ['Maroon', '#6e0f0f', 'solid'],
+            orange: ['Orange', '#f0820a', 'solid'],
+            yellow: ['Yellow', '#ebc80f', 'solid'],
+            lime_green: ['Lime Green', '#8cdc0a', 'solid'],
+            green: ['Green', '#0aaa28', 'solid'],
+            blue: ['Blue', '#143cc8', 'solid'],
+            purple: ['Purple', '#780fbe', 'solid'],
+            pink: ['Pink', '#f06eaa', 'solid'],
+            brown: ['Brown', '#4b2314', 'solid'],
+            mirror_white: ['Mirror White', 'linear-gradient(135deg, #f7f7f7 0%, #ffffff 50%, #f7f7f7 100%)', 'mirror'],
+            mf_red: ['Flake Red', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #aa0a0f', 'flake'],
+            mf_black: ['Flake Black', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #141418', 'flake'],
+            mf_silver: ['Flake Silver', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #b4b9be', 'flake'],
+            mf_gold: ['Flake Gold', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #c8aa14', 'flake'],
+            mf_green: ['Flake Green', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #0a9628', 'flake'],
+            mf_blue: ['Flake Blue', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #0f28b4', 'flake'],
+            mf_purple: ['Flake Purple', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #6e14aa', 'flake'],
+            mf_pink: ['Flake Pink', 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px), #dc5096', 'flake']
+          };
+
+          function resolveMat(val, fallbackKey) {
+            if (!val) return { id: fallbackKey, def: MATERIALS[fallbackKey] };
+            var norm = String(val).trim().toLowerCase().replace(/[\s-]+/g, '_');
+            if (MATERIALS[norm]) return { id: norm, def: MATERIALS[norm] };
+            for (var k in MATERIALS) {
+              if (MATERIALS[k][0].toLowerCase() === String(val).trim().toLowerCase()) return { id: k, def: MATERIALS[k] };
+            }
+            return { id: fallbackKey, def: MATERIALS[fallbackKey] };
+          }
+
+          var resolvedFace = resolveMat(faceVal, layersVal === 1 ? 'gloss_black' : 'mirror_white');
+          var resolvedBack = resolveMat(backVal, 'gloss_black');
+          var faceMat = resolvedFace.def;
+          var backMat = resolvedBack.def;
+          var activeFaceId = resolvedFace.id;
+
+          var faceName = container.querySelector('[data-pdp-color-name="face"]');
+          var faceChip = container.querySelector('[data-pdp-chip="face"]');
+          if (faceName) faceName.textContent = faceMat[0];
+          if (faceChip) faceChip.style.background = faceMat[1];
+
+          var backName = container.querySelector('[data-pdp-color-name="back"]');
+          var backChip = container.querySelector('[data-pdp-chip="back"]');
+          if (backName) backName.textContent = backMat[0];
+          if (backChip) backChip.style.background = backMat[1];
+
+          var propFace = document.getElementById('dc-pdp-prop-face');
+          if (propFace) propFace.value = faceMat[0];
+          var propBack = document.getElementById('dc-pdp-prop-back');
+          if (propBack) propBack.value = backMat[0];
+
+          var activeGroup = faceMat[2];
+          var finishTabs = container.querySelectorAll('[data-pdp-finish]');
+          finishTabs.forEach(function(tab) {
+            var isMatch = tab.dataset.pdpFinish === activeGroup;
+            tab.classList.toggle('is-active', isMatch);
+            tab.setAttribute('aria-pressed', String(isMatch));
+          });
+
+          var swatchesContainer = container.querySelector('[data-pdp-swatches]');
+          if (swatchesContainer) {
+            var swatchesHtml = '';
+            for (var mId in MATERIALS) {
+              var m = MATERIALS[mId];
+              if (m[2] === activeGroup) {
+                var isSel = (mId === activeFaceId);
+                swatchesHtml += '<button type="button" class="dc-pdp-swatch' + (isSel ? ' is-active' : '') + '" data-swatch="' + mId + '" aria-label="' + m[0] + ' metal finish" aria-pressed="' + String(isSel) + '" style="background: ' + m[1] + ';"><span class="dc-pdp-swatch-check">' + (isSel ? '✓' : '') + '</span></button>';
+              }
+            }
+            if (swatchesHtml) swatchesContainer.innerHTML = swatchesHtml;
+          }
+        } catch (e) {}
+      })();
+    </script>
   {%- endif -%}
 </div>
 {%- endif -%}

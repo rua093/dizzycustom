@@ -1,3 +1,39 @@
+@font-face {
+  font-family: 'DC Badge bold';
+  src: url('dc-badge-bold.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge lightning';
+  src: url('dc-badge-lightning.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge aggressive';
+  src: url('dc-badge-aggressive.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge script';
+  src: url('dc-badge-script.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge electric';
+  src: url('dc-badge-electric.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge ice';
+  src: url('dc-badge-ice.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DC Badge oem';
+  src: url('dc-badge-oem.woff2') format('woff2');
+  font-display: swap;
+}
+
 .dc-builder-section { padding-block: var(--dc-builder-space); }
 .dc-builder-heading { text-align: center; max-width: 76rem; margin: 0 auto 2.8rem; }
 .dc-builder-heading h1, .dc-builder-heading h2 { margin: 0 0 1.2rem; }
@@ -107,6 +143,7 @@ dc-emblem-builder *, dc-emblem-builder *::before, dc-emblem-builder *::after { b
 .dc-builder-group { border: 0; padding: 0; margin: 0; min-width: 0; }
 .dc-builder-group legend { padding: 0; margin-bottom: 1rem; }
 .dc-builder-fonts, .dc-builder-finishes, .dc-builder-swatches, .dc-builder-layer-count { display: flex; flex-wrap: wrap; gap: .8rem; }
+.dc-builder-swatches { min-height: 4.2rem; }
 dc-emblem-builder button:not(.button) { cursor: pointer; color: rgb(var(--color-foreground)); background-color: rgb(var(--color-background)); border: 1px solid rgba(var(--color-foreground), .25); border-radius: 8px; min-height: 4.2rem; transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease; }
 dc-emblem-builder button:not(.button):hover { border-color: rgba(var(--color-foreground), .5); }
 dc-emblem-builder button[aria-pressed="true"] { border-color: rgb(var(--color-foreground)); box-shadow: inset 0 0 0 1.5px rgb(var(--color-foreground)); }
