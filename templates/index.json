@@ -172,7 +172,7 @@
         "description": "<p>Customer favorites. Premium quality. Made to make your ride stand out.</p>",
         "show_description": false,
         "description_style": "subtitle",
-        "collection": "dizzy-custom-emblems",
+        "collection": "best-selling",
         "products_to_show": 8,
         "columns_desktop": 4,
         "full_width": false,
