@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
 {%- endif -%}
 {%- if section.settings.menu_type_desktop == 'mega' -%}
-  <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
-  <noscript>{{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}</noscript>
+  {{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}
 {%- endif -%}
 
 {%- if settings.cart_type == "drawer" -%}
@@ -43,6 +42,43 @@
       }
     }
   {%- endif -%}
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .header__inline-menu {
+    display: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .header__inline-menu {
+      display: block;
+    }
+
+    .header__inline-menu details > .header__menu-item .icon-caret {
+      position: static;
+      flex: 0 0 auto;
+      width: 1rem;
+      height: 0.6rem;
+      margin-left: 0.5rem;
+      transition: transform var(--duration-short, 0.2s) ease;
+    }
+
+    .header__inline-menu details[open] > .header__menu-item .icon-caret {
+      transform: rotate(180deg);
+    }
+
+    .header__inline-menu summary.list-menu__item {
+      padding-right: 1.6rem;
+    }
+  }
 
   .menu-drawer-container {
     display: flex;

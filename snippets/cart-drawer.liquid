@@ -127,7 +127,6 @@
                         assign custom_font = ''
                         assign custom_face = ''
                         assign custom_back = ''
-                        assign custom_mount = ''
                         assign custom_mode = ''
                         for property in item.properties
                           assign prop_first = property.first | strip
@@ -139,8 +138,6 @@
                             assign custom_face = property.last
                           elsif prop_first == 'Background Color'
                             assign custom_back = property.last
-                          elsif prop_first == 'Mounting'
-                            assign custom_mount = property.last
                           elsif prop_first == '_dc_emblem_mode'
                             assign custom_mode = property.last
                           endif
@@ -183,10 +180,6 @@
                           if custom_back != blank
                             assign enc_back = custom_back | url_encode
                             assign item_target_url = item_target_url | append: '&back=' | append: enc_back
-                          endif
-                          if custom_mount != blank
-                            assign enc_mount = custom_mount | url_encode
-                            assign item_target_url = item_target_url | append: '&mount=' | append: enc_mount
                           endif
                         endif
                       -%}
@@ -235,8 +228,7 @@
                                 <div class="product-option dizzy-cart-drawer__option">
                                   <dt>{{ option.name }}:</dt>
                                   <dd>
-                                    {{ option.value -}}
-                                    {%- unless forloop.last %}, {% endunless %}
+                                    {{ option.value }}
                                   </dd>
                                 </div>
                               {%- endfor -%}
@@ -244,7 +236,13 @@
 
                             {%- for property in item.properties -%}
                               {%- assign property_first_char = property.first | slice: 0 -%}
-                              {%- if property.last != blank and property_first_char != '_' -%}
+                              {%- assign skip_property = false -%}
+                              {%- if property.first == 'Mounting' or property.first == 'Outline Color' -%}
+                                {%- assign skip_property = true -%}
+                              {%- elsif property.first == 'Text Color' and is_legacy_modern_item == false and custom_mode != 'modern' -%}
+                                {%- assign skip_property = true -%}
+                              {%- endif -%}
+                              {%- if property.last != blank and property_first_char != '_' and skip_property == false -%}
                                 <div class="product-option dizzy-cart-drawer__option">
                                   <dt>{{ property.first }}:</dt>
                                   <dd>

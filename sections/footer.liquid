@@ -147,7 +147,7 @@
                   style: logo_style
               }}
             {%- else -%}
-              <a class="dizzy-footer__brand-name" href="{{ routes.root_url }}">{{ shop.name }}</a>
+              <a class="dizzy-footer__brand-name" href="{{ routes.root_url }}">{{ shop.name | replace: 'DizzyDev', 'Dizzy' | replace: 'Dev', '' | strip }}</a>
             {%- endif -%}
 
             {%- if section.settings.brand_text != blank -%}
@@ -398,7 +398,7 @@
 
       <div class="dizzy-footer__bottom-bar">
         <small class="dizzy-footer__copyright">
-          &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.
+          &copy; {{ 'now' | date: '%Y' }} {{ shop.name | replace: 'DizzyDev', 'Dizzy' | replace: 'Dev', '' | strip }}. All rights reserved.
         </small>
 
         {%- liquid

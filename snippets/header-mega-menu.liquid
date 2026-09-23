@@ -30,43 +30,54 @@
                 class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
                 tabindex="-1"
               >
-                <ul
-                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
-                  role="list"
-                >
+                <div class="mega-menu__nav">
                   {%- for childlink in link.links -%}
-                    <li>
-                      <a
-                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
-                        href="{{ childlink.url }}"
-                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
-                        {% if childlink.current %}
-                          aria-current="page"
-                        {% endif %}
-                      >
-                        {{ childlink.title | escape }}
-                      </a>
-                      {%- if childlink.links != blank -%}
-                        <ul class="list-unstyled" role="list">
+                    {%- if childlink.links == blank -%}
+                      <div class="mega-menu__item">
+                        <a
+                          id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                          href="{{ childlink.url }}"
+                          class="mega-menu__link link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                          {% if childlink.current %}aria-current="page"{% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
+                      </div>
+                    {%- else -%}
+                      <div class="mega-menu__group">
+                        {%- if childlink.url != blank and childlink.url != '#' -%}
+                          <a
+                            id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                            href="{{ childlink.url }}"
+                            class="mega-menu__group-header mega-menu__group-header--link link{% if childlink.current %} mega-menu__group-header--active{% endif %}"
+                            {% if childlink.current %}aria-current="page"{% endif %}
+                          >
+                            {{ childlink.title | escape }}
+                          </a>
+                        {%- else -%}
+                          <div class="mega-menu__group-header">
+                            {{ childlink.title | escape }}
+                          </div>
+                        {%- endif -%}
+
+                        <ul class="mega-menu__sublist" role="list">
                           {%- for grandchildlink in childlink.links -%}
-                            <li>
+                            <li class="mega-menu__subitem">
                               <a
                                 id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
                                 href="{{ grandchildlink.url }}"
-                                class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"
-                                {% if grandchildlink.current %}
-                                  aria-current="page"
-                                {% endif %}
+                                class="mega-menu__sublink link{% if grandchildlink.current %} mega-menu__sublink--active{% endif %}"
+                                {% if grandchildlink.current %}aria-current="page"{% endif %}
                               >
                                 {{ grandchildlink.title | escape }}
                               </a>
                             </li>
                           {%- endfor -%}
                         </ul>
-                      {%- endif -%}
-                    </li>
+                      </div>
+                    {%- endif -%}
                   {%- endfor -%}
-                </ul>
+                </div>
               </div>
             </details>
           </header-menu>

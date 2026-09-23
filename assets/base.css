@@ -2978,6 +2978,12 @@ details[open] > .header__menu-item .icon-caret {
   right: 0.8rem;
 }
 
+.header__inline-menu details > .header__menu-item .icon-caret {
+  position: static;
+  flex: 0 0 auto;
+  margin-left: 0.5rem;
+}
+
 .header__submenu .icon-caret {
   flex-shrink: 0;
   margin-left: 1rem;

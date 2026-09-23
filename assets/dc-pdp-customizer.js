@@ -97,18 +97,6 @@
     }) || null;
   }
 
-  function resolveMountKey(str) {
-    if (!str) return null;
-    const clean = str.trim().toLowerCase();
-    if (clean.includes('stud')) return 'studs';
-    if (clean.includes('tape') || clean.includes('vhb')) return 'tape';
-    return null;
-  }
-
-  const mountLabels = {
-    tape: 'VHB Tape (Flat Surface)',
-    studs: 'Studs (Grille Mount)'
-  };
 
   const loadedFonts = new Map();
   function loadFont(font) {
@@ -182,7 +170,6 @@
         face: this.isRetro ? 'white' : 'mirror_white',
         back: 'gloss_black',
         layers: this.isRetro ? 1 : ([1, 2].includes(initialModernLayers) ? initialModernLayers : ([1, 2].includes(urlLayers) ? urlLayers : 2)),
-        mount: 'tape',
         specificRequests: ''
       };
 
@@ -416,11 +403,6 @@
             hasCustomParams = true;
           }
         }
-        const mount = resolveMountKey(params.get('mount'));
-        if (mount) {
-          this.state.mount = mount;
-          hasCustomParams = true;
-        }
       }
 
       if (hasCustomParams) {
@@ -618,16 +600,6 @@
           this.updateUI();
         }, { signal: this.signal });
       });
-
-      // Mounting radio inputs (Two-layer)
-      this.controlsContainer.querySelectorAll('[data-pdp-mount]').forEach((input) => {
-        input.addEventListener('change', () => {
-          if (input.checked) {
-            this.state.mount = input.dataset.pdpMount;
-            this.updateUI();
-          }
-        }, { signal: this.signal });
-      });
     }
 
     bindModernVariant() {
@@ -806,11 +778,6 @@
           if (nameElem) nameElem.textContent = finish.label;
           if (chipElem) chipElem.style.background = this.swatchBackground(finish);
         }
-
-        // Mount radio state
-        this.controlsContainer.querySelectorAll('[data-pdp-mount]').forEach((input) => {
-          input.checked = input.dataset.pdpMount === this.state.mount;
-        });
       }
 
       // Sync hidden form properties into PDP product form
@@ -829,37 +796,35 @@
         const specificReq = this.state.specificRequests || '';
         const props = {
           'properties[Custom Text]': customText,
-          'properties[Font]': fontVal,
-          'properties[Specific Requests]': specificReq,
-          'properties[Text Color]': 'White',
-          'properties[Outline Color]': 'Black',
-          'properties[Mounting]': 'VHB Tape (Flat Surface)'
+          'properties[Font]': fontVal
         };
+        if (specificReq) {
+          props['properties[Specific Requests]'] = specificReq;
+        }
 
         const propIdMap = {
           'properties[Custom Text]': 'dc-pdp-prop-text',
           'properties[Font]': 'dc-pdp-prop-font',
-          'properties[Specific Requests]': 'dc-pdp-prop-requests',
-          'properties[Text Color]': 'dc-pdp-prop-face',
-          'properties[Outline Color]': 'dc-pdp-prop-outline',
-          'properties[Mounting]': 'dc-pdp-prop-mount'
+          'properties[Specific Requests]': 'dc-pdp-prop-requests'
         };
 
         let anyInputFound = false;
         for (const [propName, inputId] of Object.entries(propIdMap)) {
           const input = document.getElementById(inputId);
           if (input) {
-            input.value = props[propName];
+            input.value = props[propName] || '';
             input.disabled = false;
             anyInputFound = true;
           }
         }
 
-        const backInput = document.getElementById('dc-pdp-prop-back');
-        if (backInput) {
-          backInput.value = '';
-          backInput.disabled = true;
-        }
+        ['dc-pdp-prop-face', 'dc-pdp-prop-outline', 'dc-pdp-prop-back', 'dc-pdp-prop-mount'].forEach((id) => {
+          const inp = document.getElementById(id);
+          if (inp) {
+            inp.value = '';
+            inp.disabled = true;
+          }
+        });
 
         // Also sync directly to cart form
         document.querySelectorAll('form[action*="/cart/add"]').forEach((productForm) => {
@@ -874,8 +839,10 @@
             input.value = val;
             input.disabled = false;
           }
-          const extraBack = productForm.querySelector('input[name="properties[Background Color]"]');
-          if (extraBack) extraBack.remove();
+          ['properties[Text Color]', 'properties[Outline Color]', 'properties[Background Color]', 'properties[Mounting]'].forEach((pName) => {
+            const extra = productForm.querySelector(`input[name="${pName}"]`);
+            if (extra) extra.remove();
+          });
         });
         return;
       }

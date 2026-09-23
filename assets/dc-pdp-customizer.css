@@ -390,69 +390,6 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Mounting Options */
-.dc-pdp-mounts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-}
-
-@media screen and (max-width: 480px) {
-  .dc-pdp-mounts-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.dc-pdp-mount-pill {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.2rem;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.dc-pdp-mount-pill:hover {
-  border-color: #94a3b8;
-  background: #f1f5f9;
-}
-
-.dc-pdp-mount-pill:has(input:checked) {
-  border-color: #0f172a;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06), inset 0 0 0 1px #0f172a;
-}
-
-.dc-pdp-mount-pill input {
-  width: 1.6rem;
-  height: 1.6rem;
-  margin: 0;
-  accent-color: #0f172a;
-  cursor: pointer;
-}
-
-.dc-pdp-mount-pill__content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  line-height: 1.2;
-}
-
-.dc-pdp-mount-pill__content strong {
-  font-size: 1.25rem;
-  color: #0f172a;
-  text-transform: uppercase;
-}
-
-.dc-pdp-mount-pill__content small {
-  font-size: 1.05rem;
-  color: #64748b;
-}
-
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .dc-pdp-live-dot {
