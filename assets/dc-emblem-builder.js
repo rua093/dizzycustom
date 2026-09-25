@@ -102,10 +102,7 @@
       this.syncVariant();
       this.buildSwatches();
       this.querySelector('[data-controls]').disabled = false;
-      const initialSizeInput = (this.state.variantId && this.querySelector(`[data-size-id="${this.state.variantId}"]`)) || this.querySelector('[data-size-id]:checked') || this.querySelector('[data-size-id]');
-      if (initialSizeInput) {
-        this.setSize(initialSizeInput, false);
-      }
+      this.switchLayerProduct(this.state.layers, false);
       this.update();
       this.initializeFonts(signal);
     }
@@ -163,6 +160,89 @@
       const counter = this.querySelector('[data-count]');
       if (counter) {
         counter.textContent = `${this.state.text.length}/${this.currentMaxLength}`;
+      }
+    }
+
+    switchLayerProduct(layers, userAction = true) {
+      const layerKey = String(layers);
+      const productData = this.config.products?.[layerKey];
+      if (productData) {
+        this.config.productUrl = productData.url || '';
+        const productLink = this.querySelector('[data-product-link]');
+        if (productLink) {
+          if (productData.url) {
+            productLink.href = productData.url;
+            productLink.hidden = false;
+          } else {
+            productLink.hidden = true;
+          }
+        }
+        const productTitle = this.querySelector('[data-product-title]');
+        if (productTitle && productData.title) {
+          productTitle.textContent = productData.title;
+        }
+      }
+
+      const sizeContainers = this.querySelectorAll('[data-layer-sizes]');
+      if (sizeContainers.length > 0) {
+        let activeContainer = null;
+        sizeContainers.forEach((container) => {
+          const isActive = container.dataset.layerSizes === layerKey;
+          container.hidden = !isActive;
+          container.querySelectorAll('input[type="radio"]').forEach((input) => {
+            input.disabled = !isActive;
+          });
+          if (isActive) activeContainer = container;
+        });
+
+        if (activeContainer) {
+          const inputs = Array.from(activeContainer.querySelectorAll('[data-size-id]'));
+          let targetInput = null;
+
+          if (userAction) {
+            if (this.state.sizeTitle) {
+              const currentDim = this.state.sizeTitle.split(' (')[0].trim().toLowerCase();
+              targetInput = inputs.find((input) => {
+                const dim = input.dataset.sizeTitle?.split(' (')[0].trim().toLowerCase();
+                return dim && dim === currentDim;
+              });
+            }
+          } else {
+            if (this.state.variantId) {
+              targetInput = inputs.find((input) => input.dataset.sizeId === String(this.state.variantId));
+            }
+          }
+
+          if (!targetInput && this.state.sizeTitle) {
+            const currentDim = this.state.sizeTitle.split(' (')[0].trim().toLowerCase();
+            targetInput = inputs.find((input) => {
+              const dim = input.dataset.sizeTitle?.split(' (')[0].trim().toLowerCase();
+              return dim && dim === currentDim;
+            });
+          }
+
+          if (!targetInput) {
+            targetInput = activeContainer.querySelector('[data-size-id]:checked');
+          }
+          if (!targetInput && productData?.defaultVariantId) {
+            targetInput = activeContainer.querySelector(`[data-size-id="${productData.defaultVariantId}"]`);
+          }
+          if (!targetInput && inputs.length > 0) {
+            targetInput = inputs[0];
+          }
+
+          if (targetInput) {
+            inputs.forEach((inp) => {
+              inp.checked = inp === targetInput;
+            });
+            this.setSize(targetInput, userAction);
+          }
+        }
+      } else {
+        const initialSizeInput = (this.state.variantId && this.querySelector(`[data-size-id="${this.state.variantId}"]`)) || this.querySelector('[data-size-id]:checked') || this.querySelector('[data-size-id]');
+        if (initialSizeInput) {
+          this.setSize(initialSizeInput, userAction);
+        }
       }
     }
 
@@ -252,8 +332,12 @@
       if (!button || button.disabled) return;
       if (button.dataset.font) this.state.font = button.dataset.font;
       if (button.dataset.layerCount) {
+        const prevLayers = this.state.layers;
         this.state.layers = Number(button.dataset.layerCount);
         this.normalizeLayerCount();
+        if (prevLayers !== this.state.layers) {
+          this.switchLayerProduct(this.state.layers, true);
+        }
       }
       if (button.dataset.layer) {
         this.layer = button.dataset.layer;

@@ -96,6 +96,22 @@ test('modern cart items carry a mode marker and link back to the modern PDP flow
   for (const source of [drawer, cart]) {
     assert.match(source, /prop_first == '_dc_emblem_mode'/);
     assert.match(source, /custom_mode == 'modern'/);
-    assert.match(source, /&view=two-layer&layers=/);
+    assert.match(source, /&view=acrylic&layers=/);
   }
 });
+
+test('acrylic emblem builder supports distinct 1-layer and 2-layer products with dynamic switching', () => {
+  const liquid = fs.readFileSync('sections/dc-emblem-builder.liquid', 'utf8');
+  const js = fs.readFileSync('assets/dc-emblem-builder.js', 'utf8');
+
+  assert.match(liquid, /"name":\s*"Acrylic Emblem Builder"/);
+  assert.match(liquid, /"id":\s*"product_1_layer"/);
+  assert.match(liquid, /"id":\s*"product"/);
+  assert.match(liquid, /data-layer-sizes=/);
+  assert.match(liquid, /data-product-link/);
+
+  assert.match(js, /switchLayerProduct\s*\(/);
+  assert.match(js, /this\.switchLayerProduct\(this\.state\.layers,\s*(?:true|false)\)/);
+  assert.match(js, /data-layer-sizes/);
+});
+

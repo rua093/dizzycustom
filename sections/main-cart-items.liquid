@@ -132,14 +132,14 @@
                       endif
                       if is_legacy_modern_item
                         if custom_back != blank
-                          assign item_target_url = item_target_url | append: '&view=two-layer&layers=2'
+                          assign item_target_url = item_target_url | append: '&view=acrylic&layers=2'
                         else
-                          assign item_target_url = item_target_url | append: '&view=two-layer&layers=1'
+                          assign item_target_url = item_target_url | append: '&view=acrylic&layers=1'
                         endif
                       elsif custom_back != blank
-                        assign item_target_url = item_target_url | append: '&view=two-layer&layers=2'
+                        assign item_target_url = item_target_url | append: '&view=acrylic&layers=2'
                       else
-                        assign item_target_url = item_target_url | append: '&view=single-layer&layers=1'
+                        assign item_target_url = item_target_url | append: '&view=metal&layers=1'
                       endif
                       assign enc_text = custom_text | url_encode
                       assign item_target_url = item_target_url | append: '&text=' | append: enc_text

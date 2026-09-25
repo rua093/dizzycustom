@@ -23,20 +23,20 @@
   endif
 
   # Match template suffix or tags
-  if template.suffix == 'single-layer' or template.suffix == 'two-layer'
+  if template.suffix == 'metal' or template.suffix == 'acrylic'
     assign is_custom_product = true
   endif
-  if product.tags contains 'single-layer' or product.tags contains '1-layer' or product.tags contains 'two-layer' or product.tags contains '2-layer' or product.tags contains 'custom-emblem'
+  if product.tags contains 'metal' or product.tags contains 'acrylic' or product.tags contains 'custom-emblem'
     assign is_custom_product = true
   endif
 
   # Determine customizer type/mode and base layers
   assign customizer_mode = 'modern'
   assign customizer_layers = 2
-  if template.suffix == 'single-layer' or product.tags contains 'single-layer' or product.tags contains '1-layer' or product.tags contains 'retro'
+  if template.suffix == 'metal' or product.tags contains 'metal' or product.tags contains 'retro'
     assign customizer_mode = 'retro'
     assign customizer_layers = 1
-  elsif template.suffix == 'two-layer' or product.tags contains 'two-layer' or product.tags contains '2-layer'
+  elsif template.suffix == 'acrylic' or product.tags contains 'acrylic'
     assign customizer_mode = 'modern'
     assign customizer_layers = 2
   endif

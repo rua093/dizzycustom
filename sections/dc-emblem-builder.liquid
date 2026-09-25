@@ -1,16 +1,29 @@
 {%- liquid
   assign font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ','
   assign font_labels = 'Bold,Slant,Edge,Flow,Strike,Frost,Classic' | split: ','
-  assign badge_product = section.settings.product
-  if badge_product == blank
-    assign badge_product = settings.custom_emblem_product
-  endif
+
   assign is_product_page = false
   if request.page_type == 'product'
-    assign badge_product = product
     assign is_product_page = true
+    assign product_1_layer = product
+    assign product_2_layer = product
+    assign default_badge_product = product
+  else
+    assign product_1_layer = section.settings.product_1_layer.first | default: section.settings.product_1_layer
+    assign product_2_layer = section.settings.product
+
+    if product_2_layer == blank
+      assign product_2_layer = settings.custom_emblem_product
+    endif
+
+    if product_1_layer == blank
+      assign product_1_layer = product_2_layer
+    endif
+
+    assign default_badge_product = product_2_layer
   endif
-  assign initial_variant = badge_product.selected_or_first_available_variant
+
+  assign initial_variant = default_badge_product.selected_or_first_available_variant
   assign default_variant = initial_variant
 -%}
 {{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
@@ -39,7 +52,25 @@
     >
       <script type="application/json" data-builder-config>
         {
-          "productUrl": {{ badge_product.url | default: '' | json }},
+          "products": {
+            "1": {
+              "id": {{ product_1_layer.id | json }},
+              "url": {{ product_1_layer.url | default: '' | json }},
+              "title": {{ product_1_layer.title | json }},
+              "defaultVariantId": {{ product_1_layer.selected_or_first_available_variant.id | json }},
+              "price": {{ product_1_layer.selected_or_first_available_variant.price | money_with_currency | json }},
+              "available": {{ product_1_layer.selected_or_first_available_variant.available | default: false | json }}
+            },
+            "2": {
+              "id": {{ product_2_layer.id | json }},
+              "url": {{ product_2_layer.url | default: '' | json }},
+              "title": {{ product_2_layer.title | json }},
+              "defaultVariantId": {{ product_2_layer.selected_or_first_available_variant.id | json }},
+              "price": {{ product_2_layer.selected_or_first_available_variant.price | money_with_currency | json }},
+              "available": {{ product_2_layer.selected_or_first_available_variant.available | default: false | json }}
+            }
+          },
+          "productUrl": {{ default_badge_product.url | default: '' | json }},
           "defaultText": {{ section.settings.default_text | json }},
           "maxLength": {{ section.settings.max_length | json }},
           "price": {{ default_variant.price | money_with_currency | json }},
@@ -58,7 +89,7 @@
       <div class="dc-builder-stage">
         <span class="dc-builder-live"><span></span> Live preview</span>
         <span class="dc-builder-stage-guide" id="BadgeHelp-{{ section.id }}">Letters, numbers, spaces and punctuation. Up to {{ section.settings.max_length }} characters.</span>
-        <canvas data-preview width="1200" height="460" role="img" aria-label="Your custom two-layer badge preview"></canvas>
+        <canvas data-preview width="1200" height="460" role="img" aria-label="Your custom acrylic badge preview"></canvas>
       </div>
       <form class="dc-builder-controls" action="{{ routes.cart_add_url }}" method="post">
         <fieldset class="dc-builder-fields" data-controls disabled>
@@ -110,16 +141,79 @@
           <div class="dc-builder-col dc-builder-col--mount-order dc-builder-col--size-order">
             <fieldset class="dc-builder-group">
               <legend><span class="dc-builder-step-title"><span class="dc-builder-step-badge" aria-hidden="true">3</span>Size</span></legend>
-              <div class="dc-builder-sizes" role="radiogroup" aria-label="Select size">
+              {%- for l_count in (1..2) -%}
                 {%- liquid
+                  if l_count == 1
+                    assign curr_product = product_1_layer
+                    assign is_layer_hidden = true
+                    assign layer_key = '1'
+                  else
+                    assign curr_product = product_2_layer
+                    assign is_layer_hidden = false
+                    assign layer_key = '2'
+                  endif
+                  assign initial_curr_variant = curr_product.selected_or_first_available_variant
                   assign preferred_keys = '1x6,1x8,1x4,2x8' | split: ','
                   assign rendered_variant_ids = ''
                 -%}
+                <div
+                  class="dc-builder-sizes"
+                  data-layer-sizes="{{ layer_key }}"
+                  role="radiogroup"
+                  aria-label="Select size ({{ layer_key }} Layer{% if layer_key == '2' %}s{% endif %})"
+                  {% if is_layer_hidden %}hidden{% endif %}
+                >
+                  {%- comment -%} Render in preferred order (1x6, 1x8, 1x4, 2x8) {%- endcomment -%}
+                  {%- for pref_key in preferred_keys -%}
+                    {%- for variant in curr_product.variants -%}
+                      {%- if variant.title contains pref_key -%}
+                        {%- liquid
+                          assign max_chars = 16
+                          if variant.title contains '8 Letters'
+                            assign max_chars = 8
+                          elsif variant.title contains '12 Letters'
+                            assign max_chars = 12
+                          elsif variant.title contains '16 Letters'
+                            assign max_chars = 16
+                          endif
+                          assign is_checked = false
+                          if variant.id == initial_curr_variant.id
+                            assign is_checked = true
+                          endif
+                          assign rendered_variant_ids = rendered_variant_ids | append: variant.id | append: ','
+                        -%}
+                        <label class="dc-builder-size-label">
+                          <input
+                            type="radio"
+                            name="size_variant_{{ layer_key }}"
+                            value="{{ variant.id }}"
+                            data-size-id="{{ variant.id }}"
+                            data-size-title="{{ variant.title | escape }}"
+                            data-size-price="{{ variant.price | money_with_currency }}"
+                            data-size-max="{{ max_chars }}"
+                            data-size-available="{{ variant.available }}"
+                            {% if is_layer_hidden %}disabled{% endif %}
+                            {% if is_checked %}checked{% endif %}
+                          >
+                          <span class="dc-builder-size-card">
+                            {%- liquid
+                              assign title_parts = variant.title | split: ' ('
+                              assign size_dim = title_parts[0]
+                              assign size_meta = title_parts[1]
+                            -%}
+                            <span class="dc-builder-size-dim">{{ size_dim | escape }}</span>
+                            {%- if size_meta != blank -%}
+                              <span class="dc-builder-size-meta">({{ size_meta | escape }}</span>
+                            {%- endif -%}
+                          </span>
+                        </label>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endfor -%}
 
-                {%- comment -%} Render in preferred order (1x6, 1x8, 1x4, 2x8) {%- endcomment -%}
-                {%- for pref_key in preferred_keys -%}
-                  {%- for variant in badge_product.variants -%}
-                    {%- if variant.title contains pref_key -%}
+                  {%- comment -%} Fallback for any other variants {%- endcomment -%}
+                  {%- for variant in curr_product.variants -%}
+                    {%- unless rendered_variant_ids contains variant.id -%}
                       {%- liquid
                         assign max_chars = 16
                         if variant.title contains '8 Letters'
@@ -130,107 +224,73 @@
                           assign max_chars = 16
                         endif
                         assign is_checked = false
-                        if variant.id == default_variant.id
+                        if variant.id == initial_curr_variant.id and rendered_variant_ids == blank
                           assign is_checked = true
                         endif
-                        assign rendered_variant_ids = rendered_variant_ids | append: variant.id | append: ','
                       -%}
                       <label class="dc-builder-size-label">
                         <input
                           type="radio"
-                          name="size_variant"
+                          name="size_variant_{{ layer_key }}"
                           value="{{ variant.id }}"
                           data-size-id="{{ variant.id }}"
                           data-size-title="{{ variant.title | escape }}"
                           data-size-price="{{ variant.price | money_with_currency }}"
                           data-size-max="{{ max_chars }}"
                           data-size-available="{{ variant.available }}"
+                          {% if is_layer_hidden %}disabled{% endif %}
                           {% if is_checked %}checked{% endif %}
                         >
                         <span class="dc-builder-size-card">
                           {%- liquid
-                            assign title_parts = variant.title | split: ' ('
-                            assign size_dim = title_parts[0]
-                            assign size_meta = title_parts[1]
+                            assign fallback_parts = variant.title | split: ' ('
+                            assign fallback_dim = fallback_parts[0]
+                            assign fallback_meta = fallback_parts[1]
                           -%}
-                          <span class="dc-builder-size-dim">{{ size_dim | escape }}</span>
-                          {%- if size_meta != blank -%}
-                            <span class="dc-builder-size-meta">({{ size_meta | escape }}</span>
+                          <span class="dc-builder-size-dim">{{ fallback_dim | escape }}</span>
+                          {%- if fallback_meta != blank -%}
+                            <span class="dc-builder-size-meta">({{ fallback_meta | escape }}</span>
                           {%- endif -%}
                         </span>
                       </label>
-                    {%- endif -%}
+                    {%- endunless -%}
                   {%- endfor -%}
-                {%- endfor -%}
-
-                {%- comment -%} Fallback for any other variants {%- endcomment -%}
-                {%- for variant in badge_product.variants -%}
-                  {%- unless rendered_variant_ids contains variant.id -%}
-                    {%- liquid
-                      assign max_chars = 16
-                      if variant.title contains '8 Letters'
-                        assign max_chars = 8
-                      elsif variant.title contains '12 Letters'
-                        assign max_chars = 12
-                      elsif variant.title contains '16 Letters'
-                        assign max_chars = 16
-                      endif
-                      assign is_checked = false
-                      if variant.id == default_variant.id and rendered_variant_ids == blank
-                        assign is_checked = true
-                      endif
-                    -%}
-                    <label class="dc-builder-size-label">
-                      <input
-                        type="radio"
-                        name="size_variant"
-                        value="{{ variant.id }}"
-                        data-size-id="{{ variant.id }}"
-                        data-size-title="{{ variant.title | escape }}"
-                        data-size-price="{{ variant.price | money_with_currency }}"
-                        data-size-max="{{ max_chars }}"
-                        data-size-available="{{ variant.available }}"
-                        {% if is_checked %}checked{% endif %}
-                      >
-                      <span class="dc-builder-size-card">
-                        {%- liquid
-                          assign fallback_parts = variant.title | split: ' ('
-                          assign fallback_dim = fallback_parts[0]
-                          assign fallback_meta = fallback_parts[1]
-                        -%}
-                        <span class="dc-builder-size-dim">{{ fallback_dim | escape }}</span>
-                        {%- if fallback_meta != blank -%}
-                          <span class="dc-builder-size-meta">({{ fallback_meta | escape }}</span>
-                        {%- endif -%}
-                      </span>
-                    </label>
-                  {%- endunless -%}
-                {%- endfor -%}
-              </div>
+                </div>
+              {%- endfor -%}
             </fieldset>
 
             <input type="hidden" name="id" value="{{ default_variant.id }}" data-variant-id>
             <input type="hidden" name="quantity" value="1" data-quantity>
-                <input type="hidden" name="properties[Font]" data-property="font">
-                <input type="hidden" name="properties[Text Color]" data-property="face">
-                <input type="hidden" name="properties[Background Color]" data-property="back">
-                <input type="hidden" name="properties[_dc_emblem_mode]" data-property="mode" value="modern">
+            <input type="hidden" name="properties[Font]" data-property="font">
+            <input type="hidden" name="properties[Text Color]" data-property="face">
+            <input type="hidden" name="properties[Background Color]" data-property="back">
+            <input type="hidden" name="properties[_dc_emblem_mode]" data-property="mode" value="modern">
             <p class="dc-builder-error" id="BadgeError-{{ section.id }}" data-error role="alert"></p>
             <button type="submit" class="button button--primary dc-builder-submit" data-submit disabled>
-              <span data-submit-label>{% if badge_product == blank %}Ordering coming soon{% else %}Build My Badge{% endif %}</span><span aria-hidden="true">→</span>
+              <span data-submit-label>{% if default_badge_product == blank %}Ordering coming soon{% else %}Build My Badge{% endif %}</span><span aria-hidden="true">→</span>
             </button>
-            {% if badge_product != blank %}
-              <p class="dc-builder-order-summary" data-order-summary>
-                Total: <strong data-summary-price>{{ default_variant.price | money_with_currency }}</strong>
-              </p>
+            {% if default_badge_product != blank %}
+              <div class="dc-builder-order-summary-wrapper">
+                <p class="dc-builder-order-summary" data-order-summary>
+                  Total: <strong data-summary-price>{{ default_variant.price | money_with_currency }}</strong>
+                </p>
+                <a
+                  href="{{ default_badge_product.url }}"
+                  class="dc-builder-product-link link"
+                  data-product-link
+                  title="View full product page"
+                >
+                  <span data-product-title>{{ default_badge_product.title | escape }}</span> details →
+                </a>
+              </div>
             {% endif %}
           </div>
         </fieldset>
         <noscript><p>Enable JavaScript to customize and preview your badge before ordering.</p></noscript>
       </form>
     </dc-emblem-builder>
-    {% if request.design_mode and badge_product == blank %}
-      <p>Select a dedicated two-layer badge product in this section's settings to enable ordering. All fonts, finishes and size options must be included in its variant prices.</p>
+    {% if request.design_mode and default_badge_product == blank %}
+      <p>Select a dedicated acrylic badge product in this section's settings to enable ordering. All fonts, finishes and size options must be included in its variant prices.</p>
     {% endif %}
     {% if is_product_page %}
       <div class="dc-builder-description rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"{% if settings.animations_reveal_on_scroll %} data-cascade{% endif %}>{{ product.description }}</div>
@@ -242,22 +302,91 @@
 
 {% schema %}
 {
-  "name": "Dizzy Emblem Builder",
+  "name": "Acrylic Emblem Builder",
   "tag": "div",
   "disabled_on": {"groups": ["header", "footer"]},
   "settings": [
-    {"type": "product", "id": "product", "label": "Two-layer badge product", "info": "Leave blank to automatically use the product selected in Theme Settings > Custom Emblem. Or select a product here to override."},
-    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "YOUR WORDS. YOUR STYLE."},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Make it unmistakably yours."},
-    {"type": "richtext", "id": "description", "label": "Description", "default": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>"},
-    {"type": "text", "id": "default_text", "label": "Starting text", "default": "DIZZY"},
-    {"type": "range", "id": "max_length", "label": "Maximum characters", "min": 4, "max": 32, "step": 1, "default": 16},
-    {"type": "checkbox", "id": "demo", "label": "Show rotating examples before interaction", "default": false},
-    {"type": "text", "id": "preview_note", "label": "Preview note", "default": "Digital preview. Actual colors and finishes may vary slightly."},
-    {"type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "background-1"},
-    {"type": "range", "id": "padding", "label": "Section spacing", "min": 0, "max": 100, "step": 4, "default": 48}
+    {
+      "type": "header",
+      "content": "Acrylic Products"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "2-Layer Acrylic product",
+      "info": "Select the two-layer Acrylic badge product. If empty, falls back to Custom Emblem product."
+    },
+    {
+      "type": "product_list",
+      "id": "product_1_layer",
+      "label": "1-Layer Acrylic product",
+      "limit": 1,
+      "info": "Select the single-layer Acrylic badge product. If empty, falls back to 2-Layer product."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "YOUR WORDS. YOUR STYLE."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Make it unmistakably yours."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Your text, your font, your colors. Build your custom acrylic badge and see your design come to life.</p>"
+    },
+    {
+      "type": "text",
+      "id": "default_text",
+      "label": "Starting text",
+      "default": "DIZZY"
+    },
+    {
+      "type": "range",
+      "id": "max_length",
+      "label": "Maximum characters",
+      "min": 4,
+      "max": 32,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "demo",
+      "label": "Show rotating examples before interaction",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "preview_note",
+      "label": "Preview note",
+      "default": "Digital preview. Actual colors and finishes may vary slightly."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Section spacing",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 48
+    }
   ],
   "blocks": [{"type": "@app"}],
-  "presets": [{"name": "Dizzy Emblem Builder"}]
+  "presets": [{"name": "Acrylic Emblem Builder"}]
 }
 {% endschema %}
+
+
