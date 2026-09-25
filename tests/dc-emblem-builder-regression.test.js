@@ -108,7 +108,6 @@ test('acrylic emblem builder supports distinct 1-layer and 2-layer products with
   assert.match(liquid, /"id":\s*"product_1_layer"/);
   assert.match(liquid, /"id":\s*"product"/);
   assert.match(liquid, /data-layer-sizes=/);
-  assert.match(liquid, /data-product-link/);
 
   assert.match(js, /switchLayerProduct\s*\(/);
   assert.match(js, /this\.switchLayerProduct\(this\.state\.layers,\s*(?:true|false)\)/);

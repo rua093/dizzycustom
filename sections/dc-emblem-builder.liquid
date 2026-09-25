@@ -9,7 +9,14 @@
     assign product_2_layer = product
     assign default_badge_product = product
   else
-    assign product_1_layer = section.settings.product_1_layer.first | default: section.settings.product_1_layer
+    assign product_1_layer = nil
+    for p_item in section.settings.product_1_layer
+      assign product_1_layer = p_item
+      break
+    endfor
+    if product_1_layer == blank and section.settings.product_1_layer.title != blank
+      assign product_1_layer = section.settings.product_1_layer
+    endif
     assign product_2_layer = section.settings.product
 
     if product_2_layer == blank
@@ -270,19 +277,9 @@
               <span data-submit-label>{% if default_badge_product == blank %}Ordering coming soon{% else %}Build My Badge{% endif %}</span><span aria-hidden="true">→</span>
             </button>
             {% if default_badge_product != blank %}
-              <div class="dc-builder-order-summary-wrapper">
-                <p class="dc-builder-order-summary" data-order-summary>
-                  Total: <strong data-summary-price>{{ default_variant.price | money_with_currency }}</strong>
-                </p>
-                <a
-                  href="{{ default_badge_product.url }}"
-                  class="dc-builder-product-link link"
-                  data-product-link
-                  title="View full product page"
-                >
-                  <span data-product-title>{{ default_badge_product.title | escape }}</span> details →
-                </a>
-              </div>
+              <p class="dc-builder-order-summary" data-order-summary>
+                Total: <strong data-summary-price>{{ default_variant.price | money_with_currency }}</strong>
+              </p>
             {% endif %}
           </div>
         </fieldset>
