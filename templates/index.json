@@ -66,7 +66,10 @@
     "dc_emblem_builder": {
       "type": "dc-emblem-builder",
       "settings": {
-        "product": "custom-metal-emblem-for-car-and-motorbike-copy-4",
+        "product": "custom-acrylic-emblem-for-car-and-motorbike-single-layer-copy",
+        "product_1_layer": [
+          "custom-metal-emblem-for-car-and-motorbike-copy-4"
+        ],
         "eyebrow": "YOUR WORDS. YOUR STYLE.",
         "heading": "Make it unmistakably yours.",
         "description": "<p>Your text, your font, your colors. Build a two-layer badge and see your design come to life.</p>",
