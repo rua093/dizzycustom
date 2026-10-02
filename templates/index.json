@@ -195,33 +195,9 @@
         "padding_bottom": 36
       }
     },
-    "rich_text_hjbhAC": {
-      "type": "rich-text",
-      "blocks": {
-        "heading_cH3qAV": {
-          "type": "heading",
-          "settings": {
-            "heading": "Custom Emblem Request",
-            "heading_size": "h2"
-          }
-        }
-      },
-      "block_order": [
-        "heading_cH3qAV"
-      ],
-      "disabled": true,
-      "name": "t:sections.rich-text.presets.name",
-      "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 52
-      }
-    },
     "dc_custom_request_anchor": {
       "type": "dc-custom-request-anchor",
+      "disabled": true,
       "settings": {}
     },
     "1789410370f0d69c93": {
@@ -237,12 +213,6 @@
       "block_order": [
         "powerful_form_builder_app_block_zdaiYy"
       ],
-      "settings": {
-        "include_margins": true
-      }
-    },
-    "1789409231f10d6dbe": {
-      "type": "apps",
       "settings": {
         "include_margins": true
       }
@@ -434,22 +404,21 @@
         "padding_bottom": 20
       }
     },
-    "featured_blog_JezEiz": {
-      "type": "featured-blog",
-      "disabled": true,
+    "1789409231f10d6dbe": {
+      "type": "apps",
+      "blocks": {
+        "vitals_reviews_carousel_XmiQ3W": {
+          "type": "shopify://apps/vitals/blocks/reviews-carousel/aeb48102-2a5a-4f39-bdbd-d8d49f4e20b8",
+          "settings": {
+            "hide_mock_data": false
+          }
+        }
+      },
+      "block_order": [
+        "vitals_reviews_carousel_XmiQ3W"
+      ],
       "settings": {
-        "heading": "About Us",
-        "heading_size": "h2",
-        "blog": "news",
-        "post_limit": 2,
-        "columns_desktop": 3,
-        "color_scheme": "inverse",
-        "show_image": true,
-        "show_date": false,
-        "show_author": false,
-        "show_view_all": false,
-        "padding_top": 20,
-        "padding_bottom": 0
+        "include_margins": true
       }
     }
   },
@@ -458,13 +427,11 @@
     "dc_emblem_builder",
     "image_scrolling_ACYgDa",
     "featured_collection",
-    "rich_text_hjbhAC",
     "dc_custom_request_anchor",
     "1789410370f0d69c93",
-    "1789409231f10d6dbe",
     "multicolumn_6CbrDa",
     "craftsmanship_process",
     "multicolumn_m7M4TB",
-    "featured_blog_JezEiz"
+    "1789409231f10d6dbe"
   ]
 }
