@@ -5,9 +5,9 @@
   if adapt_image == blank and section.settings.mobile_image != blank
     assign adapt_image = section.settings.mobile_image
   endif
-  assign use_mobile_hero_asset = false
-  if request.page_type == 'index' and section.id contains '__image_banner' and section.settings.mobile_image == blank
-    assign use_mobile_hero_asset = true
+  assign is_home_hero = false
+  if request.page_type == 'index' and section.id contains '__image_banner'
+    assign is_home_hero = true
   endif
 -%}
 {%- if section.settings.image_height == 'adapt' and adapt_image != blank -%}
@@ -71,9 +71,9 @@
 
 <div
   id="Banner-{{ section.id }}"
-  class="banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.image_height }}{% if use_mobile_hero_asset %} banner--dizzy-mobile-hero{% endif %}{% if section.settings.stack_images_on_mobile and section.settings.image != blank and section.settings.image_2 != blank %} banner--stacked{% endif %}{% if section.settings.image_height == 'adapt' and adapt_image != blank %} banner--adapt{% endif %}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+  class="banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.image_height }}{% if is_home_hero %} banner--dizzy-mobile-hero{% endif %}{% if section.settings.stack_images_on_mobile and section.settings.image != blank and section.settings.image_2 != blank %} banner--stacked{% endif %}{% if section.settings.image_height == 'adapt' and adapt_image != blank %} banner--adapt{% endif %}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
 >
-  {%- if section.settings.image != blank or section.settings.mobile_image != blank or use_mobile_hero_asset -%}
+  {%- if section.settings.image != blank or section.settings.mobile_image != blank -%}
     <div class="banner__media media{% if section.settings.image == blank and section.settings.mobile_image == blank and section.settings.image_2 == blank %} placeholder{% endif %}{% if section.settings.image_2 != blank %} banner__media-half{% endif %}{% if section.settings.image_behavior != 'none' %} animate--{{ section.settings.image_behavior }}{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       {%- if section.settings.image != blank -%}
         {%- liquid
@@ -93,34 +93,17 @@
             assign sizes = full_width
           endif
         -%}
-        {%- if use_mobile_hero_asset and section.settings.image_2 == blank -%}
-          <picture class="banner__hero-picture">
-            <source media="(max-width: 749px)" srcset="{{ 'dc-home-hero-mobile.webp' | asset_url }}" type="image/webp">
-            {{
-              section.settings.image
-              | image_url: width: 3840
-              | image_tag:
-                width: section.settings.image.width,
-                height: image_height,
-                class: image_class,
-                sizes: sizes,
-                widths: widths,
-                fetchpriority: fetch_priority
-            }}
-          </picture>
-        {%- else -%}
-          {{
-            section.settings.image
-            | image_url: width: 3840
-            | image_tag:
-              width: section.settings.image.width,
-              height: image_height,
-              class: image_class,
-              sizes: sizes,
-              widths: widths,
-              fetchpriority: fetch_priority
-          }}
-        {%- endif -%}
+        {{
+          section.settings.image
+          | image_url: width: 3840
+          | image_tag:
+            width: section.settings.image.width,
+            height: image_height,
+            class: image_class,
+            sizes: sizes,
+            widths: widths,
+            fetchpriority: fetch_priority
+        }}
       {%- endif -%}
       {%- if section.settings.mobile_image != blank -%}
         {%- liquid
@@ -141,17 +124,6 @@
             widths: '375, 550, 750, 1100, 1500',
             fetchpriority: fetch_priority
         }}
-      {%- elsif use_mobile_hero_asset and section.settings.image == blank -%}
-        <img
-          src="{{ 'dc-home-hero-mobile.webp' | asset_url }}"
-          alt=""
-          width="941"
-          height="1672"
-          class="medium-hide large-up-hide"
-          loading="eager"
-          fetchpriority="{{ fetch_priority }}"
-          decoding="async"
-        >
       {%- endif -%}
     </div>
   {%- elsif section.settings.image_2 == blank -%}
@@ -185,29 +157,6 @@
           widths: widths,
           fetchpriority: fetch_priority
       }}
-    </div>
-  {%- endif -%}
-  {%- if section.settings.show_trust_strip -%}
-    <div class="banner__trust-strip">
-      {%- if section.settings.trust_strip_image != blank -%}
-        <img
-          src="{{ section.settings.trust_strip_image | image_url: width: 2172 }}"
-          alt="{{ section.settings.trust_strip_image.alt | default: 'Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers' | escape }}"
-          width="{{ section.settings.trust_strip_image.width }}"
-          height="{{ section.settings.trust_strip_image.height }}"
-          loading="eager"
-          decoding="async"
-        >
-      {%- else -%}
-        <img
-          src="{{ 'banner-trust-strip.png' | asset_url }}"
-          alt="Premium Metal Quality, Built for Every Ride, Worldwide Shipping, Trusted by 10,000+ Customers"
-          width="2172"
-          height="202"
-          loading="eager"
-          decoding="async"
-        >
-      {%- endif -%}
     </div>
   {%- endif -%}
   <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
@@ -447,7 +396,7 @@
       "type": "image_picker",
       "id": "mobile_image",
       "label": "Mobile image",
-      "info": "Optional. Displays under 750px. The homepage hero uses the included mobile artwork when empty; other banners use the desktop image."
+      "info": "Optional. Displays on mobile screens (under 750px). Falls back to desktop image if empty."
     },
     {
       "type": "select",
@@ -480,22 +429,6 @@
       "id": "show_text_below",
       "default": true,
       "label": "t:sections.image-banner.settings.show_text_below.label"
-    },
-    {
-      "type": "header",
-      "content": "Trust badges"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_trust_strip",
-      "default": true,
-      "label": "Show trust badges strip"
-    },
-    {
-      "type": "image_picker",
-      "id": "trust_strip_image",
-      "label": "Custom trust badges image",
-      "info": "Leave blank to use default trust badges image"
     }
   ],
   "blocks": [

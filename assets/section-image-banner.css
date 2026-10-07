@@ -274,34 +274,10 @@
   z-index: 2;
 }
 
-.banner__trust-strip {
-  position: absolute;
-  left: 50%;
-  bottom: 1.6rem;
-  z-index: 2;
-  width: min(38rem, calc(100% - 2rem));
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.banner__trust-strip img {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter:
-    drop-shadow(0 0 0.35rem rgba(0, 0, 0, 1))
-    drop-shadow(0 0.2rem 0.8rem rgba(0, 0, 0, 0.95))
-    drop-shadow(0 0.4rem 1.2rem rgba(0, 0, 0, 0.75));
-}
 
 @media screen and (min-width: 750px) {
   .banner__content {
     padding: 5rem;
-  }
-
-  .banner__trust-strip {
-    bottom: 3.2rem;
-    width: min(92rem, calc(100% - 42rem));
   }
 
   .banner__content--top-left {
@@ -702,32 +678,12 @@
     padding: 0.7rem 1.4rem;
     border-radius: 0.6rem;
   }
-
-  .banner__trust-strip {
-    bottom: 1.4rem;
-    width: min(34rem, calc(100% - 2.4rem));
-  }
 }
 
 .banner--dizzy-mobile-hero .banner__heading--dizzy em {
   font-style: normal;
 }
 
-.banner--dizzy-mobile-hero .banner__hero-picture {
-  display: block;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.banner--dizzy-mobile-hero .banner__hero-picture > img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
 
 @media screen and (max-width: 749px) {
   .banner.banner--dizzy-mobile-hero:not(.banner--adapt) {
