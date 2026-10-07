@@ -57,6 +57,7 @@
         "desktop_content_alignment": "center",
         "color_scheme": "inverse",
         "image_behavior": "none",
+        "mobile_image": "shopify://shop_images/hero_mobile.webp",
         "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
         "show_text_below": false
