@@ -76,7 +76,7 @@
                 </p>
               {%- endif -%}
 
-              {%- form 'customer', id: 'DizzyNewsletterPopupForm', class: 'dizzy-popup__form' -%}
+              {%- form 'customer', id: 'DizzyNewsletterPopupForm', class: 'dizzy-popup__form', onsubmit: 'return false;' -%}
                 <input type="hidden" name="contact[tags]" value="newsletter,popup_welcome10">
 
                 <div class="dizzy-popup__input-wrap">
@@ -98,7 +98,7 @@
                   <button type="button" class="dizzy-popup__btn-secondary">
                     {{ section.settings.cancel_text }}
                   </button>
-                  <button type="submit" class="dizzy-popup__btn-primary">
+                  <button type="button" class="dizzy-popup__btn-primary" id="DizzyPopupSubmitBtn">
                     {{ section.settings.button_text }}
                   </button>
                 </div>

@@ -183,68 +183,100 @@
       });
     });
 
-    // Form Submission (Shopify Native Customer AJAX)
-    if (form) {
-      form.addEventListener('submit', async (e) => {
+    // Form Submission (Shopify Native Customer AJAX - 0-Reload Guarantee)
+    const handleFormSubmit = async (e) => {
+      if (e) {
         e.preventDefault();
-        const emailVal = inputEmail ? inputEmail.value.trim() : '';
+        e.stopPropagation();
+      }
 
-        if (!emailVal || !emailVal.includes('@')) {
-          if (errorMsg) {
-            errorMsg.textContent = 'Please enter a valid email address.';
-            errorMsg.style.display = 'block';
-          }
-          return;
+      const emailVal = inputEmail ? inputEmail.value.trim() : '';
+
+      if (!emailVal || !emailVal.includes('@')) {
+        if (errorMsg) {
+          errorMsg.textContent = 'Please enter a valid email address.';
+          errorMsg.style.display = 'block';
+        }
+        return false;
+      }
+
+      if (errorMsg) errorMsg.style.display = 'none';
+
+      // 1. Client-side check: has this user already subscribed with this email?
+      if (isEmailAlreadyStored(emailVal)) {
+        showView(viewAlready);
+        return false;
+      }
+
+      // 2. Submit to native Shopify Customer Form endpoint via AJAX
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.dataset.origText = submitBtn.innerText;
+        submitBtn.innerText = 'Subscribing...';
+      }
+
+      try {
+        const formData = form ? new FormData(form) : new FormData();
+        if (!formData.has('contact[email]')) {
+          formData.append('contact[email]', emailVal);
+          formData.append('contact[tags]', 'newsletter,popup_welcome10');
+          formData.append('form_type', 'customer');
+          formData.append('utf8', '✓');
         }
 
-        if (errorMsg) errorMsg.style.display = 'none';
+        const endpoint = (form && form.getAttribute('action')) 
+          ? form.getAttribute('action').split('#')[0] 
+          : '/contact';
 
-        // 1. Client-side check: has this user already subscribed with this email?
-        if (isEmailAlreadyStored(emailVal)) {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'text/html'
+          }
+        });
+
+        const responseText = await response.text();
+
+        // Check if response indicates an error or already subscribed
+        const isTaken = responseText.includes('already been taken') || 
+                        responseText.includes('already left') || 
+                        responseText.includes('form__message--error');
+
+        if (isTaken) {
+          addStoredEmail(emailVal);
           showView(viewAlready);
-          return;
-        }
-
-        // 2. Submit to native Shopify Customer Form endpoint via AJAX
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.dataset.origText = submitBtn.innerText;
-          submitBtn.innerText = 'Subscribing...';
-        }
-
-        try {
-          const formData = new FormData(form);
-          const response = await fetch(form.action || '/contact', {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'Accept': 'text/html'
-            }
-          });
-
-          const responseText = await response.text();
-
-          // Check if response indicates an error or already subscribed
-          const isTaken = responseText.includes('already been taken') || 
-                          responseText.includes('already left') || 
-                          responseText.includes('form__message--error');
-
-          if (isTaken) {
-            addStoredEmail(emailVal);
-            showView(viewAlready);
-          } else {
-            addStoredEmail(emailVal);
-            showView(viewSuccess);
-          }
-        } catch (err) {
-          // Fallback gracefully on network error: show success and store email
+        } else {
           addStoredEmail(emailVal);
           showView(viewSuccess);
-        } finally {
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerText = submitBtn.dataset.origText || 'Claim 10% Off';
-          }
+        }
+      } catch (err) {
+        // Fallback gracefully on network error: show success and store email
+        addStoredEmail(emailVal);
+        showView(viewSuccess);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = submitBtn.dataset.origText || 'Claim 10% Off';
+        }
+      }
+      return false;
+    };
+
+    if (form) {
+      form.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (submitBtn) {
+      submitBtn.addEventListener('click', handleFormSubmit);
+    }
+
+    if (inputEmail) {
+      inputEmail.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          handleFormSubmit(e);
         }
       });
     }
