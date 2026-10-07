@@ -285,9 +285,6 @@
     </script>
     <meta name="google-site-verification" content="hGIWOqtrPnzI-a1R-bEpHGe-jsJ_S47ZrzlNnRhLeTI" />
     <meta name="p:domain_verify" content="8379a81ef4b2f51c94f00458670d8d5e"/>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16668294084">
-    </script>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -306,6 +303,8 @@
     </main>
 
     {% sections 'footer-group' %}
+
+    {% section 'newsletter-popup' %}
 
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
