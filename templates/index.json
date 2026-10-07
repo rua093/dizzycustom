@@ -197,7 +197,6 @@
     },
     "dc_custom_request_anchor": {
       "type": "dc-custom-request-anchor",
-      "disabled": true,
       "settings": {}
     },
     "1789410370f0d69c93": {
