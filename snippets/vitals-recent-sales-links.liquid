@@ -1,0 +1,61 @@
+{% comment %}
+  Vitals Recent Sales renders its product image as an anchor with data-href but no href.
+  Keep that app-owned link crawlable and its notification text readable.
+{% endcomment %}
+<style>
+  #bundle-recent_sales .bundle-recent_sales-person {
+    color: #555;
+  }
+</style>
+<script>
+  (() => {
+    let popup;
+    let popupObserver;
+
+    function updateLinks() {
+      if (!popup) return;
+
+      const productTitle = popup.querySelector('a.bundle-recent_sales-link.recent-sales-url')?.textContent.trim();
+      popup.querySelectorAll('a.recent-sales-url[data-href]').forEach((link) => {
+        const destination = link.getAttribute('data-href');
+        if (!destination) return;
+
+        let url;
+        try {
+          url = new URL(destination, window.location.origin);
+        } catch {
+          return;
+        }
+
+        if (url.origin !== window.location.origin || !url.pathname.includes('/products/')) return;
+
+        const href = url.pathname + url.search + url.hash;
+        if (link.getAttribute('href') !== href) link.setAttribute('href', href);
+        const image = link.querySelector('img');
+        if (productTitle && image && image.alt !== productTitle) image.alt = productTitle;
+      });
+    }
+
+    function connectPopup() {
+      const nextPopup = document.getElementById('bundle-recent_sales');
+      if (nextPopup === popup) return;
+
+      popupObserver?.disconnect();
+      popup = nextPopup;
+      if (!popup) return;
+
+      updateLinks();
+      popupObserver = new MutationObserver(updateLinks);
+      popupObserver.observe(popup, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ['data-href', 'href'],
+      });
+    }
+
+    connectPopup();
+    new MutationObserver(connectPopup).observe(document.body, { childList: true });
+  })();
+</script>

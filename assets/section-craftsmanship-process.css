@@ -434,20 +434,40 @@
   }
 
   .craftsmanship-process__dot {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .craftsmanship-process__dot::before {
+    content: '';
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.25);
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .craftsmanship-process__dot.is-active {
+  .craftsmanship-process__dot.is-active::before {
     width: 2.4rem;
     border-radius: 1rem;
     background: #1c87dc;
     box-shadow: 0 0 1.2rem rgba(28, 135, 220, 0.85);
+  }
+
+  .craftsmanship-process__dot:focus-visible {
+    outline: 0.2rem solid #ffffff;
+    outline-offset: 0.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craftsmanship-process__dot::before {
+    transition: none;
   }
 }

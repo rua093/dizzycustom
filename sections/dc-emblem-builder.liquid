@@ -34,10 +34,6 @@
   assign default_variant = initial_variant
 -%}
 {{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
-{%- for key in font_keys -%}
-  {%- assign font_file = 'dc-badge-' | append: key | append: '.woff2' -%}
-  <link rel="preload" href="{{ font_file | asset_url }}" as="font" type="font/woff2" crossorigin>
-{%- endfor -%}
 <script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
 
@@ -50,12 +46,8 @@
     {% endif %}
 
     <dc-emblem-builder
-      class="{% if settings.animations_reveal_on_scroll %}scroll-trigger animate--slide-in{% endif %}"
       data-product-page="{{ is_product_page }}"
       data-demo="{{ section.settings.demo }}"
-      {% if settings.animations_reveal_on_scroll %}
-        data-cascade
-      {% endif %}
     >
       <script type="application/json" data-builder-config>
         {

@@ -417,7 +417,8 @@
         "vitals_reviews_carousel_XmiQ3W"
       ],
       "settings": {
-        "include_margins": true
+        "include_margins": true,
+        "enable_reveal_animation": false
       }
     }
   },
