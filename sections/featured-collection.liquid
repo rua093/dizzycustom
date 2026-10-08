@@ -66,7 +66,7 @@
     <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width{% if section.settings.show_view_all and section.settings.collection != blank %} collection__title--has-view-all{% endif %}{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% endif %}{% if show_desktop_slider %} collection__title--desktop-slider{% endif %}">
       <div class="collection__title-copy">
         {%- if section.settings.title != blank -%}
-          <h2 class="title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <h2 class="title inline-richtext {{ section.settings.heading_size }}">
             {{ section.settings.title }}
           </h2>
         {%- endif -%}
@@ -74,7 +74,7 @@
           or section.settings.show_description
           and section.settings.collection.description != empty
         -%}
-          <div class="collection__description {{ section.settings.description_style }} rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <div class="collection__description {{ section.settings.description_style }} rte">
             {%- if section.settings.show_description -%}
               {{ section.settings.collection.description }}
             {%- else -%}
@@ -86,7 +86,7 @@
       {%- if section.settings.show_view_all and section.settings.collection != blank -%}
         <a
           href="{{ section.settings.collection.url }}"
-          class="collection__view-all-link link animate-arrow{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          class="collection__view-all-link link animate-arrow"
           aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
         >
           <span>{{ 'sections.featured_collection.view_all' | t }}</span>

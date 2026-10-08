@@ -269,12 +269,14 @@
     {%- endunless -%}
 
     {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
-      {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}
+      <link rel="stylesheet" href="{{ 'component-localization-form.css' | asset_url }}" media="print" onload="this.media='all'">
+      <noscript>{{ 'component-localization-form.css' | asset_url | stylesheet_tag }}</noscript>
       <script src="{{ 'localization-form.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
     {%- if settings.predictive_search_enabled -%}
-      {{ 'component-predictive-search.css' | asset_url | stylesheet_tag }}
+      <link rel="stylesheet" href="{{ 'component-predictive-search.css' | asset_url }}" media="print" onload="this.media='all'">
+      <noscript>{{ 'component-predictive-search.css' | asset_url | stylesheet_tag }}</noscript>
     {%- endif -%}
 
     <script>

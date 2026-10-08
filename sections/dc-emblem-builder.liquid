@@ -79,8 +79,7 @@
           "defaultSizeMax": {%- if default_variant.title contains '8 Letters' -%}8{%- elsif default_variant.title contains '12 Letters' -%}12{%- else -%}16{%- endif -%},
           "fonts": [
             {% for key in font_keys %}
-              {% assign font_file = 'dc-badge-' | append: key | append: '.woff2' %}
-              {"key": {{ key | json }}, "label": {{ font_labels[forloop.index0] | json }}, "url": {{ font_file | asset_url | json }}}{% unless forloop.last %},{% endunless %}
+              {"key": {{ key | json }}, "label": {{ font_labels[forloop.index0] | json }}}{% unless forloop.last %},{% endunless %}
             {% endfor %}
           ]
         }

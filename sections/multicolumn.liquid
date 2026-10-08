@@ -70,7 +70,7 @@
               class="multicolumn-mobile-tab{% if forloop.first %} is-active{% endif %}"
               id="Tab-{{ section.id }}-{{ forloop.index }}"
               aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-              aria-controls="Slide-{{ section.id }}-{{ forloop.index }}"
+              aria-controls="Panel-{{ section.id }}-{{ forloop.index }}"
               data-index="{{ forloop.index0 }}"
             >
               <span>{{ tab_title }}</span>
@@ -106,16 +106,19 @@
             id="Slide-{{ section.id }}-{{ forloop.index }}"
             class="multicolumn-list__item grid__item{% if section.settings.swipe_on_mobile and section.settings.enable_mobile_tabs != true %} slider__slide{% endif %}{% if section.settings.column_alignment == 'center' %} center{% endif %}{{ empty_column }}{% if settings.animations_reveal_on_scroll and section.settings.enable_mobile_tabs != true %} scroll-trigger animate--slide-in{% endif %}{% if section.settings.enable_mobile_tabs and section.blocks.size > 1 and forloop.first %} is-active{% endif %}"
             {{ block.shopify_attributes }}
-            {% if section.settings.enable_mobile_tabs and section.blocks.size > 1 %}
-              role="tabpanel"
-              aria-labelledby="Tab-{{ section.id }}-{{ forloop.index }}"
-            {% endif %}
             {% if settings.animations_reveal_on_scroll and section.settings.enable_mobile_tabs != true %}
               data-cascade
               style="--animation-order: {{ forloop.index }};"
             {% endif %}
           >
-            <div class="multicolumn-card content-container">
+            <div
+              class="multicolumn-card content-container"
+              {% if section.settings.enable_mobile_tabs and section.blocks.size > 1 %}
+                id="Panel-{{ section.id }}-{{ forloop.index }}"
+                role="tabpanel"
+                aria-labelledby="Tab-{{ section.id }}-{{ forloop.index }}"
+              {% endif %}
+            >
               {%- if block.settings.image != blank -%}
                 {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
                   {% assign spaced_image = true %}

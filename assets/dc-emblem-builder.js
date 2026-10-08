@@ -31,15 +31,21 @@
   const loadedFonts = new Map();
 
   function loadFont(font) {
-    const cacheKey = `${font.key}:${font.url}`;
-    if (!loadedFonts.has(cacheKey)) {
-      const face = new FontFace(`DC Badge ${font.key}`, `url(${JSON.stringify(font.url)})`);
-      loadedFonts.set(cacheKey, face.load().then((loaded) => document.fonts.add(loaded)).catch((error) => {
-        loadedFonts.delete(cacheKey);
+    if (!loadedFonts.has(font.key)) {
+      // Reuse the @font-face in dc-emblem-builder.css so each file has one URL.
+      const stylesheet = document.querySelector('link[rel="stylesheet"][href*="dc-emblem-builder.css"]');
+      const stylesheetReady = stylesheet && !stylesheet.sheet ? new Promise((resolve) => {
+        stylesheet.addEventListener('load', resolve, { once: true });
+        stylesheet.addEventListener('error', resolve, { once: true });
+      }) : Promise.resolve();
+      loadedFonts.set(font.key, stylesheetReady.then(() => document.fonts.load(`16px "DC Badge ${font.key}"`)).then((faces) => {
+        if (!faces.some((face) => face.status === 'loaded')) throw new Error(`Badge font ${font.key} is unavailable`);
+      }).catch((error) => {
+        loadedFonts.delete(font.key);
         throw error;
       }));
     }
-    return loadedFonts.get(cacheKey);
+    return loadedFonts.get(font.key);
   }
 
   class EmblemBuilder extends HTMLElement {
