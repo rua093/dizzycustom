@@ -48,17 +48,48 @@
           </div>
 
           <div class="craftsmanship-step__card">
-            {%- if block.settings.image != blank -%}
+            {%- if block.settings.video != blank or block.settings.image != blank -%}
+              {%- assign media_description = block.settings.media_description | default: block.settings.title | default: 'Craftsmanship step' -%}
               <div class="craftsmanship-step__media">
-                {{
-                  block.settings.image
-                  | image_url: width: 800
-                  | image_tag:
-                    loading: 'lazy',
-                    width: block.settings.image.width,
-                    height: block.settings.image.height,
-                    alt: block.settings.title | default: 'Craftsmanship step'
-                }}
+                {%- if block.settings.video != blank -%}
+                  <video
+                    class="craftsmanship-step__video"
+                    data-craftsmanship-video
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                    aria-label="{{ media_description | escape }}"
+                    {% if block.settings.video.preview_image != blank %}
+                      poster="{{ block.settings.video.preview_image | image_url: width: 800 }}"
+                    {% endif %}
+                  >
+                    {%- for source in block.settings.video.sources -%}
+                      <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                    {%- endfor -%}
+                    {%- if block.settings.image != blank -%}
+                      {{
+                        block.settings.image
+                        | image_url: width: 800
+                        | image_tag:
+                          loading: 'lazy',
+                          width: block.settings.image.width,
+                          height: block.settings.image.height,
+                          alt: media_description
+                      }}
+                    {%- endif -%}
+                  </video>
+                {%- else -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 800
+                    | image_tag:
+                      loading: 'lazy',
+                      width: block.settings.image.width,
+                      height: block.settings.image.height,
+                      alt: media_description
+                  }}
+                {%- endif -%}
               </div>
             {%- endif -%}
 
@@ -95,66 +126,100 @@
         </div>
       </div>
 
-      <script>
-        (() => {
-          const section = document.getElementById('CraftsmanshipProcess-{{ section.id }}');
-          if (!section) return;
-          const timeline = section.querySelector('.craftsmanship-process__timeline');
-          const dots = section.querySelectorAll('.craftsmanship-process__dot');
-          const steps = section.querySelectorAll('.craftsmanship-step');
-          if (!timeline || !dots.length || !steps.length) return;
-
-          let activeIndex = 0;
-          const updateActive = (index) => {
-            if (index === activeIndex || index < 0 || index >= dots.length) return;
-            activeIndex = index;
-            dots.forEach((dot, i) => {
-              const isActive = i === index;
-              dot.classList.toggle('is-active', isActive);
-              dot.setAttribute('aria-selected', String(isActive));
-            });
-          };
-
-          dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-              const step = steps[index];
-              if (step) {
-                const paddingLeft = parseFloat(window.getComputedStyle(timeline).paddingLeft) || 16;
-                timeline.scrollTo({
-                  left: step.offsetLeft - timeline.offsetLeft - paddingLeft,
-                  behavior: 'smooth'
-                });
-                updateActive(index);
-              }
-            });
-          });
-
-          if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver((entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  const index = Array.from(steps).indexOf(entry.target);
-                  if (index !== -1) updateActive(index);
-                }
-              });
-            }, {
-              root: timeline,
-              threshold: 0.55
-            });
-            steps.forEach((step) => observer.observe(step));
-          } else {
-            timeline.addEventListener('scroll', () => {
-              const scrollLeft = timeline.scrollLeft;
-              const itemWidth = steps[0].offsetWidth + (parseFloat(window.getComputedStyle(timeline).gap) || 18);
-              const index = Math.round(scrollLeft / itemWidth);
-              updateActive(index);
-            }, { passive: true });
-          }
-        })();
-      </script>
     {%- endif -%}
   </div>
 </section>
+
+<script>
+  (() => {
+    const section = document.getElementById('CraftsmanshipProcess-{{ section.id }}');
+    if (!section) return;
+    section._dcCraftsmanshipCleanup?.();
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const observers = [];
+    const timeline = section.querySelector('.craftsmanship-process__timeline');
+    const dots = Array.from(section.querySelectorAll('.craftsmanship-process__dot'));
+    const steps = Array.from(section.querySelectorAll('.craftsmanship-step'));
+    const videos = Array.from(section.querySelectorAll('[data-craftsmanship-video]'));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const cleanup = () => {
+      observers.forEach((observer) => observer.disconnect());
+      videos.forEach((video) => video.pause());
+      controller.abort();
+      section._dcCraftsmanshipCleanup = null;
+    };
+    section._dcCraftsmanshipCleanup = cleanup;
+
+    if (timeline && dots.length > 1 && steps.length > 1) {
+      let activeIndex = 0;
+      const updateActive = (index) => {
+        if (index < 0 || index >= dots.length) return;
+        activeIndex = index;
+        dots.forEach((dot, dotIndex) => {
+          const isActive = dotIndex === activeIndex;
+          dot.classList.toggle('is-active', isActive);
+          dot.setAttribute('aria-selected', String(isActive));
+        });
+      };
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          const step = steps[index];
+          if (!step) return;
+          const paddingLeft = parseFloat(window.getComputedStyle(timeline).paddingLeft) || 16;
+          timeline.scrollTo({
+            left: step.offsetLeft - timeline.offsetLeft - paddingLeft,
+            behavior: reducedMotion.matches ? 'auto' : 'smooth'
+          });
+          updateActive(index);
+        }, { signal });
+      });
+
+      if ('IntersectionObserver' in window) {
+        const stepObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) updateActive(steps.indexOf(entry.target));
+          });
+        }, { root: timeline, threshold: 0.55 });
+        steps.forEach((step) => stepObserver.observe(step));
+        observers.push(stepObserver);
+      } else {
+        timeline.addEventListener('scroll', () => {
+          const itemWidth = steps[0].offsetWidth + (parseFloat(window.getComputedStyle(timeline).gap) || 18);
+          updateActive(Math.round(timeline.scrollLeft / itemWidth));
+        }, { passive: true, signal });
+      }
+    }
+
+    const updateVideo = (video) => {
+      if (reducedMotion.matches || video.dataset.inView !== 'true') {
+        video.pause();
+        return;
+      }
+      video.play().catch(() => {});
+    };
+
+    if (videos.length && 'IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          entry.target.dataset.inView = String(entry.isIntersecting);
+          if (entry.isIntersecting) entry.target.preload = 'metadata';
+          updateVideo(entry.target);
+        });
+      }, { rootMargin: '300px 0px', threshold: 0.05 });
+      videos.forEach((video) => videoObserver.observe(video));
+      observers.push(videoObserver);
+    }
+
+    reducedMotion.addEventListener('change', () => videos.forEach(updateVideo), { signal });
+    document.addEventListener('shopify:section:unload', (event) => {
+      if (event.target === section || event.target?.contains(section) || event.detail?.sectionId === '{{ section.id }}') cleanup();
+    }, { signal });
+  })();
+</script>
 
 {% schema %}
 {
@@ -217,6 +282,17 @@
           "type": "image_picker",
           "id": "image",
           "label": "Step Image / GIF"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Step video (preferred)"
+        },
+        {
+          "type": "text",
+          "id": "media_description",
+          "label": "Media description",
+          "info": "Describe the process shown for screen-reader users."
         },
         {
           "type": "text",

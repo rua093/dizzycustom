@@ -6,12 +6,12 @@
 {% endcomment %}
 
 <link rel="stylesheet" href="{{ 'quantity-popover.css' | asset_url }}" media="print" onload="this.media='all'">
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'component-card.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'component-card.css' | asset_url | stylesheet_tag }}</noscript>
 <link rel="stylesheet" href="{{ 'component-list-payment.css' | asset_url }}" media="print" onload="this.media='all'">
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
-<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-cart-badge.js' | asset_url }}" defer="defer"></script>
 
 {%- assign cart_font_keys = 'bold,lightning,aggressive,script,electric,ice,oem' | split: ',' -%}

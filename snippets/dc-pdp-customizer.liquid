@@ -76,14 +76,7 @@
   endif
 -%}
 {%- if is_custom_product -%}
-{%- unless customizer_mode == 'retro' -%}
-  {%- for key in font_keys -%}
-    {%- assign font_file = 'dc-badge-' | append: key | append: '.woff2' -%}
-    <link rel="preload" href="{{ font_file | asset_url }}" as="font" type="font/woff2" crossorigin>
-  {%- endfor -%}
-{%- endunless -%}
 {{ 'dc-pdp-customizer.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-pdp-customizer.js' | asset_url }}" defer="defer"></script>
 
 <div id="DCPdpControlsContainer" class="dc-pdp-controls-wrapper dc-pdp-controls-wrapper--layers-{{ customizer_layers }} dc-pdp-controls-wrapper--mode-{{ customizer_mode }}" data-custom-product="{{ is_custom_product }}" data-layers="{{ customizer_layers }}" data-mode="{{ customizer_mode }}" data-initial-modern-layers="{{ initial_modern_layers }}">

@@ -6,6 +6,17 @@
   #bundle-recent_sales .bundle-recent_sales-person {
     color: #555;
   }
+
+  #bundle-recent_sales .recent-sales-product-image,
+  #bundle-recent_sales .bundle-recent_sales-product-image,
+  #bundle-recent_sales .recent-sales-product-image > a {
+    aspect-ratio: 1 / 1;
+  }
+
+  #bundle-recent_sales .recent-sales-image {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
 </style>
 <script>
   (() => {
@@ -32,7 +43,13 @@
         const href = url.pathname + url.search + url.hash;
         if (link.getAttribute('href') !== href) link.setAttribute('href', href);
         const image = link.querySelector('img');
-        if (productTitle && image && image.alt !== productTitle) image.alt = productTitle;
+        if (image) {
+          if (productTitle && image.alt !== productTitle) image.alt = productTitle;
+          if (!image.hasAttribute('width')) image.setAttribute('width', '100');
+          if (!image.hasAttribute('height')) image.setAttribute('height', '100');
+          image.loading = 'lazy';
+          image.decoding = 'async';
+        }
       });
     }
 

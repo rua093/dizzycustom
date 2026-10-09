@@ -34,7 +34,6 @@
   assign default_variant = initial_variant
 -%}
 {{ 'dc-emblem-builder.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'dc-emblem-core.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'dc-emblem-builder.js' | asset_url }}" defer="defer"></script>
 
 <section class="dc-builder-section color-{{ section.settings.color_scheme }} gradient" style="--dc-builder-space: {{ section.settings.padding }}px">

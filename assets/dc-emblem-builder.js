@@ -74,11 +74,15 @@
       this.layer = 'face';
       this.group = 'mirror';
       this.textures = new Map();
+      this.readyFonts = new Set();
+      this.failedFonts = new Set();
       this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       this.restore();
       const signal = this.controller.signal;
       this.addEventListener('pointerdown', () => this.stopDemo(), { signal });
       this.addEventListener('focusin', () => this.stopDemo(), { signal });
+      this.addEventListener('pointerover', (event) => this.prioritizeFont(event), { signal });
+      this.addEventListener('focusin', (event) => this.prioritizeFont(event), { signal });
       this.addEventListener('click', (event) => this.onClick(event), { signal });
       this.addEventListener('animationend', (event) => {
         if (event.target === this) this.style.transform = 'none';
@@ -119,18 +123,79 @@
       this.observer?.disconnect();
       this.stopDemo();
       cancelAnimationFrame(this.frame);
+      if (this.fontIdleHandle) {
+        if (this.fontIdleType === 'idle') cancelIdleCallback(this.fontIdleHandle);
+        else clearTimeout(this.fontIdleHandle);
+      }
     }
 
     async initializeFonts(signal) {
-      const results = await Promise.allSettled(this.config.fonts.map(loadFont));
-      if (signal.aborted) return;
-      this.readyFonts = new Set();
-      results.forEach((result, index) => {
-        const key = this.config.fonts[index].key;
-        this.querySelector(`[data-font="${key}"]`).disabled = result.status !== 'fulfilled';
-        if (result.status === 'fulfilled') this.readyFonts.add(key);
-      });
-      this.update();
+      await this.ensureFont(this.state.font);
+      if (!signal.aborted) this.scheduleRemainingFonts(signal);
+    }
+
+    fontByKey(key) {
+      return this.config.fonts.find((font) => font.key === key);
+    }
+
+    prioritizeFont(event) {
+      const button = event.target.closest?.('[data-font]');
+      if (button && this.contains(button)) this.ensureFont(button.dataset.font);
+    }
+
+    setFontButtonState(key, state) {
+      const button = this.querySelector(`[data-font="${key}"]`);
+      if (!button) return;
+      button.classList.toggle('is-font-ready', state === 'ready');
+      button.toggleAttribute('aria-busy', state === 'loading');
+      if (state === 'failed') {
+        button.disabled = true;
+        button.title = 'This font is temporarily unavailable';
+      }
+    }
+
+    async ensureFont(key) {
+      if (this.readyFonts.has(key)) return true;
+      if (this.failedFonts.has(key)) return false;
+      const font = this.fontByKey(key);
+      if (!font) return false;
+      this.setFontButtonState(key, 'loading');
+      try {
+        await loadFont(font);
+        if (this.controller?.signal.aborted) return false;
+        this.readyFonts.add(key);
+        this.setFontButtonState(key, 'ready');
+        this.update();
+        return true;
+      } catch (error) {
+        if (this.controller?.signal.aborted) return false;
+        this.failedFonts.add(key);
+        this.setFontButtonState(key, 'failed');
+        this.update();
+        return false;
+      }
+    }
+
+    scheduleRemainingFonts(signal) {
+      const loadRemaining = async () => {
+        this.fontIdleHandle = null;
+        for (const font of this.config.fonts) {
+          if (signal.aborted) return;
+          await this.ensureFont(font.key);
+        }
+      };
+      const scheduleIdle = () => {
+        if (signal.aborted) return;
+        if ('requestIdleCallback' in window) {
+          this.fontIdleType = 'idle';
+          this.fontIdleHandle = requestIdleCallback(loadRemaining, { timeout: 3000 });
+        } else {
+          this.fontIdleType = 'timeout';
+          this.fontIdleHandle = setTimeout(loadRemaining, 1000);
+        }
+      };
+      if (document.readyState === 'complete') scheduleIdle();
+      else window.addEventListener('load', scheduleIdle, { once: true, signal });
     }
 
     stopDemo() {
@@ -336,7 +401,10 @@
     onClick(event) {
       const button = event.target.closest('button');
       if (!button || button.disabled) return;
-      if (button.dataset.font) this.state.font = button.dataset.font;
+      if (button.dataset.font) {
+        this.state.font = button.dataset.font;
+        this.ensureFont(button.dataset.font);
+      }
       if (button.dataset.layerCount) {
         const prevLayers = this.state.layers;
         this.state.layers = Number(button.dataset.layerCount);
@@ -427,7 +495,8 @@
       if (!/^[\x20-\x7E]+$/.test(this.state.text)) return 'Please use English letters, numbers and standard punctuation for these fonts.';
       if (this.state.font === 'ice' && !/^[A-Za-z0-9 !,.:;?]+$/.test(this.state.text)) return 'Frost supports letters, numbers, spaces and ! , . : ; ? punctuation. Choose another font for other symbols.';
       if (this.state.font === 'lightning' && this.state.text.includes('~')) return 'Slant does not support ~. Please remove it or choose another font.';
-      if (!this.readyFonts?.has(this.state.font)) return this.readyFonts ? 'This font could not load. Please choose another font or reload the page.' : 'Loading badge fonts…';
+      if (this.failedFonts?.has(this.state.font)) return 'This font could not load. Please choose another font or reload the page.';
+      if (!this.readyFonts?.has(this.state.font)) return 'Loading this font…';
       return '';
     }
 

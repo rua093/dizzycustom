@@ -162,11 +162,13 @@
       this.layer = 'face';
       this.group = 'mirror';
       this.textures = new Map();
+      this.readyFonts = new Set();
+      this.failedFonts = new Set();
 
       // Default state
       this.state = {
         text: this.isRetro ? '' : (this.config.defaultText || 'DIZZY'),
-        font: this.isRetro ? (this.config.defaultFont || 'nissan') : 'lightning',
+        font: this.config.defaultFont || (this.isRetro ? 'nissan' : 'lightning'),
         face: this.isRetro ? 'white' : 'mirror_white',
         back: 'gloss_black',
         layers: this.isRetro ? 1 : ([1, 2].includes(initialModernLayers) ? initialModernLayers : ([1, 2].includes(urlLayers) ? urlLayers : 2)),
@@ -200,6 +202,10 @@
       }
       if (this.observer) {
         this.observer.disconnect();
+      }
+      if (this.fontIdleHandle) {
+        if (this.fontIdleType === 'idle') cancelIdleCallback(this.fontIdleHandle);
+        else clearTimeout(this.fontIdleHandle);
       }
       cancelAnimationFrame(this.frame);
       if (this.mediaWrapper && this.mediaWrapper.classList.contains('dc-mobile-sticky')) {
@@ -524,6 +530,7 @@
       if (this.fontSelect) {
         this.fontSelect.addEventListener('change', () => {
           this.state.font = this.fontSelect.value;
+          this.ensureFont(this.state.font);
           this.updateUI();
           this.scrollToFirstMedia();
         }, { signal: this.signal });
@@ -564,8 +571,12 @@
 
       // Font pills (Two-layer)
       this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
+        const prioritize = () => this.ensureFont(btn.dataset.pdpFont);
+        btn.addEventListener('pointerenter', prioritize, { signal: this.signal });
+        btn.addEventListener('focus', prioritize, { signal: this.signal });
         btn.addEventListener('click', () => {
           this.state.font = btn.dataset.pdpFont;
+          this.ensureFont(this.state.font);
           this.updateUI();
           this.scrollToFirstMedia();
         }, { signal: this.signal });
@@ -725,6 +736,8 @@
       if (this.fontSelect) {
         this.fontSelect.value = this.state.font;
         this.fontSelect.setAttribute('data-font-selected', this.state.font);
+        this.fontSelect.classList.toggle('is-font-ready', this.readyFonts.has(this.state.font));
+        this.fontSelect.toggleAttribute('aria-busy', !this.readyFonts.has(this.state.font) && !this.failedFonts.has(this.state.font));
       }
 
       // Retro specific requests
@@ -738,6 +751,8 @@
         this.controlsContainer.querySelectorAll('[data-pdp-font]').forEach((btn) => {
           const isActive = btn.dataset.pdpFont === this.state.font;
           btn.classList.toggle('is-active', isActive);
+          btn.classList.toggle('is-font-ready', this.readyFonts.has(btn.dataset.pdpFont));
+          btn.toggleAttribute('aria-busy', !this.readyFonts.has(btn.dataset.pdpFont) && !this.failedFonts.has(btn.dataset.pdpFont));
           btn.setAttribute('aria-pressed', String(isActive));
         });
 
@@ -890,32 +905,76 @@
     }
 
     async initFonts() {
-      const fontsToLoad = [];
-      if (this.config.baseFonts && this.config.baseFonts.length) {
-        fontsToLoad.push(...this.config.baseFonts);
+      const sourceFonts = this.isRetro ? this.config.fonts : this.config.baseFonts;
+      this.fontCatalog = new Map((sourceFonts || []).filter((font) => font.url).map((font) => [font.key, font]));
+      await this.ensureFont(this.state.font);
+      if (!this.signal.aborted) this.scheduleRemainingFonts();
+    }
+
+    async ensureFont(key) {
+      if (this.readyFonts.has(key)) return true;
+      if (this.failedFonts.has(key)) return false;
+      const font = this.fontCatalog?.get(key);
+      if (!font) return false;
+      this.updateFontControl(key, 'loading');
+      try {
+        await loadFont(font);
+        if (this.signal.aborted) return false;
+        this.readyFonts.add(key);
+        this.updateFontControl(key, 'ready');
+        this.scheduleRender();
+        return true;
+      } catch (error) {
+        if (this.signal.aborted) return false;
+        this.failedFonts.add(key);
+        this.updateFontControl(key, 'failed');
+        return false;
       }
-      if (this.config.fonts && this.config.fonts.length) {
-        for (const f of this.config.fonts) {
-          if (f.url && !fontsToLoad.some(b => b.key === f.key)) {
-            fontsToLoad.push(f);
-          }
+    }
+
+    updateFontControl(key, state) {
+      const button = this.controlsContainer.querySelector(`[data-pdp-font="${key}"]`);
+      if (button) {
+        button.classList.toggle('is-font-ready', state === 'ready');
+        button.toggleAttribute('aria-busy', state === 'loading');
+        if (state === 'failed') {
+          button.disabled = true;
+          button.title = 'This font is temporarily unavailable';
         }
       }
-
-      if (fontsToLoad.length) {
-        const results = await Promise.allSettled(fontsToLoad.map(loadFont));
-        this.readyFonts = new Set();
-        results.forEach((res, i) => {
-          if (res.status === 'fulfilled') {
-            this.readyFonts.add(fontsToLoad[i].key);
-          }
-        });
+      if (this.fontSelect && this.state.font === key) {
+        this.fontSelect.classList.toggle('is-font-ready', state === 'ready');
+        this.fontSelect.toggleAttribute('aria-busy', state === 'loading');
+        const option = this.fontSelect.querySelector(`option[value="${key}"]`);
+        if (option && state === 'failed') {
+          option.disabled = true;
+          this.fontSelect.title = 'This font is temporarily unavailable. Please choose another font.';
+        } else if (state === 'ready') {
+          this.fontSelect.removeAttribute('title');
+        }
       }
+    }
 
-      if (document.fonts?.ready) {
-        document.fonts.ready.then(() => this.scheduleRender());
-      }
-      this.scheduleRender();
+    scheduleRemainingFonts() {
+      const loadRemaining = async () => {
+        this.fontIdleHandle = null;
+        for (const key of this.fontCatalog.keys()) {
+          if (this.signal.aborted) return;
+          await this.ensureFont(key);
+        }
+      };
+      const scheduleIdle = () => {
+        if (this.signal.aborted) return;
+        if ('requestIdleCallback' in window) {
+          this.fontIdleType = 'idle';
+          this.fontIdleHandle = requestIdleCallback(loadRemaining, { timeout: 3000 });
+        } else {
+          this.fontIdleType = 'timeout';
+          this.fontIdleHandle = setTimeout(loadRemaining, 1000);
+        }
+      };
+      if (document.readyState === 'complete') scheduleIdle();
+      else window.addEventListener('load', scheduleIdle, { once: true, signal: this.signal });
     }
 
     scheduleRender() {
@@ -996,13 +1055,8 @@
 
       const isSingleLayer = this.isRetro;
       if (!isSingleLayer) {
-        const fontSpec = `16px "DC Badge ${this.state.font}"`;
-        if (document.fonts && typeof document.fonts.check === 'function' && !document.fonts.check(fontSpec)) {
-          if (typeof document.fonts.load === 'function') {
-            document.fonts.load(fontSpec).then(() => {
-              this.scheduleRender();
-            });
-          }
+        if (!this.readyFonts.has(this.state.font)) {
+          this.ensureFont(this.state.font);
           return;
         }
         this.core.renderModernCanvas({ context, width, height, text, fontKey: this.state.font, faceId: this.state.face, backId: this.state.back, layers: this.state.layers, texture: this.texture.bind(this), maxFontSize: 120, widthRatio: 0.78, heightRatio: 0.45, faceOffset: 0.015 });
@@ -1013,13 +1067,8 @@
 
       const fontKey = (this.state.font || '').toLowerCase();
       const retro = retroFontMap[fontKey] || retroFontMap['nissan'];
-      const retroFontSpec = `16px "${retro.family}"`;
-      if (document.fonts && typeof document.fonts.check === 'function' && !document.fonts.check(retroFontSpec)) {
-        if (typeof document.fonts.load === 'function') {
-          document.fonts.load(retroFontSpec).then(() => {
-            this.scheduleRender();
-          });
-        }
+      if (!this.readyFonts.has(this.state.font)) {
+        this.ensureFont(this.state.font);
         return;
       }
       let fontSetting = `${size}px "${retro.family}", ${retro.fallback}`;
