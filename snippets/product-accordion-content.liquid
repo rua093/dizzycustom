@@ -1,5 +1,16 @@
 {%- if block.settings.use_product_description -%}
   {{ product.description }}
+{%- elsif block.settings.image != blank -%}
+  {{
+    block.settings.image
+    | image_url: width: 1200
+    | image_tag:
+      loading: 'lazy',
+      widths: '375, 550, 750, 900, 1100, 1200',
+      sizes: '(min-width: 990px) 550px, calc(100vw - 60px)',
+      alt: block.settings.image.alt | default: block.settings.heading,
+      class: 'product-accordion__image'
+  }}
 {%- else -%}
   {{ block.settings.content }}
   {{ block.settings.page.content }}
