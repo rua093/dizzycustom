@@ -89,7 +89,8 @@
             "heading": "Description",
             "icon": "clipboard",
             "content": "",
-            "page": "description"
+            "use_product_description": true,
+            "page": ""
           }
         },
         "collapsible_tab_GhaHkm": {

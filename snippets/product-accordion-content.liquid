@@ -1,0 +1,6 @@
+{%- if block.settings.use_product_description -%}
+  {{ product.description }}
+{%- else -%}
+  {{ block.settings.content }}
+  {{ block.settings.page.content }}
+{%- endif -%}
